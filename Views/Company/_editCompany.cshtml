@@ -1,0 +1,58 @@
+﻿@model UpdateCompanyDTO
+
+<form asp-action="EditCompany" asp-controller="Company" method="post" autocomplete="off" data-ajax="true"
+      data-ajax-method="POST" data-ajax-complete="Success">
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Edit Company</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <input type="hidden" asp-for="CompanyId" />
+        <div class="row g-3">
+            <div class="col-4 mb-2">
+                <label class="form-label" asp-for="CompanyName">Company Name <span class="text-danger">*</span></label>
+                <input asp-for="CompanyName" type="text" class="form-control" required placeholder="Enter Company Name.." />
+                <span asp-validation-for="CompanyName" class="text-danger"></span>
+            </div>
+            <div class="col-4 mb-2">
+                <label class="form-label" asp-for="Phone"></label>
+                <input asp-for="Phone" type="text" class="form-control" placeholder="Enter Company Phone.." />
+            </div>
+            <div class="col-4 mb-2">
+                <label class="form-label" asp-for="Email"></label>
+                <input asp-for="Email" type="text" class="form-control" placeholder="Enter Company Email.." />
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-4 mb-2">
+                <label class="form-label" asp-for="Description">Description <span class="text-danger">*</span></label>
+                <input asp-for="Description" type="text" class="form-control" required placeholder="Enter Company Description.." />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="col-4 mb-2">
+                <label class="form-label" asp-for="Website"></label>
+                <input asp-for="Website" type="text" class="form-control" placeholder="Enter Company Website.." />
+            </div>
+            <div class="col-4 mb-2">
+                <label class="form-label" asp-for="Address"></label>
+                <textarea asp-for="Address" type="text" class="form-control" placeholder="Enter Company Address.."></textarea>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-4 mb-2">
+                <label class="form-label" asp-for="IsActive"></label>
+                <div class="form-check">
+                    <input class="form-check-input" asp-for="IsActive" type="checkbox">
+                    <label class="form-check-label" asp-for="IsActive">
+                        Is Active
+                    </label>
+                </div>
+            </div>
+       </div>
+        
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Close</button>
+        <button type="submit" class="btn btn-primary"><i class="bx bx-save me-1"></i>Save Change</button>
+    </div>
+</form>

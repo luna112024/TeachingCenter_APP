@@ -52,21 +52,12 @@
             </li>
         </ul>
     </li>
-    <li class="menu-header small text-uppercase" asp-permissions="ViewCompanies,ViewAccount"><span class="menu-header-text small">Setting</span></li>
-
-    <li class="menu-item @Html.IsSelected(action: "index", controller: "Company")" asp-permissions="ManageCompanies,ViewCompanies,DeleteCompanies">
+    <li class="menu-item @Html.IsSelected(action: "index", controller: "Company")" asp-permissions="ManageCompany,ViewCompany,DeleteCompany">
         <a href="@Url.Action("Index", "Company")" class="menu-link">
             <i class="menu-icon tf-icons bx bx-building-house"></i>
-            ​​Companies
+            ​​Company
         </a>
     </li>
-    <li class="menu-item @Html.IsSelected(action: "Index", controller: "Account")" asp-permissions="ManageAccount,ViewAccount,DeleteAccount">
-        <a href="@Url.Action("Index", "Account")" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-book-add"></i>
-            ​​Accounts
-        </a>
-    </li>
-
    @*  <!-- User Info Section (Show current user info) -->
     @if (AuthService.IsAuthenticated())
     {

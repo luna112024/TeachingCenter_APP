@@ -14,6 +14,10 @@ namespace hongWenAPP.Models.CompanyModel.DTOs
         [RegularExpression(@"^[a-zA-Z0-9\s]*$", ErrorMessage = "Description can only contain letters, numbers and spaces")]
         public string Description { get; set; }
         public bool IsActive { get; set; } = true;
+        public string? Address { get; set; }
+        public string? Phone { get; set; }
+        public string? Email { get; set; }
+        public string? Website { get; set; }
     }
 
     public record class CreateCompanyDTO : CompanyBaseDTO

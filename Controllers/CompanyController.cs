@@ -21,7 +21,10 @@ namespace hongWenAPP.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(ListCompanyDTOs model)
         {
-
+            if (!_authService.HasPermission("ViewCompany"))
+            {
+                return PartialView("_AccessDenied");
+            }
             var company = await _companyService.GetCompanies();
             var list = new ListCompanyDTOs
             {
@@ -34,6 +37,10 @@ namespace hongWenAPP.Controllers
         [HttpGet]
         public async Task<IActionResult> ListCompany(ListCompanyDTOs model)
         {
+            if (!_authService.HasPermission("ViewCompany"))
+            {
+                return PartialView("_AccessDenied");
+            }
             var company = await _companyService.GetCompanies(model.SearchText);
             var list = PageList<GetCompanyDTO>.Create(company, model.Page, model.PageSize, "ListCompany");
             return PartialView("_ListCompanies", list);
@@ -43,6 +50,10 @@ namespace hongWenAPP.Controllers
         [HttpGet]
         public async Task<IActionResult> FetchCompany(string i)
         {
+            if (!_authService.HasPermission("ViewCompany"))
+            {
+                return PartialView("_AccessDenied");
+            }
             var company = await _companyService.GetCompanies(i);
             var result = company.Select(c => new
             {
@@ -57,7 +68,7 @@ namespace hongWenAPP.Controllers
         public IActionResult AddCompany()
         {
             // Check permission for viewing account statements
-            if (!_authService.HasPermission("ManageCompanies"))
+            if (!_authService.HasPermission("ManageCompany"))
             {
                 return PartialView("_AccessDenied");
             }
@@ -69,6 +80,10 @@ namespace hongWenAPP.Controllers
         {
             try
             {
+                if (!_authService.HasPermission("ManageCompany"))
+                {
+                    return PartialView("_AccessDenied");
+                }
                 if (!ModelState.IsValid)
                 {
                     var errors = ModelState.ToDictionary(kvp => kvp.Key, kvp => kvp.Value?.Errors.Select(e => e.ErrorMessage).ToArray());
@@ -87,6 +102,10 @@ namespace hongWenAPP.Controllers
         {
             try
             {
+                if (!_authService.HasPermission("ManageCompany"))
+                {
+                    return PartialView("_AccessDenied");
+                }
                 var companyData = await _companyService.GetCompanybyId(id);
 
                 var companyUpdateDTO = new UpdateCompanyDTO
@@ -95,7 +114,11 @@ namespace hongWenAPP.Controllers
                     CompanyName = companyData.CompanyName, 
                     ModifyBy = companyData.ModifyBy,
                     Description = companyData.Description,
-                    IsActive = companyData.IsActive
+                    IsActive = companyData.IsActive,
+                    Address=companyData.Address,
+                    Email=companyData.Email,
+                    Website=companyData.Website,
+                    Phone=companyData.Phone
                 };
 
                 ViewBag.CompanyId = id;
@@ -113,6 +136,10 @@ namespace hongWenAPP.Controllers
         {
             try
             {
+                if (!_authService.HasPermission("ManageCompany"))
+                {
+                    return PartialView("_AccessDenied");
+                }
                 if (!ModelState.IsValid)
                 {
                     var errors = ModelState.ToDictionary(kvp => kvp.Key, kvp => kvp.Value?.Errors.Select(e => e.ErrorMessage).ToArray());
@@ -131,6 +158,10 @@ namespace hongWenAPP.Controllers
         {
             try
             {
+                if (!_authService.HasPermission("DeleteCompany"))
+                {
+                    return PartialView("_AccessDenied");
+                }
                 var company = await _companyService.GetCompanybyId(id);
                 if (company == null)
                 {
@@ -158,6 +189,10 @@ namespace hongWenAPP.Controllers
         {
             try
             {
+                if (!_authService.HasPermission("DeleteCompany"))
+                {
+                    return PartialView("_AccessDenied");
+                }
                 var result = await _companyService.DeleteCompany(model.CompanyId);
                 return _returnHelper.ReturnNewResult(result.Flag, result.Message ?? "Company deleted successfully");
             }

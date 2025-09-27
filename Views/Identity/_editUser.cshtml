@@ -11,7 +11,7 @@
         <div class="mb-3">
             <div class="row g-3">
                 <div class="col-4 mb-2">
-                    <label class="form-label" asp-for="UserName"></label>
+                    <label class="form-label" asp-for="UserName">Username <span class="text-danger">*</span></label>
                     <input asp-for="UserName" type="text" class="form-control" required placeholder="Ex.​ Dara.." />
                     <span asp-validation-for="UserName" class="text-danger"></span>
                 </div>
@@ -53,7 +53,7 @@
                     <input asp-for="Phone" type="text" class="form-control" placeholder="Ex.​Phone.." />
                 </div>
                 <div class="col-4 mb-2">
-                    <label class="form-label" asp-for="Email"></label>
+                    <label class="form-label" asp-for="Email">Email <span class="text-danger">*</span></label>
                     <input asp-for="Email" type="email" class="form-control" required placeholder="Ex.​ user@example.com" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
