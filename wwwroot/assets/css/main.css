@@ -1,0 +1,650 @@
+﻿a{
+    text-decoration: none;
+}
+
+/*Override Btn*/
+.btn {
+    padding: 0.22rem 1.38rem 0.35rem 1.38rem;
+}
+
+@media screen and (max-width:767px) {
+    .btn-icon-only {
+        padding: 0.6rem 0.7rem;
+    }
+}
+/*End Override Btn*/
+
+a {
+    text-decoration:none;
+}
+
+.menu .app-brand.demo {
+    padding: 30px 2rem 30px 2rem;
+    background: linear-gradient(180deg, #2b68c3, #185abd);
+}
+
+.menu a.menu-link {
+    text-decoration:none;
+}
+
+.layout-navbar.navbar-detached {
+    margin: 0.5rem auto 0;
+}
+
+.menu-vertical .menu-inner {
+    background-color: #edf4fd;
+    background: linear-gradient(45deg, #e5e5e5, #edf4fd);
+}
+
+html:not(.layout-menu-collapsed) .bg-menu-theme .menu-inner .menu-item.open > .menu-link, .layout-menu-hover.layout-menu-collapsed .bg-menu-theme .menu-inner .menu-item.open > .menu-link, html:not(.layout-menu-collapsed) .bg-menu-theme .menu-inner .menu-item .menu-link:not(.active):hover, .layout-menu-hover.layout-menu-collapsed .bg-menu-theme .menu-inner .menu-item .menu-link:not(.active):hover {
+    background-color: rgb(52 125 205 / 10%);
+}
+
+.app-brand-text.demo {
+    font-size: 1rem;
+    color: white;
+}
+
+#navbar-collapse div.navbar-nav,
+#navbar-collapse div.navbar-nav > .nav-item {
+    width: 100%;
+}
+
+
+/* ! For .layout-navbar-fixed added fix padding top to .layout-page */
+/* Detached navbar */
+.layout-navbar-fixed .layout-wrapper:not(.layout-horizontal):not(.layout-without-menu) .layout-page {
+    padding-top: 76px !important;
+}
+/* Default navbar */
+.layout-navbar-fixed .layout-wrapper:not(.layout-without-menu) .layout-page {
+    padding-top: 64px !important;
+}
+
+.docs-page .layout-navbar-fixed.layout-wrapper:not(.layout-without-menu) .layout-page,
+.docs-page .layout-menu-fixed.layout-wrapper:not(.layout-without-menu) .layout-page {
+    padding-top: 62px !important;
+}
+
+/* Navbar page z-index issue solution */
+.content-wrapper .navbar {
+    z-index: auto;
+}
+
+.content-wrapper{
+    position: relative;
+}
+
+.card {
+    /*box-shadow: 0 0 0.375rem 0.25rem rgba(161, 172, 184, 0.15) !important;*/
+    border: none;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top:0;
+    margin-bottom: 0;
+    line-height: 1.2;
+}
+
+.mcol-120{
+    width: 60px;
+    max-width: 120px;
+}
+
+.mcol-50 {
+    width: 40px;
+    max-width: 50px;
+}
+
+.mcol-100 {
+    width: 50px;
+    max-width: 100px;
+}
+
+.mcol-200 {
+    width: 100px;
+    max-width: 200px;
+}
+
+
+.mcol-300 {
+    width: 200px;
+    max-width: 300px;
+}
+
+/*Content Load Table Skeleton*/
+.loader-content {
+    display: none;
+}
+
+.loading-report {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 78px;
+    display: none;
+    padding: 10px;
+    z-index: 1500;
+}
+
+.tableWrapper .table tbody td span {
+    color: #fefefe;
+}
+
+.tableWrapper .loading {
+    position: relative;
+    height: 33px;
+}
+
+    .tableWrapper .loading .bar {
+        background-color: #e7e7e7;
+        height: 10px;
+        border-radius: 7px;
+        width: 100%;
+    }
+
+    .tableWrapper .loading:after {
+        position: absolute;
+        transform: translateY(-50%);
+        top: 50%;
+        left: 0;
+        content: "";
+        display: block;
+        width: 100%;
+        height: 24px;
+        background-image: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 60%, rgba(255, 255, 255, 0) 80%);
+        background-size: 200px 24px;
+        background-position: -100px 0;
+        background-repeat: no-repeat;
+        animation: loading 1s infinite;
+    }
+
+@keyframes loading {
+    40% {
+        background-position: 100% 0;
+    }
+
+    100% {
+        background-position: 100% 0;
+    }
+}
+
+
+.pagination .bx {
+    vertical-align:top;
+}
+
+.pagination .page-link {
+    padding: 6px 8px;
+    margin: 0 .3rem;
+    color: #697a8d;
+}
+
+.page-item.active .page-link {
+    margin:0 0.3rem 0 0;
+}
+
+.table th {
+    font-size: 0.8125rem;
+}
+
+.table .badge {
+    line-height:1.1;
+}
+
+.dropdown-menu {
+    border:none;
+    padding:0;
+}
+
+    .dropdown-menu .dropdown-item {
+        line-height:1.3;
+        padding: 10px 20px
+    }
+
+    .dropdown-menu .dropdown-divider {
+        margin:0;
+    }
+
+.modal-content {
+    border:none;
+}
+
+.modal-dialog {
+    display: flex;
+    align-items: center;
+    height: 100vh;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.modal .modal-header .modal-title{
+    margin-right:1.5rem;
+}
+
+.modal .modal-header .btn-close {
+    position: absolute;
+    margin-top: 0;
+    box-shadow: none;
+    border-radius: 0;
+    background-color: transparent;
+    padding: 0 0.635rem;
+    transform: translate(0, 0);
+    top: 1.5rem;
+    right: 1rem;
+}
+
+    .modal .btn-close:hover, .modal .btn-close:focus, .modal .btn-close:active {
+
+        transform: translate(0, 0);
+    }
+
+.modal-backdrop.show {
+    backdrop-filter: blur(5px);
+    background-color: rgba(0,0,0,0.2);
+    z-index: 99 !important;
+    opacity: 20;
+}
+.image-preview {
+    position: relative;
+    width: 188px;
+    height: auto;
+    aspect-ratio: 3/4;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f8f8;
+    overflow: hidden;
+}
+
+    .image-preview img {
+        width: 100%;
+        height: 100%;
+        transition: 0.2s;
+        object-fit: cover;
+        z-index:1;
+    }
+
+.image-preview:hover {
+    background-color: #e8e8e8;
+}
+.nav-link:hover {
+    cursor: pointer !important;
+}
+
+.modal-backdrop {
+    background-color:rgba(0,0,0,0.2) !important;
+}
+.misc-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh -(1.625rem* 2));
+    text-align: center;
+}
+
+/*Css for People Profile*/
+
+.people-profile {
+    width: 100%;
+}
+
+.people-profile-caption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+/*End People Profile*/
+
+
+.image-preview {
+    cursor:pointer;
+}
+
+.image-preview.no-click {
+    cursor: unset;
+}
+
+.image-preview:before {
+    content: 'Click to Upload';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+}
+
+.image-container, .background-container {
+    width:100%;
+}
+.form-check-input, .form-check-label {
+    cursor: pointer;
+}
+@media screen and (min-width:768px) {
+    .image-preview {
+        max-width: 180px !important;
+        width: calc(100% - 24px);
+    }
+    
+    .image-container {
+        width: 188px;
+    }
+
+    .background-container {
+        width: calc(100% - 188px);
+    }
+}
+
+#azis-notibox {
+    position: fixed;
+    top: 32px;
+    right: 20px;
+    z-index: 99;
+}
+
+#azis-notibox > div {
+    margin-top: 20px;
+    padding: 20px 20px;
+    min-width: 200px;
+    box-shadow: #d2d2d2 0 2px 2px 1px;
+    border-radius: 10px;
+    color: #fff;
+}
+.azis-notimessage {
+    position: relative;
+    width: 100%;
+}
+.noti-close {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: white;
+    width: 22px;
+    font-size: 12px;
+    height: 22px;
+    line-height: 18px;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0px 0px 10px 1px #00000030;
+}
+
+#stockTable > tbody > tr.active > * {
+    --bs-table-accent-bg: rgb(199, 230, 251);
+    color: var(--bs-table-hover-color);
+}
+
+.blur::after{
+    color: darkblue;
+    margin auto;
+    display: block;
+    text-align: center;
+    content: "កំពុងរៀបចំ នឹងដាក់អោយដំណើរការពេលក្រោយ";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index:9;
+    top: 0;
+    left: 0;
+    background-color: rgba(255,255,255,0.5);
+    backdrop-filter: blur(2px);
+}
+.print-section.print.card {
+    max-height: 75vh; /* Adjust this value as needed */
+    overflow-y: auto;
+}
+
+
+.blur:hover::after {
+    background-color: rgba(255,255,255,0.3);
+}
+/* Common Print Styles */
+.print-section h1, .print-section h2, .print-section h3, .print-section h4, .print-section h5, .print-section h6 {
+    margin: 0;
+    color: #000 !important;
+    font-family: 'Khmer OS Moul';
+    font-weight: 500;
+}
+
+.print-section p {
+    font-size: 14px;
+    margin: 0;
+    font-family: 'Khmer OS Siemreap';
+    color: #000 !important;
+    font-weight: 500;
+}
+
+.print-section .header, .print-section .footer {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.print-section .content {
+    margin-bottom: 40px;
+}
+
+.print-section table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.print-section th, .print-section td, .print-section tr {
+    padding: 5px;
+    text-align: center;
+    border: 1px solid #6b6b6b;
+    font-family: 'Khmer OS Siemreap';
+    font-size: 14px;
+}
+.print {
+    padding: 1cm;
+    margin: 10px 0 0 0; 
+    border: 1px solid #000;
+}
+
+@media print {
+    .print-section.print.card {
+        max-height: none; /* Adjust this value as needed */
+        overflow-y: hidden;
+    }
+    .card {
+        box-shadow: none;
+        border: none;
+    }
+
+    .print {
+        page-break-after: avoid;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+    }
+
+      
+    .print {
+        -webkit-print-color-adjust: exact;  Ensure background colors are printed 
+    }
+    @page :blank {
+        @top-center {
+            content: "គ្មានឯកសារ!";
+        }
+    }
+}
+
+
+
+/*Print Css*/
+
+/*.print-section h1, .print-section h2, .print-section h3, .print-section h4, .print-section h5, .print-section h6 {
+    margin: 0;*/
+/*    line-height: 1.3em !important;*/
+    /*color: #000 !important;
+    font-family: 'Khmer OS Moul';
+    font-weight: 500;
+}
+.print-section p {
+    font-size: 14px;
+    margin: 0;
+    font-family: 'Khmer OS Siemreap';
+    color: #000 !important;
+    font-weight: 500;
+}
+.container {
+    max-width: 210mm;
+    padding: 20mm;
+    margin: auto;
+    border: 1px solid #000;
+}
+.print-section .header, .print-section .footer {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.print-section .content {
+    margin-bottom: 40px;
+}
+
+.print-section table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.print-section th, .print-section td, .print-section tr {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #000;
+    font-family: 'Khmer OS Siemreap'
+}
+
+@page:right {
+    
+}
+
+
+@page {
+    margin: 1cm;
+    size: A4 ;
+    padding: 0;
+}
+
+@page:first {
+    margin-top: 1.5cm;
+}
+
+@page :blank {
+
+    @top-center {
+        content: "គ្មានឯកសារ!."
+    }
+}*/
+
+
+/* Landscape-Specific Styles */
+/*.print-landscape {
+    max-width: 297mm;
+    padding: 20mm;
+    margin: auto;
+    border: 1px solid #000;
+}
+
+@media print and (orientation: landscape) {
+    .print-landscape {
+        page-break-after: avoid;
+    }
+
+    @page {
+        size: A4 landscape;
+        margin: 1cm;
+    }
+
+    @page:first {
+        margin-top: 1.5cm;
+    }
+
+    @page :blank {
+        @top-center {
+            content: "គ្មានឯកសារ!";
+        }
+    }
+}*/
+
+
+/*@media print {
+
+    #print-section {
+        width: 100%;
+        background: red !important;
+    }
+
+    .print-section {
+        margin: 0;
+        padding: 0;
+        padding-left: 0.5cm
+    }
+
+    .sub-page {
+        padding: 0;
+        margin: 0;
+    }
+
+    html, .sub-page {
+    }
+
+    body * {
+        visibility: hidden;
+    }
+
+    #printSection, #printSection * {
+        visibility: visible;
+    }
+
+    #printSection {
+        background: #fff !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+    body {
+        width: 100%;
+        overflow: hidden !important;
+        background: #fff !important;
+        visibility: hidden;
+        margin: 0;  
+        padding: 0;
+    }
+
+    .print-section {
+        visibility: visible;
+        width: 210mm;
+        min-height: 297mm;
+    }
+
+    .main-page {
+        margin: 0;
+        border: initial;
+        border-radius: initial;
+        overflow: hidden;
+        width: 210mm;
+        min-height: 297mm;
+        width: initial;
+        min-height: initial;
+        position: relative;
+        box-shadow: none;
+        background: none;
+        page-break-inside: auto;
+        page-break-after: always;
+    }
+
+    .pagebreak {
+        clear: both;
+        page-break-after: always;
+    }
+}
+*/

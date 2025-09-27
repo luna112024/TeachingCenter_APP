@@ -1,0 +1,11 @@
+﻿
+@import url('port.css');
+@media print {
+   
+    @page {
+        size: A4 portrait;
+        margin: 1cm;
+    }
+
+
+}

@@ -1,0 +1,1189 @@
+﻿@model hongWenAPP.Models.CompanyModel.DTOs.ManageUserCompanyDTO
+@using hongWenAPP.Models.CompanyModel.DTOs
+
+<form id="assignCompanyForm" asp-action="AssignUserCompanies" asp-controller="Identity" method="post" autocomplete="off">
+    <div class="modal-header">
+        <span class="modal-title fs-md-5 fw-bold" id="staticBackdropLabel">
+            Assign User Companies
+        </span>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <!-- User Information -->
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="d-flex justify-content-between">
+                    <label for="username" class="form-label">Username</label>
+                </div>
+                <div class="input-group input-group-merge">
+                    <span class="input-group-text input-group-sm"><i class="bx bx-user"></i></span>
+                    <input type="text" class="form-control form-control-sm bg-white ps-2" value="@Model.UserName" disabled />
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions Toggle -->
+        <div class="mb-3">
+            <button type="button" class="btn custom-outline-info btn-sm" onclick="toggleCompanyInstructions()" id="companyInstructionsToggle">
+                <i class="bx bx-help-circle me-1"></i>
+                <span id="companyInstructionsToggleText">Show Instructions</span>
+                <i class="bx bx-chevron-down ms-1" id="companyInstructionsChevron"></i>
+            </button>
+        </div>
+
+        <!-- Instructions (Hidden by default) -->
+        <div class="alert alert-info" id="companyInstructionsPanel" style="display: none;">
+            <div class="d-flex align-items-start">
+                <i class="bx bx-info-circle me-2 mt-1"></i>
+                <div class="flex-grow-1">
+                    <strong>How to assign companies to this user:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li><strong>Multi-select:</strong> Use <kbd>Ctrl+Click</kbd> or <kbd>Cmd+Click</kbd> to select multiple companies</li>
+                        <li><strong>Drag & Drop:</strong> Drag selected companies between panels to assign/unassign</li>
+                        <li><strong>Bulk actions:</strong> Use "Select All", "Unselect", "Assign", and "Remove" buttons</li>
+                        <li><strong>Search:</strong> Use the search boxes to filter companies by name or description</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search boxes -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <input type="text" class="form-control form-control-sm" id="searchAvailableCompanies" placeholder="Search available companies..." onkeyup="filterCompanies('availableCompaniesList', this.value)">
+            </div>
+            <div class="col-md-6">
+                <input type="text" class="form-control form-control-sm" id="searchAssignedCompanies" placeholder="Search assigned companies..." onkeyup="filterCompanies('assignedCompaniesList', this.value)">
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Available Companies -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div class="lh-sm">
+                            <h6 class="mb-0">Available Companies</h6>
+                            <small class="text-muted">Drag to assign</small>
+                        </div>
+                        <div class="d-flex gap-2">
+                            @* <button type="button" class="btn btn-sm btn-outline-primary" onclick="selectAllAvailableCompanies()">
+                                <i class="bx bx-check-square"></i> Select All
+                            </button> *@
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearSelectionAvailableCompanies()">
+                                <i class="bx bx-square"></i> Unselect
+                            </button>
+                            <button type="button" class="btn btn-sm btn-success" onclick="moveSelectedCompaniesToAssigned()">
+                                <i class="bx bx-right-arrow-alt"></i> Assign
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="company-container available-companies"
+                             id="availableCompaniesList"
+                             ondrop="dropCompany(event, 'available')"
+                             ondragover="allowDropCompany(event)"
+                             style="min-height: 300px; max-height: 400px; overflow-y: auto; border: 2px dashed #e9ecef; border-radius: 8px; padding: 10px;">
+                            @if (Model.AvailableCompanies?.Any() == true)
+                            {
+                                @foreach (var company in Model.AvailableCompanies)
+                                {
+                                    <div class="company-item lh-sm"
+                                         data-company-id="@company.CompanyId"
+                                         draggable="true"
+                                         ondragstart="dragCompany(event)"
+                                         ondblclick="moveCompanyToAssigned(@company.CompanyId)"
+                                         onclick="toggleCompanySelection(this, event)">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bx bx-buildings me-2 text-primary"></i>
+                                            <div>
+                                                <div class="fw-medium">@company.CompanyName</div>
+                                                @if (!string.IsNullOrEmpty(company.Description))
+                                                {
+                                                    <small class="text-muted">@company.Description</small>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-center text-muted py-4 empty-state-message">
+                                    <i class="bx bx-check-circle display-4"></i>
+                                    <p class="mt-2">All companies are assigned</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-footer  bg-white d-flex justify-content-between align-items-center text-muted small py-2 px-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="fw-semibold">Available:</span>
+                            <span id="availableCompanyCount" class="badge bg-label-info px-2 py-1" style="font-size: 0.75rem;">
+                                0
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assigned Companies -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div class="lh-sm">
+                            <h6 class="mb-0">Assigned Companies</h6>
+                            <small class="text-muted">Currently assigned to user</small>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="selectAllAssignedCompanies()">
+                                <i class="bx bx-check-square"></i> Select All
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearSelectionAssignedCompanies()">
+                                <i class="bx bx-square"></i> Unselect
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="moveSelectedCompaniesToAvailable()">
+                                <i class="bx bx-left-arrow-alt"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="company-container assigned-companies"
+                             id="assignedCompaniesList"
+                             ondrop="dropCompany(event, 'assigned')"
+                             ondragover="allowDropCompany(event)"
+                             style="min-height: 300px; max-height: 400px; overflow-y: auto; border: 2px dashed #e9ecef; border-radius: 8px; padding: 10px;">
+                            @if (Model.AssignedCompanies?.Any() == true)
+                            {
+                                @foreach (var company in Model.AssignedCompanies)
+                                {
+                                    <div class="company-item lh-sm"
+                                         data-company-id="@company.CompanyId"
+                                         draggable="true"
+                                         ondragstart="dragCompany(event)"
+                                         ondblclick="moveCompanyToAvailable(@company.CompanyId)"
+                                         onclick="toggleCompanySelection(this, event)">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bx bx-door-open me-2 text-success"></i>
+                                            <div>
+                                                <div class="fw-medium">@company.CompanyName</div>
+                                                @if (!string.IsNullOrEmpty(company.Description))
+                                                {
+                                                    <small class="text-muted">@company.Description</small>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-center text-muted py-4 empty-state-message">
+                                    <i class="bx bx-building-house display-4"></i>
+                                    <p class="mt-2">No companies assigned</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-footer  bg-white d-flex justify-content-between align-items-center text-muted small py-2 px-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="fw-semibold">Assigned:</span>
+                            <span id="assignedCompanyCount" class="badge bg-label-success px-2 py-1" style="font-size: 0.75rem;">
+                                0
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden inputs for form submission -->
+        <input type="hidden" asp-for="UserId" id="selectedUserId" />
+        <div id="companyInputs"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bx bx-x-circle me-1"></i>Close
+        </button>
+        <button type="submit" class="btn btn-secondary" id="saveCompanyButton" disabled>
+            <i class="bx bx-save me-1"></i>No Changes
+        </button>
+    </div>
+</form>
+
+<style>
+    .modal-body {
+        overflow-y: auto;
+        max-height: calc(100vh - 200px);
+        padding-right: 15px;
+    }
+
+    .bg-label-success {
+        background-color: #e8fadf !important;
+        color: #71dd37 !important
+    }
+
+    .bg-label-info {
+        background-color: #d7f5fc !important;
+        color: #03c3ec !important
+    }
+
+    .custom-outline-info {
+        font-size: 0.775rem !important;
+        color: #0dcaf0;
+        background-color: transparent;
+        border: 1px solid #0dcaf0;
+        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+    }
+
+        .custom-outline-info:hover,
+        .custom-outline-info:focus {
+            color: white;
+            background-color: #0dcaf0;
+            border-color: #0dcaf0;
+            text-decoration: none;
+            outline: none;
+        }
+
+        .custom-outline-info:active {
+            background-color: #0bb7d8;
+            border-color: #0bb7d8;
+            color: white;
+        }
+
+    .company-item {
+        background: #fff;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        padding: 12px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+        transform: none;
+    }
+
+        .company-item:hover {
+            border-color: #007bff;
+            box-shadow: 0 2px 4px rgba(0,123,255,0.1);
+            transform: translateY(-1px);
+        }
+
+        .company-item.selected {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            box-shadow: 0 0 0 2px rgba(33,150,243,0.2);
+        }
+
+        .company-item.dragging {
+            transition: none !important;
+            transform: none !important;
+            animation: none !important;
+            opacity: 0.8;
+            cursor: grabbing !important;
+            filter: none !important;
+        }
+
+    body.drag-active {
+        cursor: grabbing !important;
+    }
+
+    .company-container {
+        transition: all 0.3s ease;
+    }
+
+        .company-container.drag-over {
+            border-color: #007bff !important;
+            background-color: #f8f9ff;
+            border-style: solid !important;
+        }
+
+        .company-container:empty::after {
+            content: "Drop companies here";
+            display: block;
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            padding: 20px;
+        }
+
+    .company-item .fw-medium {
+        font-size: 14px;
+        color: #2c3e50;
+    }
+
+    .company-item small {
+        font-size: 12px;
+        line-height: 1.3;
+    }
+
+    .company-item:hover .fw-medium {
+        color: #007bff;
+    }
+
+    .btn-sm {
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .alert-info {
+        background-color: #e3f2fd;
+        border-color: #bbdefb;
+        color: #1976d2;
+    }
+
+    /* Enhanced User Icon Styles */
+    .company-item i {
+        font-size: 18px !important;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+        /* Available companies - bx-buildings icon */
+        .company-item i.bx-buildings {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+        }
+
+        /* Assigned companies - bx-building-check icon */
+        .company-item i.bx-door-open {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+        }
+
+    /* Hover effects for company icons */
+    .company-item:hover i.bx-buildings {
+        transform: scale(1.1) rotate(-5deg);
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+        background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+    }
+
+    .company-item:hover i.bx-door-open {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        background: linear-gradient(135deg, #1e7e34 0%, #155724 100%);
+    }
+
+    /* Selected state for company icons */
+    .company-item.selected i.bx-buildings {
+        transform: scale(1.15);
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3), 0 4px 15px rgba(0, 123, 255, 0.4);
+        animation: pulse-blue 1.5s infinite;
+    }
+
+    .company-item.selected i.bx-door-open {
+        transform: scale(1.15);
+        box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3), 0 4px 15px rgba(40, 167, 69, 0.4);
+        animation: pulse-green 1.5s infinite;
+    }
+
+    /* Dragging state for company icons */
+    .company-item.dragging i {
+        transform: none !important;
+        animation: none !important;
+        filter: none !important;
+        opacity: 1;
+    }
+
+    /* Pulse animations */
+    @@keyframes pulse-blue {
+        0%, 100% {
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3), 0 4px 15px rgba(0, 123, 255, 0.4);
+        }
+
+        50% {
+            box-shadow: 0 0 0 6px rgba(0, 123, 255, 0.2), 0 6px 20px rgba(0, 123, 255, 0.5);
+        }
+    }
+
+    @@keyframes pulse-green {
+        0%, 100% {
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3), 0 4px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        50% {
+            box-shadow: 0 0 0 6px rgba(40, 167, 69, 0.2), 0 6px 20px rgba(40, 167, 69, 0.5);
+        }
+    }
+
+    /* Company transformation animation when moving between panels */
+    @@keyframes company-to-assigned {
+        0% {
+            transform: scale(1) rotate(0deg);
+        }
+
+        50% {
+            transform: scale(1.3) rotate(-10deg);
+        }
+
+        100% {
+            transform: scale(1) rotate(0deg);
+        }
+    }
+
+    @@keyframes assigned-to-company {
+        0% {
+            transform: scale(1) rotate(0deg);
+        }
+
+        50% {
+            transform: scale(1.3) rotate(10deg);
+        }
+
+        100% {
+            transform: scale(1) rotate(0deg);
+        }
+    }
+
+    /* Enhanced company item styling to complement the icons */
+    .company-item {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 8px 15px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        user-select: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .company-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .company-item:hover::before {
+            left: 100%;
+        }
+
+        .company-item:hover {
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .company-item.selected {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-color: #2196f3;
+            transform: translateY(-1px);
+        }
+
+        /* Text styling improvements */
+        .company-item .fw-medium {
+            font-size: 14px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .company-item small {
+            font-size: 12px;
+            line-height: 1.4;
+            color: #6c757d;
+        }
+
+        /* Re-enabled for smoother animation */
+        .company-item i.icon-changing {
+            animation: company-to-assigned 0.6s ease-in-out;
+        }
+</style>
+
+<script src="~/js/myNotifybox.js"></script>
+<script>
+    (function () {
+        let draggedCompanyItems = [];
+        let originalCompanyIds = [];
+        let hasCompanyChanges = false;
+
+        // 🔒 REFINED NOTIFICATION SYSTEM - Less aggressive locking
+        let isNotificationActive = false;
+        let notificationTimeout = null;
+        let lastNotificationTime = 0;
+        const NOTIFICATION_COOLDOWN = 1000;
+
+        function isAlreadyAssignedOne() {
+            const assignedCompanies = document.querySelectorAll('#assignedCompaniesList .company-item:not(.empty-state-message)');
+            return assignedCompanies.length >= 1;
+        }
+
+        // 🔒 IMPROVED: Smarter notification system with debouncing
+        function showAlert(message, type = 'info', duration = 4000) {
+            const now = Date.now();
+
+            // Prevent spam notifications
+            if (now - lastNotificationTime < NOTIFICATION_COOLDOWN) {
+                return;
+            }
+
+            lastNotificationTime = now;
+
+            // Clear any existing notification
+            if (notificationTimeout) {
+                clearTimeout(notificationTimeout);
+            }
+
+            // Brief lock to prevent immediate re-triggers
+            isNotificationActive = true;
+
+            if (typeof myNotifyBox !== 'undefined') {
+                myNotifyBox(message, duration, type);
+            } else if (typeof modernNotify !== 'undefined') {
+                modernNotify.show(message, type);
+            } else {
+                alert(message);
+                releaseNotificationLock();
+                return;
+            }
+
+            // Release lock quickly - only block immediate re-triggers
+            notificationTimeout = setTimeout(() => {
+                releaseNotificationLock();
+            }, 800); // Much shorter lock time
+        }
+
+        function releaseNotificationLock() {
+            if (notificationTimeout) {
+                clearTimeout(notificationTimeout);
+                notificationTimeout = null;
+            }
+            isNotificationActive = false;
+        }
+
+        // 🔒 REFINED: Only block rapid successive actions, not all interactions
+        function isRapidActionBlocked() {
+            return isNotificationActive;
+        }
+
+        function updateCompanyLists(availableCompanies, assignedCompanies) {
+            const availableContainer = document.getElementById('availableCompaniesList');
+            const assignedContainer = document.getElementById('assignedCompaniesList');
+
+            availableContainer.innerHTML = availableCompanies.map(company => `
+                <div class="company-item"
+                     data-company-id="${company.companyId}"
+                     draggable="true"
+                     ondragstart="dragCompany(event)"
+                     ondblclick="moveCompanyToAssigned(${company.companyId})"
+                     onclick="toggleCompanySelection(this, event)">
+                    <div class="d-flex align-items-center">
+                        <i class="bx bx-buildings me-2 text-primary"></i>
+                        <div>
+                            <div class="fw-medium">${company.companyName}</div>
+                            ${company.description ? `<small class="text-muted">${company.description}</small>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            assignedContainer.innerHTML = assignedCompanies.map(company => `
+                <div class="company-item"
+                     data-company-id="${company.companyId}"
+                     draggable="true"
+                     ondragstart="dragCompany(event)"
+                     ondblclick="moveCompanyToAvailable(${company.companyId})"
+                     onclick="toggleCompanySelection(this, event)">
+                    <div class="d-flex align-items-center">
+                        <i class="bx bx-door-open me-2 text-success"></i>
+                        <div>
+                            <div class="fw-medium">${company.companyName}</div>
+                            ${company.description ? `<small class="text-muted">${company.description}</small>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            updateCompanyHiddenInputs();
+        }
+
+        // 🔧 FIXED: Debounced save button state with conflict prevention
+        let saveButtonUpdateTimeout = null;
+        let isUpdatingSaveButton = false;
+
+        function updateCompanySaveButtonState() {
+            if (isUpdatingSaveButton) return;
+            if (saveButtonUpdateTimeout) clearTimeout(saveButtonUpdateTimeout);
+
+            saveButtonUpdateTimeout = setTimeout(() => {
+                isUpdatingSaveButton = true;
+
+                try {
+                    // 🔧 FIXED: Get actual company IDs (strings, not parsed as int for UUIDs)
+                    const currentCompanyIds = Array.from(document.querySelectorAll('#assignedCompaniesList .company-item:not(.empty-state-message)'))
+                        .map(item => {
+                            const id = item.getAttribute('data-company-id');
+                            return id;
+                        })
+                        .filter(id => id && id.trim() !== '')
+                        .sort();
+
+                    // 🔥 FIXED: Always compare against the TRUE original from page load
+                    const sortedOriginal = [...originalCompanyIds].sort();
+                    const companiesChanged = !arraysEqualCompany(sortedOriginal, currentCompanyIds);
+                    const hasAssignedCompanies = currentCompanyIds.length > 0;
+
+                    const saveButton = document.getElementById('saveCompanyButton');
+
+                    if (saveButton) {
+                        saveButton.classList.remove('btn-primary', 'btn-secondary', 'btn-warning');
+
+                        if (!hasAssignedCompanies) {
+                            saveButton.disabled = true;
+                            saveButton.innerHTML = '<i class="bx bx-save me-1"></i>No Changes';
+                            saveButton.classList.add('btn-secondary');
+                            hasCompanyChanges = false;
+                        } else if (companiesChanged) {
+                            saveButton.disabled = false;
+                            saveButton.innerHTML = '<i class="bx bx-save me-1"></i>Save Changes';
+                            saveButton.classList.add('btn-primary');
+                            hasCompanyChanges = true;
+                        } else {
+                            saveButton.disabled = true;
+                            saveButton.innerHTML = '<i class="bx bx-save me-1"></i>No Changes';
+                            saveButton.classList.add('btn-secondary');
+                            hasCompanyChanges = false;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error updating save button state:', error);
+                } finally {
+                    isUpdatingSaveButton = false;
+                }
+            }, 150);
+        }
+
+        // 🔥 CRITICAL FIX: Capture original IDs ONCE and NEVER change them
+        function initializeOriginalCompanyIds() {
+            // Only set originalCompanyIds if it's empty (first time initialization)
+            if (originalCompanyIds.length === 0) {
+                originalCompanyIds = Array.from(document.querySelectorAll('#assignedCompaniesList .company-item:not(.empty-state-message)'))
+                    .map(item => parseInt(item.getAttribute('data-company-id')))
+                    .filter(id => !isNaN(id))
+                    .sort((a, b) => a - b);
+                // Store in DOM for persistence across operations
+                const assignedContainer = document.getElementById('assignedCompaniesList');
+                if (assignedContainer) {
+                    assignedContainer.setAttribute('data-original-ids', JSON.stringify(originalCompanyIds));
+                }
+            }
+
+            updateCompanySaveButtonState();
+        }
+
+        function arraysEqualCompany(a, b) {
+            if (a.length !== b.length) return false;
+            for (let i = 0; i < a.length; i++) {
+                if (a[i] !== b[i]) return false;
+            }
+            return true;
+        }
+
+        // 🔒 REFINED: Allow selection, only block rapid actions
+        function toggleCompanySelection(element, event) {
+            if (event.ctrlKey || event.metaKey) {
+                element.classList.toggle('selected');
+            } else {
+                document.querySelectorAll('.company-item.selected').forEach(item => {
+                    item.classList.remove('selected');
+                });
+                element.classList.add('selected');
+            }
+        }
+
+        // 🔧 FIXED: Safer timing for updates after moves
+        function moveSelectedCompaniesToAssigned() {
+            if (isRapidActionBlocked()) {
+                return;
+            }
+
+            const selectedItems = document.querySelectorAll('#availableCompaniesList .company-item.selected');
+            const assignedContainer = document.getElementById('assignedCompaniesList');
+
+            if (selectedItems.length === 0) {
+                return;
+            }
+
+            const currentAssignedCompanies = assignedContainer.querySelectorAll('.company-item:not(.empty-state-message)');
+
+            if (selectedItems.length > 1) {
+                showAlert('Only one company can be assigned at a time.', 'warning');
+                return;
+            }
+
+            if (currentAssignedCompanies.length > 0) {
+                showAlert('Only one company can be assigned. Please remove the existing one first.', 'warning');
+                return;
+            }
+
+            selectedItems.forEach(item => {
+                item.classList.remove('selected');
+                const icon = item.querySelector('i');
+                if (icon) {
+                    icon.classList.add('icon-changing');
+                    icon.className = 'bx bx-door-open me-2 text-success';
+                    setTimeout(() => { icon.classList.remove('icon-changing'); }, 600);
+                }
+                assignedContainer.appendChild(item);
+            });
+
+            // 🔧 FIXED: Better timing coordination
+            setTimeout(() => {
+                updateCompanyHiddenInputs();
+            }, 50);
+
+            setTimeout(() => {
+                updateCompanySaveButtonState();
+            }, 200);
+        }
+
+        function moveSelectedCompaniesToAvailable() {
+            if (isRapidActionBlocked()) {
+                return;
+            }
+
+            const selectedItems = document.querySelectorAll('#assignedCompaniesList .company-item.selected');
+            const availableContainer = document.getElementById('availableCompaniesList');
+
+            if (selectedItems.length === 0) {
+                return;
+            }
+
+            selectedItems.forEach(item => {
+                item.classList.remove('selected');
+                const icon = item.querySelector('i');
+                if (icon) {
+                    icon.classList.add('icon-changing');
+                    icon.className = 'bx bx-buildings me-2 text-primary';
+                    setTimeout(() => { icon.classList.remove('icon-changing'); }, 600);
+                }
+                availableContainer.appendChild(item);
+            });
+
+            // 🔧 FIXED: Better timing coordination
+            setTimeout(() => {
+                updateCompanyHiddenInputs();
+            }, 50);
+
+            setTimeout(() => {
+                updateCompanySaveButtonState();
+            }, 200);
+        }
+
+        function dragCompany(event) {
+            if (isRapidActionBlocked()) {
+                event.preventDefault();
+                return false;
+            }
+
+            const targetItem = event.target.closest('.company-item');
+            if (!event.ctrlKey && !event.metaKey) {
+                document.querySelectorAll('.company-item.selected').forEach(item => {
+                    if (item !== targetItem) item.classList.remove('selected');
+                });
+            }
+            if (targetItem) {
+                targetItem.classList.add('selected');
+            }
+
+            draggedCompanyItems = Array.from(document.querySelectorAll('.company-item.selected'));
+            draggedCompanyItems.forEach(item => item.classList.add('dragging'));
+
+            event.dataTransfer.setData("text/plain", "");
+        }
+
+        function allowDropCompany(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('drag-over');
+        }
+
+        function dropCompany(event, targetType) {
+            if (isRapidActionBlocked()) {
+                event.preventDefault();
+                cleanupDragState();
+                return false;
+            }
+
+            event.preventDefault();
+            event.currentTarget.classList.remove('drag-over');
+
+            if (targetType === 'assigned') {
+                const currentAssignedCompanies = document.querySelectorAll('#assignedCompaniesList .company-item:not(.empty-state-message)');
+
+                if (draggedCompanyItems.length > 1) {
+                    showAlert('Only one company can be assigned at a time.', 'warning');
+                    cleanupDragState();
+                    return;
+                }
+
+                if (currentAssignedCompanies.length > 0) {
+                    showAlert('Only one company can be assigned. Please remove the existing one first.', 'warning');
+                    cleanupDragState();
+                    return;
+                }
+            }
+
+            const targetContainer = targetType === 'available'
+                ? document.getElementById('availableCompaniesList')
+                : document.getElementById('assignedCompaniesList');
+
+            draggedCompanyItems.forEach(item => {
+                item.classList.remove('dragging', 'selected');
+                const icon = item.querySelector('i');
+                if (!targetContainer.contains(item)) {
+                    targetContainer.appendChild(item);
+                }
+                if (icon) {
+                    icon.classList.add('icon-changing');
+                    icon.className = targetType === 'available'
+                        ? 'bx bx-buildings me-2 text-primary'
+                        : 'bx bx-door-open me-2 text-success';
+                    setTimeout(() => { icon.classList.remove('icon-changing'); }, 600);
+                }
+                targetContainer.appendChild(item);
+            });
+
+            cleanupDragState();
+
+            // 🔧 FIXED: Staggered updates to prevent conflicts
+            setTimeout(() => {
+                updateCompanyHiddenInputs();
+            }, 50);
+
+            setTimeout(() => {
+                updateCompanySaveButtonState();
+            }, 200);
+        }
+
+        function cleanupDragState() {
+            draggedCompanyItems.forEach(item => item.classList.remove('dragging', 'selected'));
+            draggedCompanyItems = [];
+            document.querySelectorAll('.company-container').forEach(container => {
+                container.classList.remove('drag-over');
+            });
+            document.body.classList.remove('drag-active');
+        }
+
+        function filterCompanies(containerId, searchTerm) {
+            const container = document.getElementById(containerId);
+            const items = container.querySelectorAll('.company-item');
+            const term = searchTerm.trim().toLowerCase();
+
+            let visibleCount = 0;
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                const match = text.includes(term);
+                item.style.display = match ? '' : 'none';
+                if (match) visibleCount++;
+            });
+
+            const noResultId = `${containerId}-no-result`;
+            let noResultEl = document.getElementById(noResultId);
+
+            if (visibleCount === 0) {
+                if (!noResultEl) {
+                    noResultEl = document.createElement('div');
+                    noResultEl.id = noResultId;
+                    noResultEl.className = 'text-muted text-center mt-3';
+                    noResultEl.innerText = 'No matching companies found';
+                    container.appendChild(noResultEl);
+                }
+            } else {
+                if (noResultEl) noResultEl.remove();
+            }
+        }
+
+        function moveCompanyToAssigned(companyId) {
+            if (isRapidActionBlocked()) {
+                return;
+            }
+
+            const currentAssignedCompanies = document.querySelectorAll('#assignedCompaniesList .company-item:not(.empty-state-message)');
+
+            if (currentAssignedCompanies.length > 0) {
+                showAlert('Only one company can be assigned. Please remove the existing one first.', 'warning');
+                return;
+            }
+
+            const item = document.querySelector(`[data-company-id="${companyId}"]`);
+            if (item && item.closest('#availableCompaniesList')) {
+                const icon = item.querySelector('i');
+                if (icon) {
+                    icon.classList.add('icon-changing');
+                    icon.className = 'bx bx-door-open me-2 text-success';
+                    setTimeout(() => { icon.classList.remove('icon-changing'); }, 600);
+                }
+                document.getElementById('assignedCompaniesList').appendChild(item);
+
+                // 🔧 FIXED: Separate timing for updates
+                setTimeout(() => {
+                    updateCompanyHiddenInputs();
+                }, 50);
+
+                setTimeout(() => {
+                    updateCompanyEmptyStates();
+                }, 100);
+
+                setTimeout(() => {
+                    updateCompanySaveButtonState();
+                }, 150);
+            }
+        }
+
+        function moveCompanyToAvailable(companyId) {
+            if (isRapidActionBlocked()) {
+                return;
+            }
+
+            const item = document.querySelector(`[data-company-id="${companyId}"]`);
+            if (item && item.closest('#assignedCompaniesList')) {
+                const icon = item.querySelector('i');
+                if (icon) {
+                    icon.classList.add('icon-changing');
+                    icon.className = 'bx bx-buildings me-2 text-primary';
+                    setTimeout(() => { icon.classList.remove('icon-changing'); }, 600);
+                }
+                document.getElementById('availableCompaniesList').appendChild(item);
+
+                // 🔧 FIXED: Separate timing for updates
+                setTimeout(() => {
+                    updateCompanyHiddenInputs();
+                }, 50);
+
+                setTimeout(() => {
+                    updateCompanyEmptyStates();
+                }, 100);
+
+                setTimeout(() => {
+                    updateCompanySaveButtonState();
+                }, 150);
+            }
+        }
+
+        function updateCompanyHiddenInputs() {
+            const assignedCompanies = document.querySelectorAll('#assignedCompaniesList .company-item');
+            const companyInputsContainer = document.getElementById('companyInputs');
+
+            if (companyInputsContainer) {
+                companyInputsContainer.innerHTML = '';
+
+                assignedCompanies.forEach((item, index) => {
+                    const companyId = item.getAttribute('data-company-id');
+                    if (companyId) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = `CompanyIds[${index}]`;
+                        input.value = companyId;
+                        companyInputsContainer.appendChild(input);
+                    }
+                });
+            }
+
+            updateCompanyCounts();
+            updateCompanyEmptyStates();
+        }
+
+        function updateCompanyCounts() {
+            const availableCount = document.querySelectorAll('#availableCompaniesList .company-item').length;
+            const assignedCount = document.querySelectorAll('#assignedCompaniesList .company-item').length;
+
+            const availableCountEl = document.getElementById('availableCompanyCount');
+            const assignedCountEl = document.getElementById('assignedCompanyCount');
+
+            if (availableCountEl) availableCountEl.textContent = availableCount;
+            if (assignedCountEl) assignedCountEl.textContent = assignedCount;
+        }
+
+        function updateCompanyEmptyStates() {
+            const availableContainer = document.getElementById('availableCompaniesList');
+            const assignedContainer = document.getElementById('assignedCompaniesList');
+
+            if (!availableContainer || !assignedContainer) return;
+
+            const availableCompanies = availableContainer.querySelectorAll('.company-item');
+            const assignedCompanies = assignedContainer.querySelectorAll('.company-item');
+
+            document.querySelectorAll('.empty-state-message').forEach(e => e.remove());
+
+            if (availableCompanies.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'text-center text-muted py-4 empty-state-message';
+                empty.innerHTML = '<i class="bx bx-check-circle display-4"></i><p class="mt-2">All companies are assigned</p>';
+                availableContainer.appendChild(empty);
+            }
+
+            if (assignedCompanies.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'text-center text-muted py-4 empty-state-message';
+                empty.innerHTML = '<i class="bx bx-building-house display-4"></i><p class="mt-2">No companies assigned</p>';
+                assignedContainer.appendChild(empty);
+            }
+        }
+
+        function initializeCounts() {
+            let attempts = 0;
+            const maxAttempts = 10;
+
+            function tryUpdateCounts() {
+                attempts++;
+                const availableCountEl = document.getElementById('availableCompanyCount');
+                const assignedCountEl = document.getElementById('assignedCompanyCount');
+                const availableContainer = document.getElementById('availableCompaniesList');
+                const assignedContainer = document.getElementById('assignedCompaniesList');
+
+                if (availableCountEl && assignedCountEl && availableContainer && assignedContainer) {
+                    updateCompanyCounts();
+                    updateCompanyEmptyStates();
+                } else if (attempts < maxAttempts) {
+                    setTimeout(tryUpdateCounts, 200);
+                } else {
+                    console.warn('Could not initialize company counts - elements not found after', maxAttempts, 'attempts');
+                }
+            }
+
+            tryUpdateCounts();
+        }
+
+        function clearSelectionAvailableCompanies() {
+            document.querySelectorAll('#availableCompaniesList .company-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+        }
+
+        function selectAllAssignedCompanies() {
+            document.querySelectorAll('#assignedCompaniesList .company-item').forEach(item => {
+                item.classList.add('selected');
+            });
+        }
+
+        function clearSelectionAssignedCompanies() {
+            document.querySelectorAll('#assignedCompaniesList .company-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+        }
+        function toggleCompanyInstructions() {
+            const panel = document.getElementById('companyInstructionsPanel');
+            const toggleText = document.getElementById('companyInstructionsToggleText');
+            const chevron = document.getElementById('companyInstructionsChevron');
+
+            if (!panel || !toggleText || !chevron) return;
+
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                toggleText.textContent = 'Hide Instructions';
+                chevron.className = 'bx bx-chevron-up ms-1';
+                     panel.style.fontSize = '0.9rem';
+
+                panel.style.opacity = '0';
+                panel.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    panel.style.transition = 'all 0.3s ease';
+                    panel.style.opacity = '1';
+                    panel.style.transform = 'translateY(0)';
+                }, 10);
+            } else {
+                panel.style.transition = 'all 0.3s ease';
+                panel.style.opacity = '0';
+                panel.style.transform = 'translateY(-10px)';
+
+                setTimeout(() => {
+                    panel.style.display = 'none';
+                    toggleText.textContent = 'Show Instructions';
+                    chevron.className = 'bx bx-chevron-down ms-1';
+                     panel.style.fontSize = '';
+                }, 300);
+            }
+        }
+        // 🔥 CRITICAL: Initialize original IDs from server data (never changes after this)
+        function initializeOnModalShow() {
+            // 🎯 Get the TRUE original data from server
+            const initialAssignedCompanies = @Html.Raw(Json.Serialize(Model.AssignedCompanies));
+
+            // 🔥 Set the original IDs ONCE from server data
+            if (originalCompanyIds.length === 0) {
+                originalCompanyIds = initialAssignedCompanies.map(c => c.companyId).sort();
+            }
+
+            updateCompanyHiddenInputs();
+            updateCompanySaveButtonState();
+            initializeCounts();
+        }
+
+        // 🔒 REFINED: Simple emergency reset
+        window.resetNotificationSystem = function() {
+            releaseNotificationLock();
+            lastNotificationTime = 0;
+        };
+
+        // Register global handlers
+        window.toggleCompanyInstructions = toggleCompanyInstructions;
+        window.clearSelectionAvailableCompanies = clearSelectionAvailableCompanies;
+        window.selectAllAssignedCompanies = selectAllAssignedCompanies;
+        window.clearSelectionAssignedCompanies = clearSelectionAssignedCompanies;
+        window.moveSelectedCompaniesToAssigned = moveSelectedCompaniesToAssigned;
+        window.moveSelectedCompaniesToAvailable = moveSelectedCompaniesToAvailable;
+        window.dragCompany = dragCompany;
+        window.dropCompany = dropCompany;
+        window.allowDropCompany = allowDropCompany;
+        window.moveCompanyToAssigned = moveCompanyToAssigned;
+        window.moveCompanyToAvailable = moveCompanyToAvailable;
+        window.toggleCompanySelection = toggleCompanySelection;
+        window.filterCompanies = filterCompanies;
+        window.initializeOnModalShow = initializeOnModalShow;
+
+        // DOM loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeOnModalShow();
+        });
+
+        // Initialize immediately if DOM is already loaded
+        if (document.readyState === 'loading') {
+            // DOM is still loading, event listener above will handle it
+        } else {
+            // DOM is already loaded, initialize immediately
+            initializeOnModalShow();
+        }
+
+        // Listen for modal show events (Bootstrap modals)
+        document.addEventListener('shown.bs.modal', function (event) {
+            // Check if this is the company modal
+            if (event.target.querySelector('#availableCompaniesList') || event.target.querySelector('#assignedCompaniesList')) {
+                setTimeout(() => {
+                    initializeCounts();
+                }, 100);
+            }
+        });
+
+        // Clean up drag state on mouse events
+        // document.addEventListener('mouseup', () => {
+        //     cleanupDragState();
+        // });
+
+        // document.addEventListener('mouseleave', () => {
+        //     cleanupDragState();
+        // });
+         document.addEventListener('dragstart', () => document.body.classList.add('drag-active'));
+         document.addEventListener('dragend', () => document.body.classList.remove('drag-active'));
+
+    })();
+</script>

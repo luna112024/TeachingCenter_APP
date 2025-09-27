@@ -1,0 +1,215 @@
+@using hongWenAPP.Services
+@inject AuthenticationService AuthService
+
+@{
+    var isAuthenticated = AuthService.IsAuthenticated();
+    var userInfo = AuthService.GetUserInfo();
+}
+
+<style>
+    /* Avatar styles for login status */
+    .avatar {
+        --bs-avatar-size: 2.375rem;
+        --bs-avatar-group-border: #fff;
+        --bs-avatar-initial-inline: 3px;
+        --bs-avatar-initial-bg: #eeedf0;
+        position: relative;
+        block-size: var(--bs-avatar-size);
+        cursor: pointer;
+        inline-size: var(--bs-avatar-size)
+    }
+
+        .avatar .avatar-initial {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bs-avatar-initial-bg);
+            color: var(--bs-white);
+            font-size: 14px;
+            font-weight: 600;
+            inset: 0;
+            text-transform: uppercase
+        }
+
+        .avatar.avatar-online::after {
+            position: absolute;
+            border-radius: 100%;
+            block-size: calc(var(--bs-avatar-size)*.2);
+            box-shadow: 0 0 0 2px var(--bs-white);
+            content: "";
+            inline-size: calc(var(--bs-avatar-size)*.2);
+            inset-block-end: 0;
+            inset-inline-end: var(--bs-avatar-initial-inline);
+            background-color: #71dd37;
+        }
+
+    /* Avatar Color Classes */
+    .login-avatar-primary {
+        background-color: color-mix(in sRGB, #fff 90%, #696cff) !important;
+        color: #696cff !important;
+    }
+
+    .login-avatar-secondary {
+        background-color: color-mix(in sRGB, #fff 90%, #8592a3) !important;
+        color: #8592a3 !important;
+    }
+
+    .login-avatar-success {
+        background-color: color-mix(in sRGB, #fff 90%, #71dd37) !important;
+        color: #71dd37 !important;
+    }
+
+    .login-avatar-info {
+        background-color: color-mix(in sRGB, #fff 90%, #03c3ec) !important;
+        color: #03c3ec !important;
+    }
+
+    .login-avatar-warning {
+        background-color: color-mix(in sRGB, #fff 90%, #ffab00) !important;
+        color: #ffab00 !important;
+    }
+
+    .login-avatar-danger {
+        background-color: color-mix(in sRGB, #fff 90%, #ff3e1d) !important;
+        color: #ff3e1d !important;
+    }
+
+
+    .login-avatar-dark {
+        background-color: color-mix(in sRGB, #fff 90%, #233446) !important;
+        color: #233446 !important;
+    }
+
+    .login-avatar-purple {
+        background-color: color-mix(in sRGB, #fff 90%, #8b5cf6) !important;
+        color: #8b5cf6 !important;
+    }
+
+    .login-avatar-pink {
+        background-color: color-mix(in sRGB, #fff 90%, #ec4899) !important;
+        color: #ec4899 !important;
+    }
+</style>
+<li class="nav-item dropdown-language dropdown me-2 me-xl-0">
+    <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+        <i class="icon-base bx bx-globe icon-md"></i>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <a class="dropdown-item active" href="javascript:void(0);" data-language="en" data-text-direction="ltr">
+                <span>Khmer</span>
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="javascript:void(0);" data-language="fr" data-text-direction="ltr">
+                <span>English</span>
+            </a>
+        </li>
+    </ul>
+</li>
+@if (isAuthenticated && userInfo != null)
+{
+    // Generate initials from username
+    var initials = "";
+    var nameParts = userInfo.Username.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+    if (nameParts.Length >= 2)
+    {
+        initials = nameParts[0].Substring(0, 1).ToUpper() + nameParts[1].Substring(0, 1).ToUpper();
+    }
+    else if (nameParts.Length == 1 && nameParts[0].Length >= 2)
+    {
+        initials = nameParts[0].Substring(0, 2).ToUpper();
+    }
+    else if (nameParts.Length == 1)
+    {
+        initials = nameParts[0].Substring(0, 1).ToUpper();
+    }
+
+    // Generate color class based on username hash
+    var colorClasses = new string[] {
+        "login-avatar-primary",
+        "login-avatar-secondary",
+        "login-avatar-success",
+        "login-avatar-info",
+        "login-avatar-warning",
+        "login-avatar-danger",
+        "login-avatar-dark",
+        "login-avatar-purple",
+        "login-avatar-pink"
+    };
+    var colorClass = colorClasses[Math.Abs(userInfo.Username.GetHashCode()) % colorClasses.Length];
+
+    <li class="nav-item navbar-dropdown dropdown-user dropdown">
+        <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+            <div class="d-flex align-items-center">
+                <div class="avatar avatar-online">
+                    <span class="avatar-initial rounded-circle @colorClass">@initials</span>
+                </div>
+                <!-- Add username here -->
+                <span class="ms-2">@userInfo.Username</span>
+            </div>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+                <a class="dropdown-item" href="#">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0 me-3">
+                            <div class="avatar avatar-online">
+                                <span class="avatar-initial rounded-circle @colorClass">@initials</span>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">@userInfo.Username</h6>
+                            <div class="text-muted">
+                                @if (userInfo.Roles != null && userInfo.Roles.Any())
+                                {
+                                    @for (int i = 0; i < userInfo.Roles.Count; i++)
+                                    {
+                                        <small class="text-muted">@userInfo.Roles[i]</small>
+                                        @if (i < userInfo.Roles.Count - 1)
+                                        {
+                                            <small class="text-muted"> | </small>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <small class="text-muted">No roles assigned</small>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </li>
+
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            <li>
+                <a class="dropdown-item" modal-popup="" asp-action="ChangePassword" asp-controller="Identity">
+                    <i class="bx bx-refresh me-2"></i>
+                    <span class="align-middle">Change Password</span>
+                </a>
+            </li>
+            <li>
+                <form class="dropdown-item p-0" asp-controller="Login" asp-action="Logout" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="dropdown-item text-danger">
+                        <i class="bx bx-power-off me-2"></i>
+                        <span class="align-middle">Logout</span>
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="Login" asp-action="Index">
+            <i class="bx bx-log-in-circle"></i>
+            <span>Login</span>
+        </a>
+    </li>
+}

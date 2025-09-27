@@ -1,0 +1,64 @@
+﻿    .searchable-select {
+        width: 100%;
+        display: block;
+    }
+
+    /*.searchable-select > button.form-select {
+        width: 100%;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-left: 1rem;*/ /* Add padding to the left */
+        /*padding-right: 1rem;
+        background-image: none !important;
+        appearance: none;
+    }*/
+
+    .searchable-select > button.form-select {
+        width: 100%; /* Fill container */
+        min-width: 200px; /* Or however wide 'Select an Account' is */
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        background-image: none !important;
+        box-sizing: border-box;
+        appearance:none;
+    }
+
+    .searchable-select .dropdown-menu {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    .searchable-select .dropdown-search-input {
+        width: 100% !important;
+        box-sizing: border-box;
+        font-size: 0.85rem;
+        height: 30px;
+        padding: 0.25rem 0.5rem;
+        margin: 0;
+    }
+
+    .searchable-select .dropdown-item {
+        font-size: 0.85rem;
+        line-height: 1.25rem;
+        height: auto;
+        cursor: pointer;
+    }
+    .searchable-select .dropdown-menu {
+        max-height: 200px;
+        overflow-y: auto;
+        cursor: pointer;
+    }
+
+    .dropdown-item.active,
+    .dropdown-item:active {
+        background-color: #0d6efd; /* Bootstrap primary */
+        color: white;
+    }

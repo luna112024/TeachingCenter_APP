@@ -1,0 +1,11 @@
+﻿[
+  {
+    "outputFile": "wwwroot/assets/vendor/css/core.css",
+    "inputFile": "wwwroot/scss/core.scss",
+    "sourceMap": true
+  },
+  {
+    "outputFile": "wwwroot/assets/vendor/css/theme-default.css",
+    "inputFile": "wwwroot/scss/theme-default.scss"
+  }
+]

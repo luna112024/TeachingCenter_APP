@@ -1,0 +1,438 @@
+﻿@model LoginModel
+@{
+    Layout = "_LoginLayout";
+    ViewData["Title"] = "HongWen";
+}
+
+<style>
+.background-bleed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('@Url.Content("~/assets/img/Cover-Page-Final.jpg")');
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: 100% auto;
+    z-index: -1;
+}
+.card-body {
+    padding: 2.3rem !important;
+}
+
+input:focus,
+.form-control:focus {
+    box-shadow: none !important;
+    outline: none;
+    border-color: #86b7fe;
+}
+
+.title-detail {
+    font-size: 14px;
+}
+
+.form-label {
+    text-transform: none;
+    font-size: 14px;
+    font-weight: 600 !important;
+}
+
+.form-check-label {
+    font-size: 14px;
+}
+
+.text-primary {
+    font-size: 14px;
+}
+
+.text-primary a:hover {
+    color: #164ea3;
+    font-weight: 700 !important;
+}
+
+.btn {
+    font-size: 15px;
+}
+
+.bx-log-in-circle {
+    font-size: 16px;
+}
+
+/* Hide password reveal buttons */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear,
+input[type="password"]::-webkit-password-toggle-button {
+    display: none;
+}
+
+/* Alert animations */
+.alert-animated {
+    font-weight: 600;
+    padding: 10px 15px;
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: fadeInSlide 0.5s ease-in-out forwards;
+    transition: opacity 0.5s ease, height 0.5s ease;
+}
+
+@@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@@keyframes fadeOutSlide {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+
+.fade-out {
+    animation: fadeOutSlide 1s ease-in-out forwards;
+}
+
+.alert-hidden {
+    display: none;
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+}
+</style>
+<div class="background-bleed"></div>
+<div class="container">
+    <div class="authentication-wrapper authentication-basic container-p-y">
+        <div class="authentication-inner">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-start mb-4">
+                        <img src="/assets/img/logo.png" alt="Logo" class="me-3" style="height: 50px; width: auto;">
+                        <div>
+                            <div class="fw-bold fs-5 mb-1" style="line-height: 1.1;">HongWen School</div>
+                            <div class="text-muted fw-semibold small" style="line-height: 1.2;">Enter username and Password</div>
+                        </div>
+                    </div>                
+                    <!-- Success Messages -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success py-2 px-3 text-center alert-animated" role="alert">
+                            <i class='bx bx-check-circle me-2'></i>
+                            <small class="fw-semibold">@TempData["SuccessMessage"]</small>
+                        </div>
+                    }
+
+                    @if (TempData["InfoMessage"] != null)
+                    {
+                        <div class="alert alert-info py-2 px-3 text-center alert-animated" role="alert">
+                            <i class='bx bx-info-circle me-2'></i>
+                            <small class="fw-semibold">@TempData["InfoMessage"]</small>
+                        </div>
+                    }
+
+                    <!-- Error Messages -->
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger py-2 px-3 alert-animated" role="alert">
+                            <ul class="mb-0 list-unstyled text-center fw-semibold">
+                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                {
+                                    <li><small>@error.ErrorMessage</small></li>
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger py-2 px-3 text-center alert-animated" role="alert">
+                            <small class="fw-semibold">@TempData["ErrorMessage"]</small>
+                        </div>
+                    }
+
+                    <!-- Session Expired Message -->
+                    @if (ViewBag.IsSessionExpired == true)
+                    {
+                        <div class="alert alert-warning py-2 px-3 text-center alert-animated" role="alert">
+                            <i class='bx bx-time me-2'></i>
+                            <small class="fw-semibold">@ViewBag.SessionExpiredMessage</small>
+                        </div>
+                    }
+
+                    <form id="formAuthentication" asp-controller="login" asp-action="login" class="mb-3" method="POST">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <label for="username" class="form-label">Username</label>
+                            </div>
+                            <div class="input-group input-group-merge">
+                                <input type="text"
+                                       class="form-control"
+                                       id="username"
+                                       asp-for="Username"
+                                       placeholder="Enter your username"
+                                       autofocus
+                                       maxlength="40"
+                                       autocomplete="username" />
+                                <span class="input-group-text"><i class="bx bx-user"></i></span>
+                            </div>
+                            <small asp-validation-for="Username" class="text-danger"></small>
+                        </div>
+                        
+                        <div class="mb-3 form-password-toggle">
+                            <div class="d-flex justify-content-between">
+                                <label class="form-label" for="password">Password</label>
+                            </div>
+                            <div class="input-group input-group-merge">
+                                <input type="password"
+                                       id="password"
+                                       asp-for="Password"
+                                       class="form-control"
+                                       placeholder="Enter your password"
+                                       autocomplete="current-password"
+                                       aria-describedby="password" />
+                                <span class="input-group-text cursor-pointer" id="togglePassword">
+                                    <i class="bx bx-hide" id="toggleIcon"></i>
+                                </span>
+                            </div>
+                            <small asp-validation-for="Password" class="text-danger"></small>
+                        </div>
+                        
+                        <div class="mb-4 pt-1">
+                            <div class="d-flex justify-content-between">
+                                <div class="form-check">
+                                    <input class="form-check-input" 
+                                           type="checkbox" 
+                                           asp-for="RememberMe" 
+                                           id="rememberMe">
+                                    <label class="form-check-label" for="rememberMe">
+                                        Remember Me
+                                    </label>
+                                </div>
+                                <a href="@Url.Action("ForgotPassword", "Login")" class="text-primary">
+                                    Forgot Password?
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <button class="btn btn-primary w-100" type="submit" id="loginBtn">
+                                <i class='bx bx-log-in-circle me-1'></i>
+                                <span id="loginText">Login</span>
+                                <span id="loginSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+$(document).ready(function() {
+    // Form validation configurations
+    const validationRules = {
+        username: {
+            required: true,
+            minLength: 3,
+            maxLength: 40,
+            pattern: /^[a-zA-Z0-9]+(?:[ .][a-zA-Z0-9]+)?$/,
+            message: 'Username must be 3-40 characters, only letters, numbers, and max 1 space or dot'
+        },
+        password: {
+            required: true,
+            minLength: 8,
+            pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/,
+            message: 'Password must be at least 8 characters with uppercase, lowercase, number and special character'
+        }
+    };
+
+    // Utility functions
+    function showFieldError($input, message) {
+        $input.addClass('is-invalid');
+        $input.siblings('.text-danger').text(message);
+    }
+
+    function clearFieldError($input) {
+        $input.removeClass('is-invalid');
+        $input.siblings('.text-danger').text('');
+    }
+
+    function validateField($input, rules) {
+        const value = $input.val().trim();
+        
+        if (!value && rules.required) {
+            showFieldError($input, `${$input.attr('id').charAt(0).toUpperCase() + $input.attr('id').slice(1)} is required`);
+            return false;
+        }
+        
+        if (value.length < rules.minLength) {
+            showFieldError($input, `Minimum ${rules.minLength} characters required`);
+            return false;
+        }
+        
+        if (value.length > rules.maxLength) {
+            showFieldError($input, `Maximum ${rules.maxLength} characters allowed`);
+            return false;
+        }
+        
+        if (rules.pattern && !rules.pattern.test(value)) {
+            showFieldError($input, rules.message);
+            return false;
+        }
+        
+        clearFieldError($input);
+        return true;
+    }
+
+    // Password toggle functionality
+    $('#togglePassword').on('click', function() {
+        const passwordField = $('#password');
+        const toggleIcon = $('#toggleIcon');
+        
+        if (passwordField.attr('type') === 'password') {
+            passwordField.attr('type', 'text');
+            toggleIcon.removeClass('bx-hide').addClass('bx-show');
+        } else {
+            passwordField.attr('type', 'password');
+            toggleIcon.removeClass('bx-show').addClass('bx-hide');
+        }
+    });
+
+    // Real-time username validation with sanitization
+    $('#username').on('input', function() {
+        const $input = $(this);
+        let value = $input.val();
+        let cursorPos = this.selectionStart;
+
+        // Sanitize input
+        let sanitized = value.replace(/[^a-zA-Z0-9 .]/g, '');
+        
+        // Handle dots (max 1)
+        let parts = sanitized.split('.');
+        if (parts.length > 2 || sanitized.startsWith('.')) {
+            sanitized = parts[0] + (parts[1] ? '.' + parts[1].replace(/\./g, '') : '');
+        }
+        
+        // Handle spaces (max 1, no consecutive)
+        sanitized = sanitized.replace(/\s{2,}/g, ' ');
+        
+        // Update input if changed
+        if (value !== sanitized) {
+            $input.val(sanitized);
+            // Adjust cursor position
+            let removedChars = value.slice(0, cursorPos).length - sanitized.slice(0, cursorPos).length;
+            this.setSelectionRange(cursorPos - removedChars, cursorPos - removedChars);
+        }
+        
+        // Validate if not empty
+        if (sanitized.length > 0) {
+            validateField($input, validationRules.username);
+        } else {
+            clearFieldError($input);
+        }
+    });
+
+    // Form submission
+    $('#formAuthentication').on('submit', function(e) {
+        e.preventDefault();
+        
+        const $username = $('#username');
+        const $password = $('#password');
+        const $loginBtn = $('#loginBtn');
+        const $loginText = $('#loginText');
+        const $loginSpinner = $('#loginSpinner');
+        
+        // Validate all fields
+        const isUsernameValid = validateField($username, validationRules.username);
+        const isPasswordValid = validateField($password, validationRules.password);
+        
+        if (!isUsernameValid || !isPasswordValid) {
+            return false;
+        }
+        
+        // Show loading state
+        $loginBtn.prop('disabled', true);
+        $loginText.text('Signing in...');
+        $loginSpinner.removeClass('d-none');
+        
+        // Submit form
+        this.submit();
+    });
+
+    // Auto-hide alerts after 5 seconds
+    $('.alert-animated').each(function() {
+        const $alert = $(this);
+        setTimeout(function() {
+            $alert.addClass('fade-out');
+            setTimeout(function() {
+                $alert.addClass('alert-hidden');
+            }, 1000);
+        }, 5000);
+    });
+
+    // Global AJAX authentication handler
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            // Add auth check for non-login related AJAX calls
+            if (!settings.url.includes('/Login/')) {
+                // Set request header for AJAX identification
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            }
+        },
+        statusCode: {
+            401: function(xhr) {
+                // Handle 401 responses from our unified architecture
+                try {
+                    const response = xhr.responseJSON;
+                    if (response && response.redirectUrl) {
+                        window.location.href = response.redirectUrl;
+                    } else {
+                        window.location.href = '/Login/SessionExpired';
+                    }
+                } catch (e) {
+                    // Fallback for non-JSON responses
+                    window.location.href = '/Login/SessionExpired';
+                }
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle network errors and authentication failures
+            if (xhr.status === 401) {
+                // Let the 401 handler above deal with it
+                return;
+            }
+            
+            // Log other errors for debugging
+            console.error('AJAX Error:', {
+                status: xhr.status,
+                statusText: xhr.statusText,
+                error: error,
+                url: this.url
+            });
+        }
+    });
+
+    // Focus management
+    if ($('#username').val() === '') {
+        $('#username').focus();
+    } else if ($('#password').val() === '') {
+        $('#password').focus();
+    }
+});
+</script>
+}

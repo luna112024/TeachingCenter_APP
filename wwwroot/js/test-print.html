@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Export Test</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.2/css/boxicons.min.css">
+    <link rel="stylesheet" href="../css/exportLibrary.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>🖨️ Export Library Print Test</h1>
+    
+    <div class="test-section">
+        <h3>Test 1: Data Attribute Method (Auto-binding)</h3>
+        <p>This button uses data attributes for auto-binding:</p>
+        <button type="button" 
+                class="btn"
+                data-export-type="Statement"
+                data-controller="AccountStatement"
+                data-action="PrintStatement">
+            <i class="bx bxs-printer"></i> Print via Data Attributes
+        </button>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 2: Direct Method Call</h3>
+        <p>This button calls the print method directly:</p>
+        <button type="button" class="btn" onclick="testDirectPrint()">
+            <i class="bx bxs-printer"></i> Print via Direct Call
+        </button>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 3: Custom Action Method</h3>
+        <p>This button uses a custom action:</p>
+        <button type="button" class="btn" onclick="testCustomAction()">
+            <i class="bx bxs-printer"></i> Print with Custom Action
+        </button>
+    </div>
+
+    <div class="test-section">
+        <h3>Debug Information</h3>
+        <div id="debug-info">
+            <p>Current Controller: <span id="current-controller"></span></p>
+            <p>Export Library Status: <span id="lib-status"></span></p>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="myNotifybox.js"></script>
+    <script src="exportLibrary.js"></script>
+    <script>
+        // Test functions
+        function testDirectPrint() {
+            console.log('Testing direct print call...');
+            exportLib.setController('AccountStatement').print();
+        }
+
+        function testCustomAction() {
+            console.log('Testing custom action...');
+            exportLib.export('Statement', {
+                controller: 'AccountStatement',
+                action: 'PrintStatement',
+                openInNewTab: true
+            });
+        }
+
+        // Initialize and show debug info
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set controller
+            exportLib.setController('AccountStatement');
+            
+            // Update debug info
+            document.getElementById('current-controller').textContent = exportLib.currentController;
+            document.getElementById('lib-status').textContent = 'Loaded and Ready';
+            
+            // Show ready message
+            setTimeout(() => {
+                showSuccess('Print test page loaded! Try the buttons above.');
+            }, 500);
+        });
+
+        // Override window.open for testing
+        const originalOpen = window.open;
+        window.open = function(url, target, features) {
+            console.log('window.open called with:', { url, target, features });
+            showInfo(`Print URL generated: ${url}`, 8000);
+            
+            // Uncomment to actually open the window
+            // return originalOpen.call(this, url, target, features);
+            
+            return { close: function() {} }; // Mock window object
+        };
+    </script>
+</body>
+</html> 

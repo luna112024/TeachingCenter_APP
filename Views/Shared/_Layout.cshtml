@@ -1,0 +1,629 @@
+﻿<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>@ViewData["Title"]</title>
+    <link rel="icon" type="image/x-icon" href="~/assets/img//favicon.ico" />
+    @*<link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Moul&family=Noto+Sans+Khmer:wght@400;600;700&display=swap" rel="stylesheet">*@
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400..800&family=Gugi&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Public+Sans:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="~/assets/vendor/fonts/boxicons.css" />
+
+    <link rel="stylesheet" href="~/assets/vendor/css/core.min.css" />
+    <link rel="stylesheet" href="~/assets/vendor/css/theme-default.css" />
+    <link rel="stylesheet" href="~/assets/css/main.css" />
+    <!-- Bootstrap Datepicker CSS -->
+    <link rel="stylesheet" href="~/assets/css/bootstrap-datepicker3.css" />
+    <link rel="stylesheet" href="~/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <script src="~/assets/vendor/js/helpers.js"></script>
+    <link rel="stylesheet" href="~/libs/daterangeicker/bootstrap-daterangepicker.css" />
+    <link rel="stylesheet" href="~/assets/css/customize.css" />
+    <link rel="stylesheet" href="~/css/exportLibrary.css" />
+
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <!-- Menu -->
+
+            <aside id="layout-menu" class="layout-menu cont menu-vertical menu bg-menu-theme">
+                <div class="app-brand demo">
+                    <a href="/home">
+                        <span class="app-brand-text demo menu-text fw-bolder">Amret Microfinance</span>
+                    </a>
+
+                    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+                        <i class="bx bx-chevron-left bx-sm align-middle"></i>
+                    </a>
+                </div>
+
+                <div class="menu-inner-shadow"></div>
+                @await Html.PartialAsync("_NavigationMenu.cshtml")
+            </aside>
+            <!-- / Menu -->
+            <!-- Layout container -->
+            <div class="layout-page">
+                <!-- Navbar -->
+
+                <nav class="layout-navbar navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+                     id="layout-navbar">
+                    <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+                        <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                            <i class="bx bx-menu bx-sm"></i>
+                        </a>
+                    </div>
+
+                    <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+                        <!-- Search -->
+                        @RenderSection("TopBar", false)
+                        <!-- /Search -->
+
+                        <ul class="navbar-nav flex-row align-items-center ms-auto">
+                            <!-- User -->
+                            <partial name="_LoginStatus" />
+                            <!--/ User -->
+                        </ul>
+                    </div>
+                </nav>
+
+                <!-- / Navbar -->
+                <!-- Content wrapper -->
+                <div class="content-wrapper">
+                    <div class="flex-grow-1 container-p-y mx-lg-4 mx-3">
+                        <main role="main" class="pb-3">
+                            @RenderBody()
+                        </main>
+                    </div>
+                    <div id="exportPrint"></div>
+                    <!--<footer class="content-footer footer bg-footer-theme">
+                        <div class="d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+                            <div class="mb-2 mb-md-0">
+                                ©2024
+                            </div>
+                            <div>
+
+                                <a href="#"
+                                   target="_blank"
+                                   class="footer-link me-4">Azis Web</a>
+                            </div>
+                        </div>
+                    </footer>-->
+                    <div class="content-backdrop fade"></div>
+                    <div class="modal fade" id="Modalpop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content" id="ModelContent">
+                                <!-- Modal Content -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Content wrapper -->
+            </div>
+            <!-- / Layout page -->
+        </div>
+
+        <!-- Overlay -->
+        <div class="layout-overlay layout-menu-toggle"></div>
+    </div>
+    <!-- / Layout wrapper -->
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="~/assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="~/assets/vendor/libs/popper/popper.js"></script>
+    <script src="~/assets/vendor/js/bootstrap.js"></script>
+    <script src="~/assets/js/xlsx.full.min.js" asp-append-version="true"></script>
+    <script src="~/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="~/js/myNotifybox.js" asp-append-version="true"></script>
+    
+
+    <script src="~/assets/vendor/js/menu.js"></script>
+    <!-- endbuild -->
+    <!-- Main JS -->
+    <script src="~/assets/js/main.js"></script>
+    <!-- Page JS -->
+    <!-- Bootstrap Datepicker JS -->
+    <script src="~/assets/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/libs/moment/moment.min.js"></script>
+    <script src="~/libs/daterangeicker/bootstrap-daterangepicker.js"></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    <script src="~/js/rangedate.js"></script>
+    <script src="~/js/exportLibrary.js"></script>
+    @RenderSection("Scripts", required: false)
+
+    <script>
+        // Global AJAX setup for unified authentication handling with ProblemDetails support
+        $(document).ready(function() {
+            // Set up global AJAX defaults
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    // Always identify AJAX requests
+                    if (!xhr.getResponseHeader('X-Requested-With')) {
+                        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Parse structured error response from API's GlobalExceptionMiddleware
+                    const errorInfo = parseApiErrorResponse(xhr);
+                    
+                    // Global error handling based on status code
+                    switch (xhr.status) {
+                        case 401: // Unauthorized
+                            handleUnauthorizedError(errorInfo);
+                            return false;
+                            
+                        case 403: // Forbidden
+                            handleForbiddenError(errorInfo);
+                            return false;
+                            
+                        case 404: // Not Found
+                            handleNotFoundError(errorInfo);
+                            return false;
+                            
+                        case 429: // Rate Limit
+                            handleRateLimitError(errorInfo);
+                            return false;
+                            
+                        case 500: // Server Error
+                            handleServerError(errorInfo);
+                            return false;
+                    }
+                    // Let specific error handlers deal with other status codes
+                }
+            });
+        });
+
+        // Parse API error response (ProblemDetails format)
+        function parseApiErrorResponse(xhr) {
+            try {
+                const response = xhr.responseJSON;
+                return {
+                    status: xhr.status,
+                    title: response?.title || xhr.statusText,
+                    message: response?.detail || response?.message || "An error occurred",
+                    traceId: response?.traceId,
+                    redirectUrl: response?.redirectUrl,
+                    retryAfter: response?.retryAfter
+                };
+            } catch (e) {
+                return {
+                    status: xhr.status,
+                    title: xhr.statusText || "Error",
+                    message: "An unexpected error occurred",
+                    traceId: null
+                };
+            }
+        }
+
+        // Handle 401 Unauthorized errors
+        function handleUnauthorizedError(errorInfo) {
+            console.log('Authentication failed:', errorInfo);
+            
+            if (typeof myNotifyBox === 'function') {
+                myNotifyBox(errorInfo.message || "Your session has expired. Redirecting to login...", 3000, "warning");
+            }
+            
+            setTimeout(() => {
+                window.location.href = errorInfo.redirectUrl || '/Login/SessionExpired';
+            }, 2000);
+        }
+
+        // Handle 403 Forbidden errors
+        function handleForbiddenError(errorInfo) {
+            console.log('Permission denied:', errorInfo);
+            
+            if (typeof myNotifyBox === 'function') {
+                myNotifyBox(errorInfo.message || "You don't have permission to perform this action.", 5000, "danger");
+            }
+        }
+
+        // Handle 404 Not Found errors
+        function handleNotFoundError(errorInfo) {
+            console.log('Resource not found:', errorInfo);
+            
+            if (typeof myNotifyBox === 'function') {
+                myNotifyBox(errorInfo.message || "The requested resource was not found.", 5000, "warning");
+            }
+        }
+
+        // Handle 429 Rate Limit errors
+        function handleRateLimitError(errorInfo) {
+            console.log('Rate limit exceeded:', errorInfo);
+            
+            const retryTime = errorInfo.retryAfter || "60";
+            const message = `${errorInfo.message} Please wait ${retryTime} seconds before trying again.`;
+            
+            if (typeof myNotifyBox === 'function') {
+                myNotifyBox(message, 8000, "warning");
+            }
+        }
+
+        // Handle 500 Server errors
+        function handleServerError(errorInfo) {
+            console.error('Server error:', errorInfo);
+            
+            let message = errorInfo.message || "An unexpected server error occurred.";
+            if (errorInfo.traceId) {
+                message += ` (Trace ID: ${errorInfo.traceId})`;
+            }
+            
+            if (typeof myNotifyBox === 'function') {
+                myNotifyBox(message, 8000, "danger");
+            }
+        }
+
+        // Next Pagination
+        $("body").on("click", "a.page-link", function (e) {
+            e.preventDefault();
+
+            var page = $(this).attr("data-page");
+            var partial = $(this).attr("data-partial");
+            paging = page;
+            if (partial == "OurlistPartial") {
+                FormSubmit2(page);
+            } else if (partial == "OurlistPartial") {
+                FormSubmit4(page);
+            } else {
+                FormSubmit(page);
+            }
+        });
+        //Form Search
+         $("body").on("submit", "#formSearch", function (e) {
+            e.preventDefault();
+            FormSubmit(1);
+        });
+
+        //Handle Click Page Size
+        $("body").on("change", "[data-page-size]", function (e) {
+            e.preventDefault();
+            FormSubmit(1);
+        });
+
+        //Call Modal with Authentication Support
+        $("body").on("click", "[modal-popup]", function (e) {
+            e.preventDefault();
+            var size = "modal-md";
+            if ($(this).attr("modal-size") == "lg") {
+                size = "modal-lg";
+            } else if ($(this).attr("modal-size") == "xl") {
+                size = "modal-xl";
+            } else if ($(this).attr("modal-size") == "sm") {
+                size = "modal-sm";
+            }
+            var $selected = $(this);
+            $("#Modalpop").find(".modal-dialog").removeClass("modal-md modal-sm modal-lg modal-xl").addClass(size);
+            var myModal = new bootstrap.Modal(document.getElementById('Modalpop'), {
+                keyboard: false
+            });
+            
+            // Load modal content with authentication error handling
+            $.ajax({
+                url: this.href,
+                type: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                beforeSend: function() {
+                    $("#ModelContent").html('<div class="text-center p-4"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+                },
+                success: function(data) {
+                    $("#ModelContent").html(data);
+                    modal = myModal;
+                    myModal.show();
+                    BindFormSubmit($("#ModelContent"), myModal);
+                },
+                error: function(xhr, status, error) {
+                    const errorInfo = parseApiErrorResponse(xhr);
+                    
+                    if (xhr.status === 401) {
+                        // Handle authentication failure - let global handler manage this
+                        handleUnauthorizedError(errorInfo);
+                    } else {
+                        // Show structured error message in modal
+                        let errorHtml = `<div class="alert alert-danger m-3">
+                            <i class="bx bx-error me-2"></i>
+                            <strong>${errorInfo.title}</strong><br/>
+                            ${errorInfo.message}`;
+                        
+                        if (errorInfo.traceId) {
+                            errorHtml += `<br/><small class="text-muted">Trace ID: ${errorInfo.traceId}</small>`;
+                        }
+                        
+                        errorHtml += `</div>`;
+                        
+                        $("#ModelContent").html(errorHtml);
+                        myModal.show();
+                        console.error('Modal load error:', errorInfo);
+                    }
+                }
+            });
+        });
+
+        //Handle Dynamic Submit with Enhanced Authentication Support
+        function BindFormSubmit(dialog, myModal) {
+            // Clear previous validation errors
+            $(dialog).find(".validation-error").remove();
+            $(dialog).find(".is-invalid").removeClass("is-invalid");
+            
+            $(dialog).find("form").submit(function (e) {
+                e.preventDefault();
+                var action = $(this);
+                e.stopImmediatePropagation();
+
+                // Clear previous validation errors before submitting
+                $(dialog).find(".validation-error").remove();
+                $(dialog).find(".is-invalid").removeClass("is-invalid");
+
+                var submitButton = action.find("button[type='submit']");
+                var originalText = submitButton.html();
+                
+                // Show loading state
+                submitButton.prop("disabled", true);
+                submitButton.html('<span class="spinner-border spinner-border-sm me-2" role="status"></span>Processing...');
+
+                $.ajax({
+                    url: action.attr("action"),
+                    type: "post",
+                    data: new FormData($(this)[0]),
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    timeout: 30000 // 30 second timeout
+                }).done(function (rs) {
+                    if (rs.result == "true") {
+                        if (rs.isredirect) {
+                            window.location.href = rs.redirect;
+                        } else {
+                            if (rs.partialView != "") {
+                                // Handle partial view updates if needed
+                            } else {
+                                FormSubmit(1);
+                                
+                                var actionUrl = action.attr("action").toLowerCase();
+                                if (actionUrl.includes('createrole')) {
+                                    RefreshRoles();
+                                }
+                            }
+                        }
+                        myNotifyBox(rs.message, 5000, "primary");
+                        myModal.hide();
+                    } else {
+                        // Handle validation errors if present
+                        if (rs.validationErrors) {
+                            // Restore button state for re-submission
+                            submitButton.prop("disabled", false);
+                            submitButton.html(originalText);
+                            
+                            // Define a keyframe animation for the shake effect if not already defined
+                            if (!$('#shake-keyframes').length) {
+                                $('<style id="shake-keyframes">@@keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }</style>').appendTo('head');
+                            }
+                            
+                            // Display validation errors with enhanced UX
+                            $.each(rs.validationErrors, function (key, errors) {
+                                var inputField = action.find('[name="' + key + '"]');
+                                
+                                // Only add invalid class and error message if there are actual errors
+                                if (errors && errors.length > 0) {
+                                    // Add invalid class with a subtle animation
+                                    inputField.addClass("is-invalid");
+                                    inputField.css("transition", "box-shadow 0.3s ease");
+                                    inputField.css("box-shadow", "0 0 0 2px rgba(253, 72, 72, 0.25)");
+                                    
+                                    // Apply gentle shake animation
+                                    inputField.css("animation", "shake 0.7s");
+                                    setTimeout(function() {
+                                        inputField.css("animation", "");
+                                        inputField.css("box-shadow", "none");
+                                    }, 700);
+                                    
+                                    // Add error message with fade-in animation
+                                    $.each(errors, function (i, error) {
+                                        $('<div class="invalid-feedback validation-error" style="display:none;">' + error + '</div>')
+                                            .insertAfter(inputField)
+                                            .fadeIn(400);
+                                    });
+                                    
+                                    // Add real-time validation clearing
+                                    inputField.off('focus.validation input.validation')
+                                        .on('focus.validation', function() {
+                                            var $this = $(this);
+                                            var $errorMsg = $this.next('.validation-error');
+                                            
+                                            $errorMsg.fadeOut(300, function() {
+                                                $(this).remove();
+                                                $this.removeClass('is-invalid');
+                                            });
+                                        })
+                                        .on('input.validation', function() {
+                                            var $this = $(this);
+                                            var $errorMsg = $this.next('.validation-error');
+                                            
+                                            $errorMsg.fadeOut(200, function() {
+                                                $(this).remove();
+                                                $this.removeClass('is-invalid');
+                                            });
+                                        });
+                                }
+                            });
+                            
+                            // Focus on first invalid field
+                            var firstInvalidField = action.find('.is-invalid').first();
+                            if (firstInvalidField.length) {
+                                firstInvalidField.focus();
+                            }
+                        } else {
+                            // General error message
+                            myNotifyBox(rs.message, 5000, "warning");
+                            myModal.hide();
+                        }
+                    }
+                }).fail(function(xhr, status, error) {
+                    // Restore button state
+                    submitButton.prop("disabled", false);
+                    submitButton.html(originalText);
+                    
+                    // Parse structured error response
+                    const errorInfo = parseApiErrorResponse(xhr);
+                    
+                    if (xhr.status === 401) {
+                        // Handle authentication failure - close modal and redirect
+                        myModal.hide();
+                        handleUnauthorizedError(errorInfo);
+                    } else if (xhr.status === 403) {
+                        // Handle permission denied - keep modal open
+                        myNotifyBox(errorInfo.message || "You don't have permission to perform this action.", 5000, "danger");
+                    } else if (xhr.status === 404) {
+                        // Handle not found
+                        myNotifyBox(errorInfo.message || "The requested resource was not found.", 5000, "warning");
+                        myModal.hide();
+                    } else if (xhr.status === 429) {
+                        // Handle rate limit
+                        const retryTime = errorInfo.retryAfter || "60";
+                        const message = `${errorInfo.message} Please wait ${retryTime} seconds.`;
+                        myNotifyBox(message, 8000, "warning");
+                    } else if (xhr.status === 0) {
+                        // Network error
+                        myNotifyBox("Network error. Please check your connection and try again.", 5000, "danger");
+                    } else if (status === 'timeout') {
+                        // Timeout error
+                        myNotifyBox("Request timed out. Please try again.", 5000, "warning");
+                    } else {
+                        // Server errors and other issues
+                        let message = errorInfo.message || "An unexpected error occurred. Please try again.";
+                        if (errorInfo.traceId) {
+                            message += ` (Trace ID: ${errorInfo.traceId})`;
+                        }
+                        console.error('Form submission error:', errorInfo);
+                        myNotifyBox(message, 8000, "danger");
+                    }
+                }).always(function(response) {
+                    // Ensure button is restored if not handled above
+                    if (submitButton.prop("disabled")) {
+                        submitButton.prop("disabled", false);
+                        submitButton.html(originalText);
+                    }
+                });
+            });
+        }
+
+        //Handle Form Search Pagination with Authentication Support
+        function FormSubmit(page) {
+            var pagesize = $("select[data-page-size]").val();
+            $.ajax({
+                url: $("#formSearch").attr("action"),
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                headers: {
+                    RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                data: $("#formSearch").serialize() + "&page=" + page + "&pagesize=" + pagesize,
+                timeout: 15000, // 15 second timeout
+                beforeSend: function () {
+                    $(".loader-content").fadeIn("fast");
+                    $('#listData').html("");
+                }
+            }).done(function (result) {
+                $(".loader-content").fadeOut("fast", function () {
+                    $('#listData').html(result);
+                });
+               
+            }).fail(function(xhr, status, error) {
+                $(".loader-content").fadeOut("fast");
+                
+                // Parse structured error response
+                const errorInfo = parseApiErrorResponse(xhr);
+                
+                if (xhr.status === 401) {
+                    // Handle authentication failure
+                    handleUnauthorizedError(errorInfo);
+                } else if (xhr.status === 403) {
+                    // Handle permission denied
+                    const alertHtml = `<div class="alert alert-danger m-3">
+                        <i class="bx bx-error me-2"></i>
+                        <strong>${errorInfo.title}</strong><br/>
+                        ${errorInfo.message}
+                    </div>`;
+                    $('#listData').html(alertHtml);
+                    myNotifyBox(errorInfo.message || "Access denied.", 5000, "danger");
+                } else if (xhr.status === 404) {
+                    // Handle not found
+                    const alertHtml = `<div class="alert alert-warning m-3">
+                        <i class="bx bx-info-circle me-2"></i>
+                        <strong>${errorInfo.title}</strong><br/>
+                        ${errorInfo.message}
+                    </div>`;
+                    $('#listData').html(alertHtml);
+                    myNotifyBox(errorInfo.message || "Resource not found.", 5000, "warning");
+                } else if (xhr.status === 429) {
+                    // Handle rate limit
+                    const retryTime = errorInfo.retryAfter || "60";
+                    const alertHtml = `<div class="alert alert-warning m-3">
+                        <i class="bx bx-time me-2"></i>
+                        <strong>${errorInfo.title}</strong><br/>
+                        ${errorInfo.message} Please wait ${retryTime} seconds before trying again.
+                    </div>`;
+                    $('#listData').html(alertHtml);
+                    myNotifyBox(`${errorInfo.message} Please wait ${retryTime} seconds.`, 8000, "warning");
+                } else if (xhr.status === 0) {
+                    // Network error
+                    $('#listData').html('<div class="alert alert-warning m-3"><i class="bx bx-wifi-off me-2"></i>Network error. Please check your connection.</div>');
+                    myNotifyBox("Network error. Please check your connection and try again.", 5000, "warning");
+                } else if (status === 'timeout') {
+                    // Timeout error
+                    $('#listData').html('<div class="alert alert-warning m-3"><i class="bx bx-time me-2"></i>Request timed out. Please try again.</div>');
+                    myNotifyBox("Request timed out. Please try again.", 5000, "warning");
+                } else {
+                    // Server errors and other issues
+                    let message = errorInfo.message || "Error loading data. Please refresh the page.";
+                    let alertHtml = `<div class="alert alert-danger m-3">
+                        <i class="bx bx-error me-2"></i>
+                        <strong>${errorInfo.title}</strong><br/>
+                        ${message}`;
+                    
+                    if (errorInfo.traceId) {
+                        alertHtml += `<br/><small class="text-muted">Trace ID: ${errorInfo.traceId}</small>`;
+                        message += ` (Trace ID: ${errorInfo.traceId})`;
+                    }
+                    
+                    alertHtml += `</div>`;
+                    $('#listData').html(alertHtml);
+                    console.error('Pagination error:', errorInfo);
+                    myNotifyBox(message, 8000, "danger");
+                }
+            });
+        }
+
+        //Refresh Roles List
+        function RefreshRoles() {
+            $.ajax({
+                url: '/Identity/ListRoles',
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                timeout: 15000,
+                success: function (result) {
+                    $('#rolesList').html(result);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error refreshing roles:', error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+﻿@model UserUpdateDTO
+
+<form asp-action="EditUser" asp-controller="Identity" method="post" autocomplete="off" data-ajax="true"
+    data-ajax-method="POST" data-ajax-complete="Success">
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Edit User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <input type="hidden"  asp-for="UserId" />
+        <div class="mb-3">
+            <div class="mb-2">
+                <label class="form-label" asp-for="UserName"></label>
+                <input asp-for="UserName" type="text" class="form-control" required placeholder="Ex.​ Dara.." />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+
+            </div>
+            <div class="mb-2">
+                <label class="form-label" asp-for="Email"></label>
+                <input asp-for="Email" type="email" class="form-control" required placeholder="Ex.​ user@example.com" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+
+            </div>
+            <div class="mb-2">
+                <div class="form-check">
+                    <input class="form-check-input" asp-for="Status" type="checkbox">
+                    <label class="form-check-label" asp-for="Status">
+                        Is Active
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Close</button>
+        <button type="submit" class="btn btn-primary"><i class="bx bx-save me-1"></i>Save</button>
+    </div>
+</form>

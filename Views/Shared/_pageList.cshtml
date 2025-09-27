@@ -1,0 +1,27 @@
+﻿@model hongWenAPP.Models.PaginationModel
+<div class="d-flex justify-content-end align-items-center">
+    <span class="me-2"><b>Total:</b> @Model.TotalItem</span>
+@*Pagination*@
+<nav aria-label="...">
+    <ul class="pagination mt-3 justify-content-end">
+        <li class="page-item @Model.HidePreviousePage">
+                <a data-page="@Model.PreviousePageIndex" data-partial="@Model.PartialAction" class="page-link" asp-action="@Model.PartialAction" asp-route-page="@Model.PreviousePageIndex"><i class="tf-icon bx bx-left-arrow-alt"></i></a>
+        </li>
+
+        @* Can Select IndexPage*@
+        @for (var j = 1; j <= Model.TotalPages; j++)
+        {
+            var active = j == Model.PageIndex ? "active" : "";
+
+            <li class="page-item @active" aria-current="page">
+                    <a data-page="@j" data-partial="@Model.PartialAction" class="page-link" asp-action="@Model.PartialAction" asp-route-page="@j">@j</a>
+            </li>
+        }
+
+        <li class="page-item  @Model.HideNextPage">
+                <a data-page="@Model.NextPageIndex" data-partial="@Model.PartialAction" class="page-link" asp-action="@Model.PartialAction" asp-route-page="@Model.NextPageIndex"><i class="tf-icon bx bx-right-arrow-alt"></i></a>
+        </li>
+    </ul>
+</nav>
+
+</div>

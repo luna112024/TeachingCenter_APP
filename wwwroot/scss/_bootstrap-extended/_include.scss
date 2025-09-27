@@ -1,0 +1,13 @@
+//Functions
+@import '../_bootstrap/functions'; // Bootstrap core functions
+@import 'functions'; // Bootstrap extended functions
+
+//Variables
+@import '../_custom-variables/bootstrap-extended'; // Bootstrap extended custom variable (for customization purpose)
+@import 'variables'; // Bootstrap extended variable
+@import '../_bootstrap/variables'; // Bootstrap core variable
+@import '../_bootstrap/maps'; // Bootstrap core variable
+
+//Mixins
+@import '../_bootstrap/mixins'; // Bootstrap core mixins
+@import 'mixins'; // Bootstrap extended mixins

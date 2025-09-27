@@ -1,0 +1,1060 @@
+@model hongWenAPP.Models.RolesModel.DTOs.ManageUserRoleDTO
+@using hongWenAPP.Models.RolesModel.DTOs
+
+<form asp-action="AssignUserRoles" asp-controller="Identity" method="post" autocomplete="off">
+    <div class="modal-header">
+        <span class="modal-title fs-md-5 fw-bold" id="staticBackdropLabel">
+            Assign User Roles
+        </span>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <!-- User Information -->
+        <div class="row mb-3">
+            <div class="col-12">
+                @* <div class="alert alert-info">
+                    <div class="d-flex align-items-center">
+                        <i class="bx bx-user-circle me-2"></i>
+                        <div>
+                            <strong>User:</strong> @Model.UserName <br>
+                            <small class="text-muted">@Model.Email</small>
+                        </div>
+                    </div>
+                </div> *@
+                <div class="d-flex justify-content-between">
+                    <label for="username" class="form-label">Username</label>
+                </div>
+                <div class="input-group input-group-merge">
+                    <span class="input-group-text input-group-sm"><i class="bx bx-user"></i></span>
+                    <input type="text" class="form-control form-control-sm bg-white ps-2" value="@Model.UserName" disabled />
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions Toggle -->
+        <div class="mb-3">
+            <button type="button" class="btn custom-outline-info btn-sm" onclick="toggleRoleInstructions()" id="roleInstructionsToggle">
+                <i class="bx bx-help-circle me-1"></i>
+                <span id="roleInstructionsToggleText">Show Instructions</span>
+                <i class="bx bx-chevron-down ms-1" id="roleInstructionsChevron"></i>
+            </button>
+        </div>
+
+        <!-- Instructions (Hidden by default) -->
+        <div class="alert alert-info" id="roleInstructionsPanel" style="display: none;">
+            <div class="d-flex align-items-start">
+                <i class="bx bx-info-circle me-2 mt-1"></i>
+                <div class="flex-grow-1">
+                    <strong>How to assign roles to this user:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li><strong>Multi-select:</strong> Use <kbd>Ctrl+Click</kbd> or <kbd>Cmd+Click</kbd> to select multiple roles</li>
+                        <li><strong>Drag & Drop:</strong> Drag selected roles between panels to assign/unassign</li>
+                        <li><strong>Bulk actions:</strong> Use "Select All", "Unselect", "Assign", and "Remove" buttons</li>
+                        <li><strong>Search:</strong> Use the search boxes to filter roles by name or description</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search boxes -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <input type="text" class="form-control form-control-sm" id="searchAvailableRoles" placeholder="Search available roles..." onkeyup="filterRoles('available')">
+            </div>
+            <div class="col-md-6">
+                <input type="text" class="form-control form-control-sm" id="searchAssignedRoles" placeholder="Search assigned roles..." onkeyup="filterRoles('assigned')">
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Available Roles -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div class="lh-sm">
+                            <h6 class="mb-0">Available Roles</h6>
+                            <small class="text-muted">Drag to assign</small>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="selectAllAvailableRoles()">
+                                <i class="bx bx-check-square"></i> Select All
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearSelectionAvailableRoles()">
+                                <i class="bx bx-square"></i> Unselect
+                            </button>
+                            <button type="button" class="btn btn-sm btn-success" onclick="moveSelectedRolesToAssigned()">
+                                <i class="bx bx-right-arrow-alt"></i> Assign
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="role-container available-roles"
+                             id="availableRolesList"
+                             ondrop="dropRole(event, 'available')"
+                             ondragover="allowDropRole(event)"
+                             style="min-height: 300px; max-height: 400px; overflow-y: auto; border: 2px dashed #e9ecef; border-radius: 8px; padding: 10px;">
+                            @if (Model.AvailableRoles?.Any() == true)
+                            {
+                                @foreach (var role in Model.AvailableRoles)
+                                {
+                                    <div class="role-item lh-sm"
+                                         data-role-id="@role.RoleId"
+                                         draggable="true"
+                                         ondragstart="dragRole(event)"
+                                         ondblclick="moveRoleToAssigned(@role.RoleId)"
+                                         onclick="toggleRoleSelection(this, event)">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bx bx-user-plus me-2 text-primary"></i>
+                                            <div>
+                                                <div class="fw-medium">@role.RoleName</div>
+                                                @if (!string.IsNullOrEmpty(role.Description))
+                                                {
+                                                    <small class="text-muted">@role.Description</small>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-center text-muted py-4 empty-state-message">
+                                    <i class="bx bx-check-circle display-4"></i>
+                                    <p class="mt-2">All roles are assigned</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-footer  bg-white d-flex justify-content-between align-items-center text-muted small py-2 px-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="fw-semibold">Available:</span>
+                            <span id="availableRoleCount" class="badge bg-label-info px-2 py-1" style="font-size: 0.75rem;">
+                                0
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assigned Roles -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div class="lh-sm">
+                            <h6 class="mb-0">Assigned Roles</h6>
+                            <small class="text-muted">Currently assigned to user</small>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="selectAllAssignedRoles()">
+                                <i class="bx bx-check-square"></i>Select All
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearSelectionAssignedRoles()">
+                                <i class="bx bx-square"></i> Unselect
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="moveSelectedRolesToAvailable()">
+                                <i class="bx bx-left-arrow-alt"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="role-container assigned-roles lh-sm"
+                             id="assignedRolesList"
+                             ondrop="dropRole(event, 'assigned')"
+                             ondragover="allowDropRole(event)"
+                             style="min-height: 300px; max-height: 400px; overflow-y: auto; border: 2px dashed #e9ecef; border-radius: 8px; padding: 10px;">
+                            @if (Model.AssignedRoles?.Any() == true)
+                            {
+                                @foreach (var role in Model.AssignedRoles)
+                                {
+                                    <div class="role-item lh-sm"
+                                         data-role-id="@role.RoleId"
+                                         draggable="true"
+                                         ondragstart="dragRole(event)"
+                                         ondblclick="moveRoleToAvailable(@role.RoleId)"
+                                         onclick="toggleRoleSelection(this, event)">
+                                        <div class="d-flex align-items-center">
+                                            <i class="bx bx-user-check me-2 text-success"></i>
+                                            <div>
+                                                <div class="fw-medium">@role.RoleName</div>
+                                                @if (!string.IsNullOrEmpty(role.Description))
+                                                {
+                                                    <small class="text-muted">@role.Description</small>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-center text-muted py-4 empty-state-message">
+                                    <i class="bx bx-user-x display-4"></i>
+                                    <p class="mt-2">No roles assigned</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-footer  bg-white d-flex justify-content-between align-items-center text-muted small py-2 px-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="fw-semibold">Assigned:</span>
+                            <span id="assignedRoleCount" class="badge bg-label-success px-2 py-1" style="font-size: 0.75rem;">
+                                0
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        @*  <div class="row mt-3">
+            <div class="col-12">
+                <div class="alert alert-light">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <strong>Available:</strong> <span id="availableRoleCount" class="badge bg-primary">0</span>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Assigned:</strong> <span id="assignedRoleCount" class="badge bg-success">0</span>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Total:</strong> <span id="totalRoleCount" class="badge bg-secondary">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> *@
+
+        <!-- Hidden inputs for form submission -->
+        <input type="hidden" asp-for="UserId" id="selectedUserId" />
+        <div id="roleInputs"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bx bx-x-circle me-1"></i>Close
+        </button>
+        <button type="submit" class="btn btn-secondary" id="saveRoleButton" disabled>
+            <i class="bx bx-save me-1"></i>No Changes
+        </button>
+    </div>
+</form>
+
+<style>
+    .modal-body {
+        overflow-y: auto;
+        max-height: calc(100vh - 200px);
+        padding-right: 15px;
+    }
+
+    .bg-label-success {
+        background-color: #e8fadf !important;
+        color: #71dd37 !important
+    }
+
+    .bg-label-info {
+        background-color: #d7f5fc !important;
+        color: #03c3ec !important
+    }
+
+    .custom-outline-info {
+        font-size: 0.775rem !important;
+        color: #0dcaf0;
+        background-color: transparent;
+        border: 1px solid #0dcaf0;
+        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+    }
+
+        .custom-outline-info:hover,
+        .custom-outline-info:focus {
+            color: white;
+            background-color: #0dcaf0;
+            border-color: #0dcaf0;
+            text-decoration: none;
+            outline: none;
+        }
+
+        .custom-outline-info:active {
+            background-color: #0bb7d8;
+            border-color: #0bb7d8;
+            color: white;
+        }
+
+    .role-item {
+        background: #fff;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        padding: 12px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+    }
+
+        .role-item:hover {
+            border-color: #007bff;
+            box-shadow: 0 2px 4px rgba(0,123,255,0.1);
+            transform: translateY(-1px);
+        }
+
+        .role-item.selected {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            box-shadow: 0 0 0 2px rgba(33,150,243,0.2);
+        }
+
+        .role-item.dragging {
+            transition: none !important;
+            transform: none !important;
+            animation: none !important;
+            opacity: 0.8;
+            cursor: grabbing !important;
+            filter: none !important;
+        }
+
+    .role-container {
+        transition: all 0.3s ease;
+    }
+
+    .role-item.icon-changing {
+        transform: none !important;
+        transition: none !important;
+    }
+
+    .role-container.drag-over {
+        border-color: #007bff !important;
+        background-color: #f8f9ff;
+        border-style: solid !important;
+    }
+
+    .role-container:empty::after {
+        content: "Drop roles here";
+        display: block;
+        text-align: center;
+        color: #6c757d;
+        font-style: italic;
+        padding: 20px;
+    }
+
+    .role-item .fw-medium {
+        font-size: 14px;
+        color: #2c3e50;
+    }
+
+    .role-item small {
+        font-size: 12px;
+        line-height: 1.3;
+    }
+
+    .role-item:hover .fw-medium {
+        color: #007bff;
+    }
+
+    .btn-sm {
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .alert-info {
+        background-color: #e3f2fd;
+        border-color: #bbdefb;
+        color: #1976d2;
+    }
+
+    /* #roleInstructionsToggle {
+        border-radius: 20px;
+        font-size: 13px;
+        padding: 6px 15px;
+        transition: all 0.2s ease;
+        border: 1px solid #17a2b8;
+        color: #17a2b8;
+    }
+
+    #roleInstructionsToggle:hover {
+        background-color: #17a2b8;
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(23,162,184,0.2);
+    }
+
+    #roleInstructionsPanel {
+        border-left: 4px solid #17a2b8;
+        background-color: #e8f4f8;
+        border-color: #bee5eb;
+    }
+
+    #roleInstructionsPanel strong {
+        color: #0c5460;
+    }
+
+    #roleInstructionsPanel kbd {
+        background-color: #17a2b8;
+        color: white;
+        border: none;
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: 3px;
+    }
+     */
+    /* Enhanced User Icon Styles */
+    .role-item i {
+        font-size: 18px !important;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+        /* Available roles - user-plus icon */
+        .role-item i.bx-user-plus {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+        }
+
+        /* Assigned roles - user-check icon */
+        .role-item i.bx-user-check {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+        }
+
+    /* Hover effects for user icons */
+    .role-item:hover i.bx-user-plus {
+        transform: scale(1.1) rotate(-5deg);
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+        background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+    }
+
+    .role-item:hover i.bx-user-check {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        background: linear-gradient(135deg, #1e7e34 0%, #155724 100%);
+    }
+
+    /* Selected state for user icons */
+    .role-item.selected i.bx-user-plus {
+        transform: scale(1.15);
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3), 0 4px 15px rgba(0, 123, 255, 0.4);
+        animation: pulse-blue 1.5s infinite;
+    }
+
+    .role-item.selected i.bx-user-check {
+        transform: scale(1.15);
+        box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3), 0 4px 15px rgba(40, 167, 69, 0.4);
+        animation: pulse-green 1.5s infinite;
+    }
+
+    /* Dragging state for user icons */
+    .role-item.dragging i {
+        transform: none !important;
+        animation: none !important;
+        filter: none !important;
+        opacity: 1;
+    }
+
+    /* Prevent browser from showing "not-allowed" cursor */
+    body.drag-active {
+        cursor: default !important;
+    }
+
+    /* Pulse animations */
+    @@keyframes pulse-blue {
+        0%, 100% {
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3), 0 4px 15px rgba(0, 123, 255, 0.4);
+        }
+
+        50% {
+            box-shadow: 0 0 0 6px rgba(0, 123, 255, 0.2), 0 6px 20px rgba(0, 123, 255, 0.5);
+        }
+    }
+
+    @@keyframes pulse-green {
+        0%, 100% {
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3), 0 4px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        50% {
+            box-shadow: 0 0 0 6px rgba(40, 167, 69, 0.2), 0 6px 20px rgba(40, 167, 69, 0.5);
+        }
+    }
+
+    /* User transformation animation when moving between panels */
+    @@keyframes user-to-assigned {
+        0% {
+            transform: scale(1) rotate(0deg);
+        }
+
+        50% {
+            transform: scale(1.3) rotate(-10deg);
+        }
+
+        100% {
+            transform: scale(1) rotate(0deg);
+        }
+    }
+
+    @@keyframes assigned-to-user {
+        0% {
+            transform: scale(1) rotate(0deg);
+        }
+
+        50% {
+            transform: scale(1.3) rotate(10deg);
+        }
+
+        100% {
+            transform: scale(1) rotate(0deg);
+        }
+    }
+
+    /* Apply animations when icons change */
+    .role-item i.icon-changing {
+        animation: user-to-assigned 0.6s ease-in-out;
+    }
+
+    /* Enhanced role item styling to complement the icons */
+    .role-item {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 8px 15px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        user-select: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .role-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .role-item:hover::before {
+            left: 100%;
+        }
+
+        .role-item:hover {
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .role-item.selected {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-color: #2196f3;
+            transform: translateY(-1px);
+        }
+
+        /* Text styling improvements */
+        .role-item .fw-medium {
+            font-size: 14px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .role-item small {
+            font-size: 12px;
+            line-height: 1.4;
+            color: #6c757d;
+        }
+</style>
+
+<script>
+    (function() {
+        // Scoped variables for role assignment to avoid conflicts with permission management
+        let draggedRoleItems = [];
+        let originalRoleIds = [];
+        let hasRoleChanges = false;
+
+        function updateRoleLists(availableRoles, assignedRoles) {
+            const availableContainer = document.getElementById('availableRolesList');
+            const assignedContainer = document.getElementById('assignedRolesList');
+
+            // Update available roles
+            availableContainer.innerHTML = availableRoles.map(role => `
+                <div class="role-item"
+                     data-role-id="${role.roleId}"
+                     draggable="true"
+                     ondragstart="dragRole(event)"
+                     ondblclick="moveRoleToAssigned(${role.roleId})"
+                     onclick="toggleRoleSelection(this, event)">
+                    <div class="d-flex align-items-center">
+                        <i class="bx bx-user-plus me-2 text-primary"></i>
+                        <div>
+                            <div class="fw-medium">${role.roleName}</div>
+                            ${role.description ? `<small class="text-muted">${role.description}</small>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Update assigned roles
+            assignedContainer.innerHTML = assignedRoles.map(role => `
+                <div class="role-item"
+                     data-role-id="${role.roleId}"
+                     draggable="true"
+                     ondragstart="dragRole(event)"
+                     ondblclick="moveRoleToAvailable(${role.roleId})"
+                     onclick="toggleRoleSelection(this, event)">
+                    <div class="d-flex align-items-center">
+                        <i class="bx bx-user-check me-2 text-success"></i>
+                        <div>
+                            <div class="fw-medium">${role.roleName}</div>
+                            ${role.description ? `<small class="text-muted">${role.description}</small>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            updateRoleHiddenInputs();
+        }
+            function arraysEqualRole(a, b) {
+            if (a.length !== b.length) return false;
+            for (let i = 0; i < a.length; i++) {
+                if (a[i] !== b[i]) return false;
+            }
+            return true;
+        }
+
+        function updateRoleSaveButtonState() {
+            const currentRoleIds = Array.from(document.querySelectorAll('#assignedRolesList .role-item'))
+                .map(item => item.getAttribute('data-role-id'))
+                .filter(id => !!id)
+                .sort(); // Sort string GUIDs
+
+            const sortedOriginal = [...originalRoleIds].sort();
+
+            const rolesChanged = !arraysEqualRole(sortedOriginal, currentRoleIds);
+
+            const saveButton = document.getElementById('saveRoleButton');
+
+            // Disable save if no roles assigned
+            if (currentRoleIds.length === 0) {
+                saveButton.disabled = true;
+                saveButton.innerHTML = '<i class="bx bx-save me-1"></i>No Changes';
+                saveButton.classList.remove('btn-primary');
+                saveButton.classList.add('btn-secondary');
+                hasRoleChanges = false;
+                return;
+            }
+
+            if (rolesChanged) {
+                saveButton.disabled = false;
+                saveButton.innerHTML = '<i class="bx bx-save me-1"></i>Save Changes';
+                saveButton.classList.remove('btn-secondary');
+                saveButton.classList.add('btn-primary');
+                hasRoleChanges = true;
+            } else {
+                saveButton.disabled = true;
+                saveButton.innerHTML = '<i class="bx bx-save me-1"></i>No Changes';
+                saveButton.classList.remove('btn-primary');
+                saveButton.classList.add('btn-secondary');
+                hasRoleChanges = false;
+            }
+        }
+
+
+        function arraysEqualRole(a, b) {
+            if (a.length !== b.length) return false;
+            for (let i = 0; i < a.length; i++) {
+                if (a[i] !== b[i]) return false;
+            }
+            return true;
+        }
+
+        function toggleRoleSelection(element, event) {
+            if (event.ctrlKey || event.metaKey) {
+                element.classList.toggle('selected');
+            } else {
+                document.querySelectorAll('.role-item.selected').forEach(item => {
+                    item.classList.remove('selected');
+                });
+                element.classList.add('selected');
+            }
+        }
+
+        function selectAllAvailableRoles() {
+            document.querySelectorAll('#availableRolesList .role-item').forEach(item => {
+                item.classList.add('selected');
+            });
+        }
+
+        function clearSelectionAvailableRoles() {
+            document.querySelectorAll('#availableRolesList .role-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+        }
+
+        function selectAllAssignedRoles() {
+            document.querySelectorAll('#assignedRolesList .role-item').forEach(item => {
+                item.classList.add('selected');
+            });
+        }
+
+        function clearSelectionAssignedRoles() {
+            document.querySelectorAll('#assignedRolesList .role-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+        }
+
+        function moveSelectedRolesToAssigned() {
+            const selectedItems = document.querySelectorAll('#availableRolesList .role-item.selected');
+            const assignedContainer = document.getElementById('assignedRolesList');
+
+            if (selectedItems.length === 0) {
+                return;
+            }
+
+            selectedItems.forEach(item => {
+                item.classList.remove('selected');
+                const icon = item.querySelector('i');
+
+                icon.classList.add('icon-changing');
+
+                setTimeout(() => {
+                    icon.className = 'bx bx-user-check me-2 text-success';
+                    assignedContainer.appendChild(item);
+
+                    setTimeout(() => {
+                        icon.classList.remove('icon-changing');
+                    }, 600);
+                }, 100);
+            });
+
+            setTimeout(() => {
+                updateRoleHiddenInputs();
+                updateRoleSaveButtonState();
+            }, 300);
+        }
+
+        function moveSelectedRolesToAvailable() {
+            const selectedItems = document.querySelectorAll('#assignedRolesList .role-item.selected');
+            const availableContainer = document.getElementById('availableRolesList');
+
+            if (selectedItems.length === 0) {
+                return;
+            }
+
+            selectedItems.forEach(item => {
+                item.classList.remove('selected');
+                const icon = item.querySelector('i');
+
+                icon.classList.add('icon-changing');
+
+                setTimeout(() => {
+                    icon.className = 'bx bx-user-plus me-2 text-primary';
+                    availableContainer.appendChild(item);
+
+                    setTimeout(() => {
+                        icon.classList.remove('icon-changing');
+                    }, 600);
+                }, 100);
+            });
+
+            setTimeout(() => {
+                updateRoleHiddenInputs();
+                updateRoleSaveButtonState();
+            }, 300);
+        }
+
+        function dragRole(event) {
+            const selectedItems = document.querySelectorAll('.role-item.selected');
+            if (selectedItems.length === 0) {
+                const targetItem = event.target.closest('.role-item');
+                if (targetItem) {
+                    targetItem.classList.add('selected');
+                }
+            }
+
+            draggedRoleItems = Array.from(document.querySelectorAll('.role-item.selected'));
+            draggedRoleItems.forEach(item => item.classList.add('dragging'));
+
+            event.dataTransfer.setData("text/plain", ""); // necessary for Firefox
+            document.body.classList.add('drag-active'); // prevent 'not-allowed' cursor
+        }
+
+
+        function allowDropRole(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('drag-over');
+        }
+
+        function dropRole(event, targetType) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('drag-over');
+
+            const targetContainer = targetType === 'available' ?
+                document.getElementById('availableRolesList') :
+                document.getElementById('assignedRolesList');
+
+            draggedRoleItems.forEach(item => {
+                item.classList.remove('dragging', 'selected');
+
+                const icon = item.querySelector('i');
+                if (targetType === 'available') {
+                    icon.className = 'bx bx-user-plus me-2 text-primary';
+                } else {
+                    icon.className = 'bx bx-user-check me-2 text-success';
+                }
+
+                targetContainer.appendChild(item);
+            });
+
+            draggedRoleItems = [];
+
+            setTimeout(() => {
+                updateRoleHiddenInputs();
+                updateRoleSaveButtonState();
+            }, 100);
+
+            document.querySelectorAll('.role-container').forEach(container => {
+                container.classList.remove('drag-over');
+            });
+        }
+
+        function moveRoleToAssigned(roleId) {
+            const item = document.querySelector(`[data-role-id="${roleId}"]`);
+            if (item && item.closest('#availableRolesList')) {
+                const icon = item.querySelector('i');
+                icon.className = 'bx bx-user-check me-2 text-success';
+                document.getElementById('assignedRolesList').appendChild(item);
+
+                setTimeout(() => {
+                    updateRoleHiddenInputs();
+                    updateRoleEmptyStates();
+                    updateRoleSaveButtonState();
+                }, 50);
+            }
+        }
+
+        function moveRoleToAvailable(roleId) {
+            const item = document.querySelector(`[data-role-id="${roleId}"]`);
+            if (item && item.closest('#assignedRolesList')) {
+                const icon = item.querySelector('i');
+                icon.className = 'bx bx-user-plus me-2 text-primary';
+                document.getElementById('availableRolesList').appendChild(item);
+
+                setTimeout(() => {
+                    updateRoleHiddenInputs();
+                    updateRoleEmptyStates();
+                    updateRoleSaveButtonState();
+                }, 50);
+            }
+        }
+
+        function updateRoleHiddenInputs() {
+            const assignedRoles = document.querySelectorAll('#assignedRolesList .role-item');
+            const availableRoles = document.querySelectorAll('#availableRolesList .role-item');
+            const roleInputsContainer = document.getElementById('roleInputs');
+
+            if (roleInputsContainer) {
+                roleInputsContainer.innerHTML = '';
+
+                assignedRoles.forEach((item, index) => {
+                    const roleId = item.getAttribute('data-role-id');
+                    if (roleId) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = `RoleIds[${index}]`;
+                        input.value = roleId;
+                        roleInputsContainer.appendChild(input);
+                    }
+                });
+            }
+
+            updateRoleCounts();
+            updateRoleEmptyStates();
+        }
+
+        function updateRoleCounts() {
+            const assignedRoles = document.querySelectorAll('#assignedRolesList .role-item');
+            const availableRoles = document.querySelectorAll('#availableRolesList .role-item');
+
+            const availableCount = availableRoles.length;
+            const assignedCount = assignedRoles.length;
+            const totalCount = availableCount + assignedCount;
+
+            const availableCountElement = document.getElementById('availableRoleCount');
+            const assignedCountElement = document.getElementById('assignedRoleCount');
+            const totalCountElement = document.getElementById('totalRoleCount');
+
+            if (availableCountElement) availableCountElement.textContent = availableCount;
+            if (assignedCountElement) assignedCountElement.textContent = assignedCount;
+            if (totalCountElement) totalCountElement.textContent = totalCount;
+        }
+
+        function updateRoleEmptyStates() {
+            const availableContainer = document.getElementById('availableRolesList');
+            const assignedContainer = document.getElementById('assignedRolesList');
+
+            if (!availableContainer || !assignedContainer) return;
+
+            const availableRoles = availableContainer.querySelectorAll('.role-item');
+            const assignedRoles = assignedContainer.querySelectorAll('.role-item');
+
+            const existingEmptyStates = document.querySelectorAll('.empty-state-message');
+            existingEmptyStates.forEach(state => state.remove());
+
+            if (availableRoles.length === 0) {
+                const emptyState = document.createElement('div');
+                emptyState.className = 'text-center text-muted py-4 empty-state-message';
+                emptyState.innerHTML = '<i class="bx bx-check-circle display-4"></i><p class="mt-2">All roles are assigned</p>';
+                availableContainer.appendChild(emptyState);
+            }
+
+            if (assignedRoles.length === 0) {
+                const emptyState = document.createElement('div');
+                emptyState.className = 'text-center text-muted py-4 empty-state-message';
+                emptyState.innerHTML = '<i class="bx bx-user-x display-4"></i><p class="mt-2">No roles assigned</p>';
+                assignedContainer.appendChild(emptyState);
+            }
+        }
+
+        function toggleRoleInstructions() {
+            const panel = document.getElementById('roleInstructionsPanel');
+            const toggleText = document.getElementById('roleInstructionsToggleText');
+            const chevron = document.getElementById('roleInstructionsChevron');
+
+            if (!panel || !toggleText || !chevron) return;
+
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                toggleText.textContent = 'Hide Instructions';
+                chevron.className = 'bx bx-chevron-up ms-1';
+                     panel.style.fontSize = '0.9rem';
+
+                panel.style.opacity = '0';
+                panel.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    panel.style.transition = 'all 0.3s ease';
+                    panel.style.opacity = '1';
+                    panel.style.transform = 'translateY(0)';
+                }, 10);
+            } else {
+                panel.style.transition = 'all 0.3s ease';
+                panel.style.opacity = '0';
+                panel.style.transform = 'translateY(-10px)';
+
+                setTimeout(() => {
+                    panel.style.display = 'none';
+                    toggleText.textContent = 'Show Instructions';
+                    chevron.className = 'bx bx-chevron-down ms-1';
+                     panel.style.fontSize = '';
+                }, 300);
+            }
+        }
+
+        function filterRoles(type) {
+            const searchInput = type === 'available' ?
+                document.getElementById('searchAvailableRoles') :
+                document.getElementById('searchAssignedRoles');
+            const container = type === 'available' ?
+                document.getElementById('availableRolesList') :
+                document.getElementById('assignedRolesList');
+
+            if (!searchInput || !container) return;
+
+            const searchTerm = searchInput.value.toLowerCase();
+            const roleItems = container.querySelectorAll('.role-item');
+
+            roleItems.forEach(item => {
+                const roleName = item.querySelector('.fw-medium')?.textContent.toLowerCase() || '';
+                const description = item.querySelector('small')?.textContent.toLowerCase() || '';
+
+                if (roleName.includes(searchTerm) || description.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Remove drag-over class when dragging leaves the container
+        document.addEventListener('dragleave', function(event) {
+            if (event.target.classList.contains('role-container')) {
+                event.target.classList.remove('drag-over');
+            }
+        });
+        function initializeRolesModal() {
+            updateRoleHiddenInputs();
+            updateRoleCounts();
+            const initialAssignedRoles = @Html.Raw(Json.Serialize(Model.AssignedRoles));
+            if (originalRoleIds.length === 0) {
+                originalRoleIds = initialAssignedRoles
+                .map(r => r.roleId)
+                .filter(id => !!id)
+                .sort();
+            }
+
+            updateRoleSaveButtonState();
+        }
+        // Make functions globally accessible for inline event handlers
+        window.toggleRoleInstructions = toggleRoleInstructions;
+        window.selectAllAvailableRoles = selectAllAvailableRoles;
+        window.clearSelectionAvailableRoles = clearSelectionAvailableRoles;
+        window.selectAllAssignedRoles = selectAllAssignedRoles;
+        window.clearSelectionAssignedRoles = clearSelectionAssignedRoles;
+        window.moveSelectedRolesToAssigned = moveSelectedRolesToAssigned;
+        window.moveSelectedRolesToAvailable = moveSelectedRolesToAvailable;
+        window.dragRole = dragRole;
+        window.allowDropRole = allowDropRole;
+        window.dropRole = dropRole;
+        window.moveRoleToAssigned = moveRoleToAssigned;
+        window.moveRoleToAvailable = moveRoleToAvailable;
+        window.toggleRoleSelection = toggleRoleSelection;
+        window.filterRoles = filterRoles;
+        window.initializeRolesModal = initializeRolesModal;
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+               initializeRolesModal();
+        });
+
+        // Initialize immediately if DOM is already loaded
+        if (document.readyState === 'loading') {
+            // DOM is still loading
+        } else {
+            // DOM is already loaded
+               initializeRolesModal();
+        }
+        document.addEventListener('dragover', function (event) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'move';
+        });
+
+        document.addEventListener('drop', function (event) {
+            event.preventDefault();
+        });
+        // Fix drag-end cleanup
+        document.addEventListener('dragend', function () {
+            draggedRoleItems.forEach(item => item.classList.remove('dragging'));
+            document.body.classList.remove('drag-active');
+        });
+        document.querySelectorAll('.role-container').forEach(container => {
+          container.addEventListener('dragover', allowDropRole);
+          container.addEventListener('drop', event => {
+            const targetType = container.id.includes('assigned') ? 'assigned' : 'available';
+            dropRole(event, targetType);
+          });
+        });
+
+    })();
+</script> 

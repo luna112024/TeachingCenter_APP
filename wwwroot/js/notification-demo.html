@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Notification System Demo</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #f8fafc;
+        }
+        
+        .demo-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .demo-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+        
+        .demo-button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            margin: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .demo-button:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+        
+        .demo-button.success { background: #10b981; }
+        .demo-button.success:hover { background: #059669; }
+        
+        .demo-button.warning { background: #f59e0b; }
+        .demo-button.warning:hover { background: #d97706; }
+        
+        .demo-button.error { background: #ef4444; }
+        .demo-button.error:hover { background: #dc2626; }
+        
+        .demo-button.info { background: #06b6d4; }
+        .demo-button.info:hover { background: #0891b2; }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+        
+        .code-example {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-section">
+        <h1 class="demo-title">🔔 Modern Notification System Demo</h1>
+        <p>Click the buttons below to test the new modern notification system with enhanced UX.</p>
+    </div>
+
+    <div class="demo-section">
+        <h2 class="demo-title">Basic Notifications</h2>
+        <p>Standard notification types with icons and animations:</p>
+        
+        <button class="demo-button success" onclick="myNotifyBox('Operation completed successfully!', 5000, 'success')">
+            ✓ Success
+        </button>
+        
+        <button class="demo-button error" onclick="myNotifyBox('An error occurred while processing your request.', 5000, 'error')">
+            ✕ Error
+        </button>
+        
+        <button class="demo-button warning" onclick="myNotifyBox('Please check your input and try again.', 5000, 'warning')">
+            ⚠ Warning
+        </button>
+        
+        <button class="demo-button info" onclick="myNotifyBox('Your export is being prepared...', 5000, 'info')">
+            ⓘ Info
+        </button>
+        
+        <button class="demo-button" onclick="myNotifyBox('System notification received.', 5000, 'primary')">
+            ● Primary
+        </button>
+
+        <div class="code-example">
+// Basic usage (same as before - backward compatible)
+myNotifyBox('Success message!', 5000, 'success');
+myNotifyBox('Error message!', 5000, 'error');
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2 class="demo-title">Enhanced API</h2>
+        <p>New helper functions for better developer experience:</p>
+        
+        <button class="demo-button success" onclick="showSuccess('Data saved successfully!')">
+            Quick Success
+        </button>
+        
+        <button class="demo-button error" onclick="showError('Connection failed!')">
+            Quick Error
+        </button>
+        
+        <button class="demo-button warning" onclick="showWarning('Session will expire soon')">
+            Quick Warning
+        </button>
+        
+        <button class="demo-button info" onclick="showInfo('New update available')">
+            Quick Info
+        </button>
+
+        <div class="code-example">
+// New enhanced API
+showSuccess('Data saved successfully!');
+showError('Connection failed!');
+showWarning('Session will expire soon');
+showInfo('New update available');
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2 class="demo-title">Advanced Features</h2>
+        <p>Custom durations, persistent notifications, and bulk actions:</p>
+        
+        <button class="demo-button" onclick="myNotifyBox('This notification lasts 10 seconds', 10000, 'info')">
+            Long Duration (10s)
+        </button>
+        
+        <button class="demo-button" onclick="myNotifyBox('This notification stays until closed', 0, 'warning')">
+            Persistent (Manual Close)
+        </button>
+        
+        <button class="demo-button" onclick="showMultiple()">
+            Show Multiple
+        </button>
+        
+        <button class="demo-button error" onclick="modernNotify.clear()">
+            Clear All
+        </button>
+
+        <div class="code-example">
+// Advanced usage
+myNotifyBox('Long message', 10000, 'info');  // 10 seconds
+myNotifyBox('Persistent', 0, 'warning');     // Until closed
+modernNotify.clear();                        // Clear all
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2 class="demo-title">Export Integration</h2>
+        <p>Simulated export notifications (same as used in export library):</p>
+        
+        <button class="demo-button info" onclick="simulateExport()">
+            Simulate Export Process
+        </button>
+
+        <div class="code-example">
+// Export simulation
+function simulateExport() {
+    showInfo('Preparing your export...', 2000);
+    setTimeout(() => showSuccess('Export completed successfully!'), 2500);
+}
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2 class="demo-title">Key Features</h2>
+        <ul>
+            <li>✨ <strong>Modern Design</strong> - Gradient backgrounds, smooth animations, professional styling</li>
+            <li>🎯 <strong>Better UX</strong> - Progress bars, hover effects, responsive design</li>
+            <li>📱 <strong>Mobile Friendly</strong> - Auto-adjusts for mobile screens</li>
+            <li>🔄 <strong>Backward Compatible</strong> - Existing myNotifyBox calls work unchanged</li>
+            <li>⚡ <strong>Performance</strong> - Efficient animations, automatic cleanup</li>
+            <li>🎨 <strong>Customizable</strong> - Easy to extend and modify</li>
+            <li>♿ <strong>Accessible</strong> - Proper ARIA labels and keyboard support</li>
+            <li>🌙 <strong>Dark Mode</strong> - Automatic dark theme support</li>
+        </ul>
+    </div>
+
+    <script src="myNotifybox.js"></script>
+    <script>
+        function showMultiple() {
+            showSuccess('First notification');
+            setTimeout(() => showInfo('Second notification'), 500);
+            setTimeout(() => showWarning('Third notification'), 1000);
+            setTimeout(() => showError('Fourth notification'), 1500);
+        }
+
+        function simulateExport() {
+            showInfo('Preparing your export...', 2000);
+            setTimeout(() => showSuccess('Export completed successfully!'), 2500);
+        }
+
+        // Demo ready message
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                showSuccess('Modern notification system loaded! Try the buttons above.', 4000);
+            }, 1000);
+        });
+    </script>
+</body>
+</html> 

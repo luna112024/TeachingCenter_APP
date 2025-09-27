@@ -1,0 +1,37 @@
+﻿@model RegisterDTO
+
+<form asp-action="AddUser" asp-controller="Identity" method="post" autocomplete="off" data-ajax="true"
+      data-ajax-method="POST" data-ajax-complete="Success">
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Create user</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class="mb-3">
+            <div class="mb-2">
+                <label class="form-label" asp-for="Username"></label>
+                <input asp-for="Username" type="text" class="form-control" required placeholder="Ex.​ Dara.." />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="mb-2">
+                <label class="form-label" asp-for="Email"></label>
+                <input asp-for="Email" type="email" class="form-control" required placeholder="Ex. user@example.com" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="mb-2">
+                <label class="form-label" asp-for="Password"></label>
+                <input asp-for="Password" type="password" class="form-control" required placeholder="Password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="mb-2">
+                <label class="form-label" asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" type="password" class="form-control" required placeholder="Confirm Password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Close</button>
+        <button type="submit" class="btn btn-primary"><i class="bx bx-save me-1"></i>Save</button>
+    </div>
+</form>
