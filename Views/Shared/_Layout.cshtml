@@ -36,12 +36,21 @@
             <!-- Menu -->
 
             <aside id="layout-menu" class="layout-menu cont menu-vertical menu bg-menu-theme">
-                <div class="app-brand demo">
-                    <a href="/home">
-                        <span class="app-brand-text demo menu-text fw-bolder">Amret Microfinance</span>
+                <div class="app-brand demo d-flex flex-column align-items-start justify-content-between">
+                    <!-- Logo on top -->
+                    <a href="/home" class="d-block pb-1">
+                        <img src="~/assets/img/logo.png" alt="Logo" width="50" height="50" />
                     </a>
 
-                    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+                    <!-- Text below the logo -->
+                    <a href="/home" class="d-block ml-2">
+                        <span class="app-brand-text demo menu-text fw-bolder pb-3">HongWen APP</span>
+                        <br />
+                        <small class="fs-8 text-white">Teaching Center</small>
+                    </a>
+
+                    <!-- Menu toggle for mobile -->
+                    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none mt-2">
                         <i class="bx bx-chevron-left bx-sm align-middle"></i>
                     </a>
                 </div>

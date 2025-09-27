@@ -36,6 +36,14 @@ namespace hongWenAPP.Models.IdentityModel.DTOs
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [Display(Name = "CreateBy")]
         public string? CreateBy { get; set; } = "";
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? KhmerName { get; set; }
+        public string? ChineseName { get; set; }
+        public string? Gender { get; set; }
+        public DateOnly? DateofBirth { get; set; }
+        public string? Phone { get; set; }
+        public string? Address { get; set; }
 
     }
 }

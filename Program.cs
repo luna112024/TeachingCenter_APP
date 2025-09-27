@@ -1,8 +1,30 @@
 using hongWenAPP.Helpers;
 using hongWenAPP.Middleware;
 using hongWenAPP.Services;
+using Serilog;
+using SharedHongWenApp.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+// Configure Serilog early to capture startup logs
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateBootstrapLogger();
+
+
+builder.Services.AddSharedServices(builder.Configuration, "hongWenAPP");
+
+// Use Serilog as the logging provider
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .ReadFrom.Services(services)
+    .Enrich.FromLogContext()
+    .Enrich.WithMachineName()
+    .Enrich.WithThreadId()
+    .Enrich.WithEnvironmentUserName()
+    .Enrich.WithProperty("Application", "hongWenAPP")
+    .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
+);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -80,5 +102,7 @@ app.UseCustomAuthentication();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+// Log application startup
+Log.Information("hongWenAPP application started successfully");
 
 app.Run();

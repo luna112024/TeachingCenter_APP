@@ -19,8 +19,8 @@ a {
 }
 
 .menu .app-brand.demo {
-    padding: 30px 2rem 30px 2rem;
-    background: linear-gradient(180deg, #2b68c3, #185abd);
+    padding: 0.5rem 1.2rem !important;
+    background: linear-gradient(180deg, #0170bb, #293897);
 }
 
 .menu a.menu-link {

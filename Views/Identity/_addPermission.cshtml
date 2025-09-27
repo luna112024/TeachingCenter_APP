@@ -10,13 +10,23 @@
         <div class="mb-3">
             <div class="mb-2">
                 <label class="form-label" asp-for="PermissionName"></label>
-                <input asp-for="PermissionName" type="text" class="form-control" required  />
+                <input asp-for="PermissionName" type="text" class="form-control" required />
                 <span asp-validation-for="PermissionName" class="text-danger"></span>
             </div>
             <div class="mb-2">
+                <label class="form-label" asp-for="PermissionCode"></label>
+                <input asp-for="PermissionCode" type="text" class="form-control" required />
+                <span asp-validation-for="PermissionCode" class="text-danger"></span>
+            </div>
+            <div class="mb-2">
                 <label class="form-label" asp-for="Description"></label>
-                <input asp-for="Description" class="form-control" required placeholder="Description" />
+                <input asp-for="Description" class="form-control" placeholder="Description" />
                 <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="mb-2">
+                <label class="form-label" asp-for="Module"></label>
+                <input asp-for="Module" class="form-control" required placeholder="Module" />
+                <span asp-validation-for="Module" class="text-danger"></span>
             </div>
         </div>
     </div>

@@ -74,7 +74,7 @@
         border-collapse: separate;
         border-spacing: 0;
     }
-    
+
     .identity-user-list-table th {
         background-color: #f8f9fa;
         border-bottom: 2px solid #e9ecef;
@@ -395,7 +395,7 @@
                     <i class="bx bx-dots-vertical-rounded"></i>
                 </button>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" modal-popup="" asp-action="EditUser" asp-controller="Identity" asp-route-id="@m.UserId"><i class="bx bx-edit-alt me-2"></i> Edit</a>
+                        <a class="dropdown-item" modal-popup=""  modal-size="xl" asp-action="EditUser" asp-controller="Identity" asp-route-id="@m.UserId"><i class="bx bx-edit-alt me-2"></i> Edit</a>
                         <a class="dropdown-item" modal-popup="" modal-size = "xl" asp-action="AssignRole" asp-controller="Identity" asp-route-id="@m.UserId"><i class="bx bx-check-shield me-2"></i>Assign Role</a>
                             <a class="dropdown-item" modal-popup="" modal-size="xl" asp-action="AssignCompany" asp-controller="Identity" asp-route-id="@m.UserId"><i class="bx bx-home-smile me-2"></i>Assign Company</a>
                         <a class="dropdown-item" modal-popup="" asp-action="ResetForcePassword" asp-controller="Identity" asp-route-id="@m.UserId"><i class="bx bx-refresh me-2"></i> Reset Password</a>

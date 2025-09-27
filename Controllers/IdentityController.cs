@@ -108,6 +108,14 @@ namespace hongWenAPP.Controllers
                     Email = userData.Email,
                     UserName = userData.Username,
                     Status = userData.Status,
+                    FirstName= userData.FirstName,
+                    LastName=userData.LastName,
+                    KhmerName=userData.KhmerName,
+                    ChineseName=userData.ChineseName,
+                    Gender=userData.Gender,
+                    Phone=userData.Phone,
+                    Address=userData.Address,
+                    DateofBirth=userData.DateofBirth
                 };
 
                 ViewBag.UserId = id;
@@ -615,8 +623,10 @@ namespace hongWenAPP.Controllers
                 var permissionUpdateDTO = new UpdatePermissionDTO
                 {
                     PermissionId = permissionData.PermissionId,
+                    PermissionCode=permissionData.PermissionCode,
                     PermissionName = permissionData.PermissionName,
                     Description = permissionData.Description,
+                    Module=permissionData.Module,
                     ModifyBy = permissionData.ModifyBy,
                 };
 

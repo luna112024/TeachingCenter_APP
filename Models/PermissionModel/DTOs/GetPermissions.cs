@@ -6,10 +6,13 @@ namespace hongWenAPP.Models.PermissionModel.DTOs
     public abstract record class PermissionBaseDTO
     {
         [Required]
-        [StringLength(50)]
+        [StringLength(100)]
         public string PermissionName { get; set; }
-
+        [Required]
+        [StringLength(50)]
+        public string PermissionCode { get; set; }
         public string Description { get; set; }
+        public string Module { get; set; }
     }
 
     // DTO for creating a new permission
