@@ -411,6 +411,9 @@ namespace hongWenAPP.Controllers
                 var user = await _identityService.GetUserById(id);
                 var allRoles = await _roleService.GetRoles();
 
+                // Check if user has Teacher profile
+                var hasTeacherProfile = await _roleService.HasTeacherProfile(id);
+
                 // Map user role names to role objects
                 var userRoles = allRoles.Where(r => user.Roles.Contains(r.RoleName)).ToList();
 
@@ -426,6 +429,8 @@ namespace hongWenAPP.Controllers
                 };
 
                 ViewBag.AllRoles = allRoles;
+                ViewBag.HasTeacherProfile = hasTeacherProfile;
+                ViewBag.TeacherRole = allRoles.FirstOrDefault(r => r.RoleName == "Teacher");
                 return PartialView("_assignRole", model);
             }
             catch (Exception ex)
@@ -445,6 +450,13 @@ namespace hongWenAPP.Controllers
                 {
                     var errors = ModelState.ToDictionary(kvp => kvp.Key, kvp => kvp.Value?.Errors.Select(e => e.ErrorMessage).ToArray());
                     return Json(new { validationErrors = errors });
+                }
+
+                // Validate Teacher role assignment for users with Teacher profiles
+                var validationResult = await _roleService.ValidateTeacherRoleAssignment(model.UserId, model.RoleIds);
+                if (!validationResult.Flag)
+                {
+                    return _returnHelper.ReturnNewResult(false, validationResult.Message);
                 }
 
                 // Get current roles for the user
@@ -480,9 +492,18 @@ namespace hongWenAPP.Controllers
                     }
                 }
 
-                // Remove unselected roles
+                // Remove unselected roles (with Teacher role protection)
                 foreach (var roleId in rolesToRemove)
                 {
+                    // Check if this is a Teacher role removal attempt
+                    var roleToRemove = allRoles.FirstOrDefault(r => r.RoleId == roleId);
+                    if (roleToRemove?.RoleName == "Teacher")
+                    {
+                        // Skip Teacher role removal - it's protected
+                        _logger.LogWarning("Attempted to remove Teacher role from user {UserId} with Teacher profile - blocked", model.UserId);
+                        continue;
+                    }
+
                     var result = await _roleService.RemoveRoleFromUser(model.UserId, roleId);
                     if (result.Flag)
                     {

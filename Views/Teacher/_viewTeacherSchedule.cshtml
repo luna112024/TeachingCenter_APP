@@ -1,0 +1,97 @@
+@using hongWenAPP.Models.TeacherModel.DTOs
+
+<div class="modal-header">
+    <h5 class="modal-title" id="staticBackdropLabel">Teacher Schedule</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+    @{
+        var teacher = ViewBag.Teacher as GetTeacherDTO;
+        var schedule = ViewBag.Schedule as List<TeacherScheduleItemDTO>;
+    }
+    
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="bx bx-user me-2"></i>@(teacher?.UserName ?? "Unknown Teacher")
+                    </h6>
+                    <small class="text-muted">Teacher Code: @(teacher?.TeacherCode ?? "-")</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="bx bx-calendar me-2"></i>Current Schedule
+                    </h6>
+                </div>
+                <div class="card-body">
+                    @if (schedule != null && schedule.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Section Code</th>
+                                        <th>Schedule Pattern</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in schedule)
+                                    {
+                                        <tr>
+                                            <td>@(item.SectionCode ?? "-")</td>
+                                            <td>@(item.SchedulePattern ?? "-")</td>
+                                            <td>@(item.StartDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                                            <td>@(item.EndDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                                            <td>
+                                                @switch (item.Status?.ToLower())
+                                                {
+                                                    case "running":
+                                                        <span class="badge bg-label-success">Running</span>
+                                                        break;
+                                                    case "completed":
+                                                        <span class="badge bg-label-secondary">Completed</span>
+                                                        break;
+                                                    case "cancelled":
+                                                        <span class="badge bg-label-danger">Cancelled</span>
+                                                        break;
+                                                    default:
+                                                        <span class="badge bg-label-primary">@(item.Status ?? "-")</span>
+                                                        break;
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-4">
+                            <i class="bx bx-calendar-x display-4"></i>
+                            <p class="mt-2">No schedule information available</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+        <i class="bx bx-x-circle me-1"></i>Close
+    </button>
+</div>

@@ -1,0 +1,104 @@
+@model UpdateTeacherDTO
+
+<form asp-action="EditTeacher" asp-controller="Teacher" method="post" autocomplete="off" data-ajax="true"
+      data-ajax-method="POST" data-ajax-complete="Success">
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Edit Teacher</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <input type="hidden" asp-for="TeacherId" />
+        <div class="row g-3">
+            <div class="col-3 mb-2">
+                <label class="form-label">Assigned User</label>
+                <input type="hidden" asp-for="UserId" />
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bx bx-user"></i></span>
+                    <input type="text" class="form-control" 
+                           value="@ViewBag.CurrentUser?.UserName"
+                           disabled />
+                </div>
+                <small class="text-muted">User assignment cannot be changed after creation</small>
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="TeacherCode">Teacher Code<span class="text-danger">*</span></label>
+                <input asp-for="TeacherCode" type="text" class="form-control" required placeholder="e.g., T001, TCH001"/>
+                <span asp-validation-for="TeacherCode" class="text-danger"></span>
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="ChineseProficiency">Chinese Proficiency<span class="text-danger">*</span></label>
+                <select asp-for="ChineseProficiency" class="form-select" required>
+                    <option value="">Select Proficiency Level</option>
+                    <option value="Native">Native</option>
+                    <option value="Advanced">Advanced</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Beginner">Beginner</option>
+                </select>
+                <span asp-validation-for="ChineseProficiency" class="text-danger"></span>
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="ExperienceYears">Experience Years</label>
+                <input asp-for="ExperienceYears" type="number" class="form-control" min="0" placeholder="e.g., 5" />
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="MaxHoursPerWeek">Max Hours Per Week</label>
+                <input asp-for="MaxHoursPerWeek" type="number" class="form-control" min="1" placeholder="e.g., 40"/>
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="HourlyRate">Hourly Rate</label>
+                <input asp-for="HourlyRate" type="number" class="form-control" min="0" step="0.01" placeholder="e.g., 25.00"/>
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="HireDate">Hire Date<span class="text-danger">*</span></label>
+                <input asp-for="HireDate" type="date" class="form-control" required />
+                <span asp-validation-for="HireDate" class="text-danger"></span>
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="ContractType">Contract Type</label>
+                <select asp-for="ContractType" class="form-select">
+                    <option value="">Select Contract Type</option>
+                    <option value="Full-time">Full-time</option>
+                    <option value="Part-time">Part-time</option>
+                    <option value="Contract">Contract</option>
+                    <option value="Freelance">Freelance</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="EmploymentStatus">Employment Status</label>
+                <select asp-for="EmploymentStatus" class="form-select">
+                    <option value="">Select Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="On Leave">On Leave</option>
+                    <option value="Terminated">Terminated</option>
+                </select>
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="Specializations">Specializations</label>
+                <textarea asp-for="Specializations" class="form-control" rows="2" placeholder="e.g., HSK Preparation, Business Chinese, Conversational Chinese"></textarea>
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="Qualifications">Qualifications</label>
+                <textarea asp-for="Qualifications" class="form-control" rows="2" placeholder="e.g., Master's in Chinese Language, HSK Level 6, Teaching Certificate"></textarea>
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="TeachingLanguages">Teaching Languages</label>
+                <textarea asp-for="TeachingLanguages" class="form-control" rows="2" placeholder="e.g., Chinese, English, Khmer"></textarea>
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="Notes">Notes</label>
+                <textarea asp-for="Notes" class="form-control" rows="2" placeholder="Additional notes about the teacher"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Close</button>
+        <button type="submit" class="btn btn-primary"><i class="bx bx-save me-1"></i>Save Changes</button>
+    </div>
+</form>

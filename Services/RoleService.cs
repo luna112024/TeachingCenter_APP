@@ -15,6 +15,8 @@ namespace hongWenAPP.Services
         Task<Response> DeleteRole(Guid roleId);
         Task<Response> AssignRoleToUser(Guid userId, Guid roleId);
         Task<Response> RemoveRoleFromUser(Guid userId, Guid roleId);
+        Task<bool> HasTeacherProfile(Guid userId);
+        Task<Response> ValidateTeacherRoleAssignment(Guid userId, List<Guid> newRoleIds);
     }
     public class RoleService : BaseApiService, IRoleService
     {
@@ -63,5 +65,16 @@ namespace hongWenAPP.Services
             await SendRequestAsync<Response>(
                 $"{_baseUrl}/Role/{roleId}",
                 HttpMethod.Delete);
+
+        public async Task<bool> HasTeacherProfile(Guid userId) =>
+            await SendRequestAsync<bool>(
+                $"{_baseUrl}/Identity/has-teacher-profile/{userId}",
+                HttpMethod.Get);
+
+        public async Task<Response> ValidateTeacherRoleAssignment(Guid userId, List<Guid> newRoleIds) =>
+            await SendRequestAsync<Response>(
+                $"{_baseUrl}/Identity/validate-teacher-role-assignment",
+                HttpMethod.Post,
+                new { UserId = userId, NewRoleIds = newRoleIds });
     }
 }

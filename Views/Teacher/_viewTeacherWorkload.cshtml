@@ -1,0 +1,97 @@
+@using hongWenAPP.Models.TeacherModel.DTOs
+
+<div class="modal-header">
+    <h5 class="modal-title" id="staticBackdropLabel">Teacher Workload</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+    @{
+        var teacher = ViewBag.Teacher as GetTeacherDTO;
+        var workload = ViewBag.Workload as TeacherWorkloadDTO;
+    }
+    
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="bx bx-user me-2"></i>@(teacher?.UserName ?? "Unknown Teacher")
+                    </h6>
+                    <small class="text-muted">Teacher Code: @(teacher?.TeacherCode ?? "-")</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="bx bx-bar-chart me-2"></i>Current Workload
+                    </h6>
+                </div>
+                <div class="card-body">
+                    @if (workload != null)
+                    {
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h4 class="text-primary">@workload.CurrentLoad</h4>
+                                        <p class="mb-0">Current Active Sections</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h4 class="text-success">@workload.MaxHoursPerWeek</h4>
+                                        <p class="mb-0">Max Hours Per Week</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="progress" style="height: 20px;">
+                                    @{
+                                        var percentage = workload.UtilizationPercentage;
+                                        var progressClass = percentage > 80 ? "bg-danger" : percentage > 60 ? "bg-warning" : "bg-success";
+                                    }
+                                    <div class="progress-bar @progressClass" role="progressbar" style="width: @(percentage)%" aria-valuenow="@workload.CurrentLoad" aria-valuemin="0" aria-valuemax="@workload.MaxHoursPerWeek">
+                                        @(percentage.ToString("F1"))%
+                                    </div>
+                                </div>
+                                <small class="text-muted">Workload: @workload.CurrentLoad / @workload.MaxHoursPerWeek hours</small>
+                            </div>
+                        </div>
+                        
+                        @if (percentage > 80)
+                        {
+                            <div class="alert alert-warning mt-3">
+                                <i class="bx bx-info-circle me-2"></i>
+                                <strong>High Workload Alert:</strong> This teacher is approaching their maximum capacity.
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-4">
+                            <i class="bx bx-bar-chart-alt-2 display-4"></i>
+                            <p class="mt-2">No workload information available</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+        <i class="bx bx-x-circle me-1"></i>Close
+    </button>
+</div>

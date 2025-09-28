@@ -1,0 +1,117 @@
+@model DuplicateClassSectionDTO
+
+<form asp-action="DuplicateClassSection" asp-controller="ClassSection" method="post" autocomplete="off" data-ajax="true"
+      data-ajax-method="POST" data-ajax-complete="Success">
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Duplicate Class Section</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        @if (ViewBag.Section != null)
+        {
+            <div class="row g-3">
+                <div class="col-12 mb-3">
+                    <h6>Source Section Information</h6>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-6 mb-2">
+                    <label class="form-label">Source Section Code</label>
+                    <input type="text" class="form-control" value="@ViewBag.Section.SectionCode" readonly />
+                </div>
+                <div class="col-6 mb-2">
+                    <label class="form-label">Source Section Name</label>
+                    <input type="text" class="form-control" value="@(ViewBag.Section.SectionName ?? "-")" readonly />
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-6 mb-2">
+                    <label class="form-label">Source Course</label>
+                    <input type="text" class="form-control" value="@(ViewBag.Section.CourseName ?? "-")" readonly />
+                </div>
+                <div class="col-6 mb-2">
+                    <label class="form-label">Source Term</label>
+                    <input type="text" class="form-control" value="@(ViewBag.Section.TermName ?? "-")" readonly />
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-6 mb-2">
+                    <label class="form-label">Source Teacher</label>
+                    <input type="text" class="form-control" value="@(ViewBag.Section.TeacherName ?? "-")" readonly />
+                </div>
+                <div class="col-6 mb-2">
+                    <label class="form-label">Source Classroom</label>
+                    <input type="text" class="form-control" value="@(ViewBag.Section.ClassroomName ?? "-")" readonly />
+                </div>
+            </div>
+
+            <hr />
+        }
+
+        <div class="row g-3">
+            <div class="col-12 mb-3">
+                <h6>New Section Details</h6>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="NewSectionCode">New Section Code<span class="text-danger">*</span></label>
+                <input asp-for="NewSectionCode" type="text" class="form-control" required placeholder="e.g., CHN101-A_COPY, MATH201-B_NEW"/>
+                <span asp-validation-for="NewSectionCode" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="NewTermId">New Term<span class="text-danger">*</span></label>
+                <select asp-for="NewTermId" class="form-select" required>
+                    <option value="">Select a term...</option>
+                    @if (ViewBag.Terms != null)
+                    {
+                        @foreach (var term in ViewBag.Terms as List<hongWenAPP.Models.TermModel.DTOs.GetTermDTO>)
+                        {
+                            <option value="@term.TermId">@term.TermName</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="NewTermId" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <div class="alert alert-info">
+                    <h6>What will be duplicated:</h6>
+                    <ul class="mb-0">
+                        <li>Course assignment</li>
+                        <li>Teacher assignment</li>
+                        <li>Classroom assignment</li>
+                        <li>Schedule pattern</li>
+                        <li>Maximum enrollment</li>
+                        <li>Fee structure (tuition, materials, registration)</li>
+                        <li>Notes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <div class="alert alert-warning">
+                    <h6>Important Notes:</h6>
+                    <ul class="mb-0">
+                        <li>The new section will be created with "Planning" status</li>
+                        <li>Current enrollment and waitlist will be reset to 0</li>
+                        <li>You can modify the new section after creation</li>
+                        <li>Make sure the new section code is unique</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Cancel</button>
+        <button type="submit" class="btn btn-primary"><i class="bx bx-copy me-1"></i>Duplicate Section</button>
+    </div>
+</form>

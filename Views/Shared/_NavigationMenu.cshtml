@@ -81,18 +81,18 @@
                     <div>Level</div>
                 </a>
             </li>
-            <li class="menu-item @Html.IsSelected(action: "Permission", controller: " Identity")" asp-permissions="DeleteClassroom,ViewClassroom,ManageClassroom">
-                <a href="@Url.Action("Permission", "Identity")" class="menu-link">
+            <li class="menu-item @Html.IsSelected(action: "Index", controller: " Classroom")" asp-permissions="DeleteClassroom,ViewClassroom,ManageClassroom">
+                <a href="@Url.Action("Index", "Classroom")" class="menu-link">
                     <div>Classrooms</div>
                 </a>
             </li>
-            <li class="menu-item @Html.IsSelected(action: "Permission", controller: " Identity")" asp-permissions="ManageClassSections,ViewClassSections,DeleteClassSections">
-                <a href="@Url.Action("Permission", "Identity")" class="menu-link">
+            <li class="menu-item @Html.IsSelected(action: "Index", controller: " ClassSection")" asp-permissions="ManageClassSections,ViewClassSections,DeleteClassSections">
+                <a href="@Url.Action("Index", "ClassSection")" class="menu-link">
                     <div>Class Sections</div>
                 </a>
             </li>
-            <li class="menu-item @Html.IsSelected(action: "Permission", controller: " Identity")" asp-permissions="ViewTeacher,ManageTeacher,DeleteTeacher">
-                <a href="@Url.Action("Permission", "Identity")" class="menu-link">
+            <li class="menu-item @Html.IsSelected(action: "Index", controller: "Teacher")" asp-permissions="ViewTeacher,ManageTeacher,DeleteTeacher">
+                <a href="@Url.Action("Index", "Teacher")" class="menu-link">
                     <div>Teachers</div>
                 </a>
             </li>

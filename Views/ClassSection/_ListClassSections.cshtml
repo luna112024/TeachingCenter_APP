@@ -1,0 +1,670 @@
+@using hongWenAPP.Models.ClassSectionModel.DTOs
+@model PageList<GetClassSectionDTO>
+
+@{
+    GetClassSectionDTO p = null;
+}
+<style>
+    .bg-label-success {
+        background-color: #e8fadf !important;
+        color: #71dd37 !important;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-secondary {
+        background-color: #e4e6e8 !important;
+        color: #8592a3;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-warning {
+        background-color: #fff3cd !important;
+        color: #856404;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-primary {
+        background-color: #e7f3ff !important;
+        color: #696cff;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-danger {
+        background-color: #f8d7da !important;
+        color: #721c24;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-info {
+        background-color: #d1ecf1 !important;
+        color: #0c5460;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .enrollment-progress {
+        width: 100%;
+        height: 8px;
+        background-color: #e5e7eb;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 4px;
+    }
+
+    .enrollment-progress-bar {
+        height: 100%;
+        background-color: #3b82f6;
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+
+    .section-details {
+        line-height: 1.4;
+    }
+
+    .section-code {
+        font-weight: 600;
+        color: #1f2937;
+        font-size: 14px;
+    }
+
+    .section-name {
+        color: #6b7280;
+        font-size: 13px;
+        margin-top: 2px;
+    }
+
+    .section-dates {
+        color: #9ca3af;
+        font-size: 11px;
+        margin-top: 2px;
+    }
+
+    .course-info {
+        line-height: 1.4;
+    }
+
+    .course-name {
+        font-weight: 600;
+        color: #1f2937;
+        font-size: 14px;
+    }
+
+    .course-code {
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .term-name {
+        color: #9ca3af;
+        font-size: 11px;
+        margin-top: 2px;
+    }
+
+    .teacher-room {
+        line-height: 1.4;
+    }
+
+    .teacher-name {
+        font-weight: 600;
+        color: #1f2937;
+        font-size: 14px;
+    }
+
+    .room-info {
+        color: #6b7280;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        margin-top: 2px;
+    }
+
+    .schedule-text {
+        color: #374151;
+        font-size: 13px;
+        line-height: 1.3;
+    }
+
+    .enrollment-info {
+        line-height: 1.4;
+    }
+
+    .enrollment-count {
+        font-weight: 600;
+        color: #1f2937;
+        font-size: 14px;
+    }
+
+    .waitlist-info {
+        color: #d97706;
+        font-size: 11px;
+        margin-top: 2px;
+    }
+
+    .fees-info {
+        line-height: 1.4;
+    }
+
+    .tuition-fee {
+        font-weight: 600;
+        color: #1f2937;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+    }
+
+    .additional-fees {
+        color: #6b7280;
+        font-size: 11px;
+        margin-top: 2px;
+    }
+
+    .table-filter {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        padding: 0.75rem;
+    }
+
+    .filter-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .filter-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #495057;
+        white-space: nowrap;
+    }
+
+    .filter-select {
+        min-width: 120px;
+        font-size: 0.875rem;
+        padding: 0.375rem 0.75rem;
+        border: 1px solid #ced4da;
+        border-radius: 0.375rem;
+        background-color: white;
+    }
+
+    .filter-select:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        outline: none;
+    }
+
+    .clear-filters-btn {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        padding: 0.375rem 0.75rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .clear-filters-btn:hover {
+        background-color: #5a6268;
+    }
+</style>
+
+<div class="table-responsive">
+    <!-- Table Filters -->
+    <div class="table-filter">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">Status:</label>
+                <select class="filter-select form-select form-select-sm searchable-select" id="statusFilter" onchange="applyTableFilters()">
+                    <option value="">All Status</option>
+                    <option value="Planning">Planning</option>
+                    <option value="Open">Open</option>
+                    <option value="Full">Full</option>
+                    <option value="Running">Running</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Teacher:</label>
+                <div class="searchable-select dropdown w-100" style="min-width: 150px;"
+                     data-name="teacherFilter"
+                     data-selected-value=""
+                     data-url="@Url.Action("GetActiveTeachers", "ClassSection")">
+                    <button class="form-select form-select-sm w-100 text-start d-flex justify-content-between align-items-center"
+                        type="button"
+                        id="dropdownSearchButtonTeacher"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <span class="text-secondary selected-account">
+                        All Teachers
+                    </span>
+                        <i class="bx bx-chevron-down ms-2 text-secondary"></i>
+                    </button>
+                    <ul class="dropdown-menu py-2 px-1"
+                        aria-labelledby="dropdownSearchButtonTeacher">
+                        <div class="px-2">
+                            <input type="text"
+                                   class="form-control form-control-sm mb-2 dropdown-search-input"
+                                   id="dropdownSearchInputTeacher"
+                                   placeholder="Search Teacher.."
+                                   autocomplete="off" />
+                        </div>
+                        <li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Classroom:</label>
+                <div class="searchable-select dropdown w-100" style="min-width: 150px;"
+                     data-name="classroomFilter"
+                     data-selected-value=""
+                     data-url="@Url.Action("GetActiveClassrooms", "ClassSection")">
+                    <button class="form-select form-select-sm w-100 text-start d-flex justify-content-between align-items-center"
+                        type="button"
+                        id="dropdownSearchButtonClassroom"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <span class="text-secondary selected-account">
+                        All Classrooms
+                    </span>
+                        <i class="bx bx-chevron-down ms-2 text-secondary"></i>
+                    </button>
+                    <ul class="dropdown-menu py-2 px-1"
+                        aria-labelledby="dropdownSearchButtonClassroom">
+                        <div class="px-2">
+                            <input type="text"
+                                   class="form-control form-control-sm mb-2 dropdown-search-input"
+                                   id="dropdownSearchInputClassroom"
+                                   placeholder="Search Classroom.."
+                                   autocomplete="off" />
+                        </div>
+                        <li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Course:</label>
+                <div class="searchable-select dropdown w-100" style="min-width: 150px;"
+                     data-name="courseFilter"
+                     data-selected-value=""
+                     data-url="@Url.Action("GetActiveCourses", "ClassSection")">
+                    <button class="form-select form-select-sm w-100 text-start d-flex justify-content-between align-items-center"
+                        type="button"
+                        id="dropdownSearchButtonCourse"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <span class="text-secondary selected-account">
+                        All Courses
+                    </span>
+                        <i class="bx bx-chevron-down ms-2 text-secondary"></i>
+                    </button>
+                    <ul class="dropdown-menu py-2 px-1"
+                        aria-labelledby="dropdownSearchButtonCourse">
+                        <div class="px-2">
+                            <input type="text"
+                                   class="form-control form-control-sm mb-2 dropdown-search-input"
+                                   id="dropdownSearchInputCourse"
+                                   placeholder="Search Course.."
+                                   autocomplete="off" />
+                        </div>
+                        <li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Term:</label>
+                <div class="searchable-select dropdown w-100" style="min-width: 150px;"
+                     data-name="termFilter"
+                     data-selected-value=""
+                     data-url="@Url.Action("GetActiveTerms", "ClassSection")">
+                    <button class="form-select form-select-sm w-100 text-start d-flex justify-content-between align-items-center"
+                        type="button"
+                        id="dropdownSearchButtonTerm"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <span class="text-secondary selected-account">
+                        All Terms
+                    </span>
+                        <i class="bx bx-chevron-down ms-2 text-secondary"></i>
+                    </button>
+                    <ul class="dropdown-menu py-2 px-1"
+                        aria-labelledby="dropdownSearchButtonTerm">
+                        <div class="px-2">
+                            <input type="text"
+                                   class="form-control form-control-sm mb-2 dropdown-search-input"
+                                   id="dropdownSearchInputTerm"
+                                   placeholder="Search Term.."
+                                   autocomplete="off" />
+                        </div>
+                        <li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>
+                    </ul>
+                </div>
+            </div>
+            <button class="clear-filters-btn" onclick="clearTableFilters()">
+                <i class="bx bx-x me-1"></i>Clear Filters
+            </button>
+        </div>
+    </div>
+    
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th class="text-start">Section Details</th>
+                <th class="text-start">Course & Term</th>
+                <th class="text-start">Teacher & Room</th>
+                <th class="text-start">Schedule</th>
+                <th class="text-start">Enrollment</th>
+                <th class="text-start">Fees</th>
+                <th class="text-start">Status</th>
+                <th class="text-start">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var i = Model.Paging.StartRowNo;
+            }
+            @foreach (var m in Model)
+            {
+            <tr class="align-middle" 
+                data-status="@m.Status?.ToLower()" 
+                data-teacher-id="@m.TeacherId" 
+                data-classroom-id="@m.ClassroomId" 
+                data-course-id="@m.CourseId" 
+                data-term-id="@m.TermId"
+                data-teacher-name="@m.TeacherName?.ToLower()"
+                data-classroom-name="@m.ClassroomName?.ToLower()"
+                data-course-name="@m.CourseName?.ToLower()"
+                data-term-name="@m.TermName?.ToLower()">
+                <td class="section-details">
+                    <div class="section-code">@m.SectionCode</div>
+                    <div class="section-name">@(m.SectionName ?? "No name specified")</div>
+                    <div class="section-dates">@m.StartDate.ToString("yyyy-MM-dd") - @m.EndDate.ToString("yyyy-MM-dd")</div>
+                </td>
+
+                <td class="course-info">
+                    <div class="course-name">@(m.CourseName ?? "Unknown Course")</div>
+                    <div class="course-code">@(m.CourseCode ?? "")</div>
+                    <div class="term-name">@(m.TermName ?? "Unknown Term")</div>
+                </td>
+
+                <td class="teacher-room">
+                    <div class="teacher-name">@(m.TeacherName ?? "Unassigned")</div>
+                    <div class="room-info">
+                        <i class="bx bx-map-pin me-1" style="font-size: 12px;"></i>
+                        @(m.ClassroomName ?? "No Room")
+                    </div>
+                </td>
+
+                <td>
+                    <div class="schedule-text">@m.SchedulePattern</div>
+                </td>
+
+                <td class="enrollment-info">
+                    <div class="enrollment-count">@m.CurrentEnrollment / @m.MaxEnrollment</div>
+                    @if (m.WaitlistCount > 0)
+                    {
+                        <div class="waitlist-info">@m.WaitlistCount waitlisted</div>
+                    }
+                    <div class="enrollment-progress">
+                        <div class="enrollment-progress-bar" style="width: @((double)m.CurrentEnrollment / m.MaxEnrollment * 100)%"></div>
+                    </div>
+                </td>
+
+                <td class="fees-info">
+                    <div class="tuition-fee">
+                        <i class="bx bx-dollar me-1" style="font-size: 12px;"></i>
+                        $@m.TuitionFee.ToString("F2")
+                    </div>
+                    @if (m.MaterialsFee > 0)
+                    {
+                        <div class="additional-fees">+$@m.MaterialsFee.ToString("F2") materials</div>
+                    }
+                    @if (m.RegistrationFee > 0)
+                    {
+                        <div class="additional-fees">+$@m.RegistrationFee.ToString("F2") registration</div>
+                    }
+                </td>
+
+                <td>
+                    @switch (m.Status?.ToLower())
+                    {
+                        case "planning":
+                            <span class="badge bg-label-secondary text-capitalized">Planning</span>
+                            break;
+                        case "open":
+                            <span class="badge bg-label-success text-capitalized">Open</span>
+                            break;
+                        case "full":
+                            <span class="badge bg-label-warning text-capitalized">Full</span>
+                            break;
+                        case "running":
+                            <span class="badge bg-label-primary text-capitalized">Running</span>
+                            break;
+                        case "completed":
+                            <span class="badge bg-label-info text-capitalized">Completed</span>
+                            break;
+                        case "cancelled":
+                            <span class="badge bg-label-danger text-capitalized">Cancelled</span>
+                            break;
+                        default:
+                            <span class="badge bg-label-secondary text-capitalized">@m.Status</span>
+                            break;
+                    }
+                </td>
+
+                <td class="text-end">
+                    <div class="dropdown">
+                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                            <i class="bx bx-dots-vertical-rounded"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" modal-popup="" modal-size="xl" asp-action="EditClassSection" asp-controller="ClassSection" asp-route-id="@m.SectionId">
+                                <i class="bx bx-edit-alt me-1"></i> Edit
+                            </a>
+                            <a class="dropdown-item" modal-popup="" modal-size="lg" asp-action="DuplicateClassSection" asp-controller="ClassSection" asp-route-id="@m.SectionId">
+                                <i class="bx bx-copy me-1"></i> Duplicate
+                            </a>
+                            @if (m.Status == "Planning")
+                            {
+                                <a class="dropdown-item text-success" modal-popup="" modal-size="md" asp-action="StatusUpdateModal" asp-controller="ClassSection" asp-route-id="@m.SectionId" asp-route-newStatus="Open">
+                                    <i class="bx bx-check-circle me-1"></i> Open for Enrollment
+                                </a>
+                            }
+                            @if (m.Status == "Open")
+                            {
+                                <a class="dropdown-item text-primary" modal-popup="" modal-size="md" asp-action="StatusUpdateModal" asp-controller="ClassSection" asp-route-id="@m.SectionId" asp-route-newStatus="Running">
+                                    <i class="bx bx-play-circle me-1"></i> Start Section
+                                </a>
+                            }
+                            @if (m.Status == "Running")
+                            {
+                                <a class="dropdown-item text-info" modal-popup="" modal-size="md" asp-action="StatusUpdateModal" asp-controller="ClassSection" asp-route-id="@m.SectionId" asp-route-newStatus="Completed">
+                                    <i class="bx bx-check-double me-1"></i> Complete Section
+                                </a>
+                            }
+                            @if (m.Status != "Cancelled")
+                            {
+                                <a class="dropdown-item text-warning" modal-popup="" modal-size="md" asp-action="StatusUpdateModal" asp-controller="ClassSection" asp-route-id="@m.SectionId" asp-route-newStatus="Cancelled">
+                                    <i class="bx bx-x-circle me-1"></i> Cancel Section
+                                </a>
+                            }
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" modal-popup="" asp-action="DeleteClassSection" asp-controller="ClassSection" asp-route-id="@m.SectionId">
+                                <i class="bx bx-trash me-1"></i> Delete
+                            </a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            i++;
+            }
+        </tbody>
+    </table>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <div class="text-muted">
+                <i class="bx bx-calendar" style="font-size: 48px; opacity: 0.5;" class="mb-3"></i>
+                <p class="h5">No sections found</p>
+                <p class="small">Try adjusting your search or filters, or create a new section.</p>
+            </div>
+        </div>
+    }
+</div>
+
+@await Html.PartialAsync("_pageList", Model.Paging)
+
+<script>
+    function viewSection(sectionId) {
+        // You can implement a view modal here
+        // For now, we'll use the edit modal in view mode
+        window.open('@Url.Action("EditClassSection", "ClassSection")' + '?id=' + sectionId, '_blank');
+    }
+
+        function applyTableFilters() {
+        const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
+        const teacherFilter = $('input[name="teacherFilter"]').val();
+        const classroomFilter = $('input[name="classroomFilter"]').val();
+        const courseFilter = $('input[name="courseFilter"]').val();
+        const termFilter = $('input[name="termFilter"]').val();
+
+        // Get all table rows
+        const rows = document.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+            let showRow = true;
+            
+            // Status filter - exact match
+            if (statusFilter) {
+                const rowStatus = row.dataset.status;
+                if (rowStatus !== statusFilter) {
+                    showRow = false;
+                }
+            }
+            
+            // Teacher filter - ID match
+            if (teacherFilter) {
+                const rowTeacherId = row.dataset.teacherId;
+                if (rowTeacherId !== teacherFilter) {
+                    showRow = false;
+                }
+            }
+            
+            // Classroom filter - ID match
+            if (classroomFilter) {
+                const rowClassroomId = row.dataset.classroomId;
+                if (rowClassroomId !== classroomFilter) {
+                    showRow = false;
+                }
+            }
+            
+            // Course filter - ID match
+            if (courseFilter) {
+                const rowCourseId = row.dataset.courseId;
+                if (rowCourseId !== courseFilter) {
+                    showRow = false;
+                }
+            }
+            
+            // Term filter - ID match
+            if (termFilter) {
+                const rowTermId = row.dataset.termId;
+                if (rowTermId !== termFilter) {
+                    showRow = false;
+                }
+            }
+            
+            // Show/hide row
+            row.style.display = showRow ? '' : 'none';
+        });
+        
+        // Update row count display
+        updateRowCount();
+    }
+
+    function clearTableFilters() {
+        // Reset status filter
+        document.getElementById('statusFilter').value = '';
+        
+        // Reset searchable selects
+        $('.searchable-select').each(function() {
+            const $container = $(this);
+            const $button = $container.find('button.form-select');
+            const $hiddenInput = $container.find('input[type="hidden"]');
+            
+            $hiddenInput.val('');
+            $container.data('selected-value', '');
+            
+            // Reset button text based on filter type
+            const filterName = $container.data('name');
+            let defaultText = 'All Items';
+            if (filterName.includes('teacher')) defaultText = 'All Teachers';
+            else if (filterName.includes('classroom')) defaultText = 'All Classrooms';
+            else if (filterName.includes('course')) defaultText = 'All Courses';
+            else if (filterName.includes('term')) defaultText = 'All Terms';
+            
+            $button.find('.selected-account').text(defaultText).addClass('text-secondary');
+        });
+        
+        // Show all rows
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            row.style.display = '';
+        });
+        
+        updateRowCount();
+    }
+
+    function updateRowCount() {
+        const visibleRows = document.querySelectorAll('tbody tr[style=""], tbody tr:not([style])');
+        const totalRows = document.querySelectorAll('tbody tr').length;
+        
+        // You can add a counter display here if needed
+        console.log(`Showing ${visibleRows.length} of ${totalRows} sections`);
+    }
+
+    // Initialize filters on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // You can set initial filter values here if needed
+        updateRowCount();
+        
+        // Add event listeners for searchable selects
+        $('.searchable-select').on('itemSelected', function() {
+            applyTableFilters();
+        });
+    });
+</script>
+
+<script src="~/js/searchselect.js"></script>
+
+@functions {
+    private string GetStatusMessage(string newStatus)
+    {
+        return newStatus?.ToLower() switch
+        {
+            "open" => "This will open the section for student enrollment.",
+            "running" => "This will start the section and no new enrollments will be allowed.",
+            "completed" => "This will mark the section as completed.",
+            "cancelled" => "This will cancel the section. This action may affect enrolled students.",
+            _ => "Are you sure you want to update the status?"
+        };
+    }
+}

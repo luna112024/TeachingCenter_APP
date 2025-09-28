@@ -1,0 +1,670 @@
+@model CreateClassSectionDTO
+
+<style>
+    .form-section {
+        margin-bottom: 2rem;
+    }
+    
+    .form-section-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .form-control, .form-select {
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        outline: none;
+    }
+    
+    .required {
+        color: #dc2626;
+    }
+    
+    .help-text {
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-top: 0.25rem;
+    }
+    
+    .schedule-slot {
+        background-color: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.375rem;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .add-slot-btn {
+        color: #3b82f6;
+        background: none;
+        border: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        padding: 0.25rem 0;
+    }
+    
+    .add-slot-btn:hover {
+        color: #1d4ed8;
+    }
+    
+    .remove-slot-btn {
+        color: #dc2626;
+        background: none;
+        border: none;
+        padding: 0.25rem;
+        cursor: pointer;
+        border-radius: 0.25rem;
+    }
+    
+    .remove-slot-btn:hover {
+        background-color: #fef2f2;
+    }
+</style>
+
+<form asp-action="AddClassSection" asp-controller="ClassSection" method="post" autocomplete="off" data-ajax="true"
+      data-ajax-method="POST" data-ajax-complete="Success">
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Add New Section</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <div class="row">
+            <!-- Basic Information -->
+            <div class="col-md-6">
+                <div class="form-section">
+                    <h3 class="form-section-title">Basic Information</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label" asp-for="CourseId">Course <span class="required">*</span></label>
+                        <div class="searchable-select dropdown w-100"
+                             data-name="CourseId"
+                             data-selected-value="@(Model?.CourseId ?? Guid.Empty)"
+                             data-url="@Url.Action("GetActiveCourses", "ClassSection")">
+                            <button class="form-select w-100 text-start d-flex justify-content-between align-items-center"
+                                type="button"
+                                id="dropdownSearchButtonCourse"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            <span class="text-secondary selected-course">
+                                Select a Course
+                            </span>
+                                <i class="bx bx-chevron-down ms-2 text-secondary"></i>
+                            </button>
+                            <ul class="dropdown-menu py-2 px-1"
+                                aria-labelledby="dropdownSearchButtonCourse">
+                                <div class="px-2">
+                                    <input type="text"
+                                           class="form-control form-control-sm mb-2 dropdown-search-input"
+                                           id="dropdownSearchInputCourse"
+                                           placeholder="Search Course.."
+                                           autocomplete="off" />
+                                </div>
+                                <li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>
+                            </ul>
+                        </div>
+                        <span asp-validation-for="CourseId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" asp-for="TermId">Term <span class="required">*</span></label>
+                        <div class="searchable-select dropdown w-100"
+                             data-name="TermId"
+                             data-selected-value="@(Model?.TermId ?? Guid.Empty)"
+                             data-url="@Url.Action("GetActiveTerms", "ClassSection")">
+                            <button class="form-select w-100 text-start d-flex justify-content-between align-items-center"
+                                type="button"
+                                id="dropdownSearchButtonTerm"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            <span class="text-secondary selected-term">
+                                Select a Term
+                            </span>
+                                <i class="bx bx-chevron-down ms-2 text-secondary"></i>
+                            </button>
+                            <ul class="dropdown-menu py-2 px-1"
+                                aria-labelledby="dropdownSearchButtonTerm">
+                                <div class="px-2">
+                                    <input type="text"
+                                           class="form-control form-control-sm mb-2 dropdown-search-input"
+                                           id="dropdownSearchInputTerm"
+                                           placeholder="Search Term.."
+                                           autocomplete="off" />
+                                </div>
+                                <li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>
+                            </ul>
+                        </div>
+                        <span asp-validation-for="TermId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" asp-for="SectionCode">Section Code <span class="required">*</span></label>
+                        <input asp-for="SectionCode" type="text" class="form-control" required placeholder="e.g., HSK1-F24-001"/>
+                        <span asp-validation-for="SectionCode" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" asp-for="SectionName">Section Name</label>
+                        <input asp-for="SectionName" type="text" class="form-control" placeholder="e.g., HSK1 Morning Class"/>
+                        <span asp-validation-for="SectionName" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assignment Information -->
+            <div class="col-md-6">
+                <div class="form-section">
+                    <h3 class="form-section-title">Assignment</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label" asp-for="TeacherId">Teacher <span class="required">*</span></label>
+                        <div class="searchable-select dropdown w-100"
+                             data-name="TeacherId"
+                             data-selected-value="@(Model?.TeacherId ?? Guid.Empty)"
+                             data-url="@Url.Action("GetActiveTeachers", "ClassSection")">
+                            <button class="form-select w-100 text-start d-flex justify-content-between align-items-center"
+                                type="button"
+                                id="dropdownSearchButtonTeacher"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            <span class="text-secondary selected-teacher">
+                                Select a Teacher
+                            </span>
+                                <i class="bx bx-chevron-down ms-2 text-secondary"></i>
+                            </button>
+                            <ul class="dropdown-menu py-2 px-1"
+                                aria-labelledby="dropdownSearchButtonTeacher">
+                                <div class="px-2">
+                                    <input type="text"
+                                           class="form-control form-control-sm mb-2 dropdown-search-input"
+                                           id="dropdownSearchInputTeacher"
+                                           placeholder="Search Teacher.."
+                                           autocomplete="off" />
+                                </div>
+                                <li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>
+                            </ul>
+                        </div>
+                        <span asp-validation-for="TeacherId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" asp-for="ClassroomId">Classroom <span class="required">*</span></label>
+                        <div class="searchable-select dropdown w-100"
+                             data-name="ClassroomId"
+                             data-selected-value="@(Model?.ClassroomId ?? Guid.Empty)"
+                             data-url="@Url.Action("GetActiveClassrooms", "ClassSection")">
+                            <button class="form-select w-100 text-start d-flex justify-content-between align-items-center"
+                                type="button"
+                                id="dropdownSearchButtonClassroom"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            <span class="text-secondary selected-classroom">
+                                Select a Classroom
+                            </span>
+                                <i class="bx bx-chevron-down ms-2 text-secondary"></i>
+                            </button>
+                            <ul class="dropdown-menu py-2 px-1"
+                                aria-labelledby="dropdownSearchButtonClassroom">
+                                <div class="px-2">
+                                    <input type="text"
+                                           class="form-control form-control-sm mb-2 dropdown-search-input"
+                                           id="dropdownSearchInputClassroom"
+                                           placeholder="Search Classroom.."
+                                           autocomplete="off" />
+                                </div>
+                                <li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>
+                            </ul>
+                        </div>
+                        <span asp-validation-for="ClassroomId" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label class="form-label" asp-for="StartDate">Start Date <span class="required">*</span></label>
+                                <input asp-for="StartDate" type="date" class="form-control" required readonly />
+                                <div class="help-text">Automatically set from selected term</div>
+                                <span asp-validation-for="StartDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label class="form-label" asp-for="EndDate">End Date <span class="required">*</span></label>
+                                <input asp-for="EndDate" type="date" class="form-control" required readonly />
+                                <div class="help-text">Automatically set from selected term</div>
+                                <span asp-validation-for="EndDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule Pattern -->
+        <div class="form-section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="form-section-title mb-0">Schedule Pattern</h3>
+                <button type="button" class="add-slot-btn" onclick="addScheduleSlot()">
+                    + Add Time Slot
+                </button>
+            </div>
+            
+            <div id="scheduleSlots">
+                <div class="schedule-slot">
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <select name="scheduleDays[]" class="form-select">
+                                <option value="Monday">Monday</option>
+                                <option value="Tuesday">Tuesday</option>
+                                <option value="Wednesday">Wednesday</option>
+                                <option value="Thursday">Thursday</option>
+                                <option value="Friday">Friday</option>
+                                <option value="Saturday">Saturday</option>
+                                <option value="Sunday">Sunday</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="time" name="scheduleStartTimes[]" class="form-control" value="09:00" />
+                        </div>
+                        <div class="col-md-1 text-center">
+                            <span class="text-muted">to</span>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="time" name="scheduleEndTimes[]" class="form-control" value="11:00" />
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <button type="button" class="remove-slot-btn" onclick="removeScheduleSlot(this)" style="display: none;">
+                                <i class="bx bx-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" asp-for="SchedulePattern">Schedule Pattern <span class="required">*</span></label>
+                <textarea asp-for="SchedulePattern" class="form-control" rows="3" required placeholder="e.g., Monday 9:00-11:00, Wednesday 9:00-11:00, Friday 9:00-11:00"></textarea>
+                <div class="help-text">Enter the schedule details in a readable format</div>
+                <span asp-validation-for="SchedulePattern" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Enrollment -->
+            <div class="col-md-6">
+                <div class="form-section">
+                    <h3 class="form-section-title">Enrollment</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label" asp-for="MaxEnrollment">Max Enrollment <span class="required">*</span></label>
+                        <input asp-for="MaxEnrollment" type="number" class="form-control" min="1" required placeholder="e.g., 25"/>
+                        <span asp-validation-for="MaxEnrollment" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" asp-for="CurrentEnrollment">Current Enrollment</label>
+                        <input asp-for="CurrentEnrollment" type="number" class="form-control" min="0" placeholder="0"/>
+                        <span asp-validation-for="CurrentEnrollment" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" asp-for="WaitlistCount">Waitlist Count</label>
+                        <input asp-for="WaitlistCount" type="number" class="form-control" min="0" placeholder="0"/>
+                        <span asp-validation-for="WaitlistCount" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" asp-for="Status">Status</label>
+                        <select asp-for="Status" class="form-select">
+                            @if (ViewBag.StatusOptions != null)
+                            {
+                                @foreach (var status in ViewBag.StatusOptions as string[])
+                                {
+                                    <option value="@status">@status</option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fees -->
+            <div class="col-md-6">
+                <div class="form-section">
+                    <h3 class="form-section-title">Fees (USD)</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label" asp-for="TuitionFee">Tuition Fee <span class="required">*</span></label>
+                        <input asp-for="TuitionFee" type="number" class="form-control" min="0" step="0.01" required placeholder="e.g., 350.00"/>
+                        <span asp-validation-for="TuitionFee" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" asp-for="MaterialsFee">Materials Fee</label>
+                        <input asp-for="MaterialsFee" type="number" class="form-control" min="0" step="0.01" placeholder="e.g., 25.00"/>
+                        <span asp-validation-for="MaterialsFee" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" asp-for="RegistrationFee">Registration Fee</label>
+                        <input asp-for="RegistrationFee" type="number" class="form-control" min="0" step="0.01" placeholder="e.g., 15.00"/>
+                        <span asp-validation-for="RegistrationFee" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="form-section">
+            <div class="form-group">
+                <label class="form-label" asp-for="Notes">Notes</label>
+                <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Additional notes or special instructions..."></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bx bx-x-circle me-1"></i>Cancel
+        </button>
+        <button type="submit" class="btn btn-primary">
+            <i class="bx bx-save me-1"></i>Create Section
+        </button>
+    </div>
+</form>
+
+<script>
+    function addScheduleSlot() {
+        const container = document.getElementById('scheduleSlots');
+        const newSlot = document.createElement('div');
+        newSlot.className = 'schedule-slot';
+        newSlot.innerHTML = `
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <select name="scheduleDays[]" class="form-select">
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                        <option value="Sunday">Sunday</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="time" name="scheduleStartTimes[]" class="form-control" value="09:00" />
+                </div>
+                <div class="col-md-1 text-center">
+                    <span class="text-muted">to</span>
+                </div>
+                <div class="col-md-3">
+                    <input type="time" name="scheduleEndTimes[]" class="form-control" value="11:00" />
+                </div>
+                <div class="col-md-2 text-end">
+                    <button type="button" class="remove-slot-btn" onclick="removeScheduleSlot(this)">
+                        <i class="bx bx-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        container.appendChild(newSlot);
+        updateRemoveButtons();
+    }
+
+    function removeScheduleSlot(button) {
+        button.closest('.schedule-slot').remove();
+        updateRemoveButtons();
+    }
+
+    function updateRemoveButtons() {
+        const slots = document.querySelectorAll('.schedule-slot');
+        slots.forEach((slot, index) => {
+            const removeBtn = slot.querySelector('.remove-slot-btn');
+            if (slots.length === 1) {
+                removeBtn.style.display = 'none';
+            } else {
+                removeBtn.style.display = 'block';
+            }
+        });
+    }
+
+    // Initialize remove buttons
+    document.addEventListener('DOMContentLoaded', function() {
+        updateRemoveButtons();
+    });
+
+    // Handle term selection to auto-populate dates
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize searchable selects
+        initializeSearchableSelects();
+        
+        // Set up term date auto-population
+        setupTermDateAutoPopulation();
+    });
+
+    // Also initialize when modal content is loaded
+    $(document).ready(function() {
+        initializeSearchableSelects();
+        setupTermDateAutoPopulation();
+    });
+
+    function initializeSearchableSelects() {
+        $('.searchable-select').each(function () {
+            const $container = $(this);
+            const $button = $container.find('button.form-select');
+            const $dropdownMenu = $container.find('.dropdown-menu');
+            const $searchInput = $container.find('.dropdown-search-input');
+            const hiddenName = $container.data('name');
+            let selectedValue = $container.data('selected-value') || '';
+            const ajaxUrl = $container.data('url')?.trim() || null;
+
+            let $hiddenInput = $container.find(`input[type="hidden"][name="${hiddenName}"]`);
+            if (!$hiddenInput.length) {
+                $hiddenInput = $('<input type="hidden">').attr('name', hiddenName);
+                $container.append($hiddenInput);
+            }
+            $hiddenInput.val(selectedValue);
+
+            function renderOptions(items) {
+                $dropdownMenu.find('li').not(':first-child').remove();
+
+                if (!Array.isArray(items)) {
+                    return $dropdownMenu.append('<li><a href="#" class="dropdown-item text-danger small">Invalid data format</a></li>');
+                }
+
+                if (items.length === 0) {
+                    return $dropdownMenu.append('<li><a href="#" class="dropdown-item text-muted small">No results found</a></li>');
+                }
+
+                items.forEach(item => {
+                    const isActive = (selectedValue.toString() === item.id.toString()) ? ' active' : '';
+                    const $li = $(`
+                        <li>
+                            <a href="#" class="dropdown-item${isActive}" data-value="${item.id}" title="${item.text}">
+                                ${item.text} (${item.code})
+                            </a>
+                        </li>
+                    `);
+                    $dropdownMenu.append($li);
+                    
+                    if (isActive) {
+                        const selectedText = item.text;
+                        $button.find('span').text(selectedText).removeClass('text-secondary');
+                    }
+                });
+            }
+
+            function fetchOptions(query = '') {
+                if (!ajaxUrl) return;
+
+                $dropdownMenu.find('li').not(':first-child').remove();
+                $dropdownMenu.append('<li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>');
+
+                $.ajax({
+                    url: ajaxUrl,
+                    method: 'GET',
+                    data: { q: query },
+                    dataType: 'json'
+                })
+                    .done(function (data) {
+                        renderOptions(data);
+                    })
+                    .fail(function () {
+                        $dropdownMenu.find('li').not(':first-child').remove();
+                        $dropdownMenu.append('<li><a href="#" class="dropdown-item text-danger small">Error loading data. Check console.</a></li>');
+                    });
+            }
+
+            $searchInput.on('input', function () {
+                const query = $(this).val().toLowerCase();
+                if (ajaxUrl) {
+                    fetchOptions(query);
+                } else {
+                    $dropdownMenu.find('li').not(':first-child').each(function () {
+                        const text = $(this).find('.dropdown-item').text().toLowerCase();
+                        $(this).toggle(text.includes(query));
+                    });
+                }
+            });
+
+            $container.on('show.bs.dropdown', function () {
+                $searchInput.val('').focus();
+                if (ajaxUrl) {
+                    fetchOptions('');
+                } else {
+                    $dropdownMenu.find('li').show();
+                }
+            });
+
+            $dropdownMenu.on('click', '.dropdown-item', function (e) {
+                e.preventDefault();
+                const $item = $(this);
+                const newValue = $item.data('value');
+                const newText = $item.text();
+
+                selectedValue = newValue;
+                $hiddenInput.val(newValue);
+                $container.data('selected-value', newValue);
+                
+                const selectedText = newText.split(' (')[0]; // Remove code part
+                $button.find('span').text(selectedText).removeClass('text-secondary');
+
+                $dropdownMenu.find('.dropdown-item').removeClass('active');
+                $item.addClass('active');
+
+                const bsDropdown = bootstrap.Dropdown.getInstance($button[0]);
+                if (bsDropdown) {
+                    bsDropdown.hide();
+                }
+
+                $container.trigger('itemSelected', { id: newValue, text: newText });
+            });
+
+            if (ajaxUrl) {
+                fetchOptions('');
+            }
+        });
+    }
+
+    function setupTermDateAutoPopulation() {
+        // Listen for term selection changes
+        $('.searchable-select[data-name="TermId"]').on('itemSelected', function(e, data) {
+            const termId = data.id;
+            console.log('Term selected:', termId);
+            
+            if (termId) {
+                fetchTermDates(termId);
+            } else {
+                clearDates();
+            }
+        });
+    }
+
+    function fetchTermDates(termId) {
+        console.log('Fetching term dates for:', termId);
+        fetch(`/ClassSection/GetTermDates?termId=${termId}`)
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Term dates response:', data);
+                if (data.success) {
+                    console.log('Setting dates - Start:', data.startDate, 'End:', data.endDate);
+                    // Set both dates simultaneously to avoid validation issues
+                    const startDateInput = document.querySelector('input[name="StartDate"]');
+                    const endDateInput = document.querySelector('input[name="EndDate"]');
+                    
+                    if (startDateInput && endDateInput) {
+                        startDateInput.value = data.startDate;
+                        endDateInput.value = data.endDate;
+                        
+                        console.log('Date inputs after setting - Start:', startDateInput.value, 'End:', endDateInput.value);
+                        
+                        // Clear any existing validation errors
+                        clearDateValidationErrors();
+                        
+                        // Trigger validation to ensure dates are valid
+                        startDateInput.dispatchEvent(new Event('change'));
+                        endDateInput.dispatchEvent(new Event('change'));
+                    }
+                } else {
+                    console.error('Error loading term dates:', data.message);
+                    alert('Error loading term dates: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching term dates:', error);
+                alert('Error fetching term dates: ' + error.message);
+            });
+    }
+
+    function clearDates() {
+        console.log('No term selected, clearing dates');
+        const startDateInput = document.querySelector('input[name="StartDate"]');
+        const endDateInput = document.querySelector('input[name="EndDate"]');
+        
+        if (startDateInput && endDateInput) {
+            startDateInput.value = '';
+            endDateInput.value = '';
+            clearDateValidationErrors();
+        }
+    }
+
+    function clearDateValidationErrors() {
+        // Clear any existing validation error messages for date fields
+        const startDateInput = document.querySelector('input[name="StartDate"]');
+        const endDateInput = document.querySelector('input[name="EndDate"]');
+        
+        if (startDateInput) {
+            startDateInput.setCustomValidity('');
+        }
+        if (endDateInput) {
+            endDateInput.setCustomValidity('');
+        }
+    }
+</script>

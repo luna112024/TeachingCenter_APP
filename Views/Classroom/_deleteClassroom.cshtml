@@ -1,0 +1,32 @@
+@model UpdateClassroomDTO
+
+<form asp-action="DeleteClassroomConfirmed" asp-controller="Classroom" method="post" autocomplete="off">
+    <input type="hidden" asp-for="ClassroomId" />
+    @Html.AntiForgeryToken()
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Are you sure?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    <div class="modal-body">
+        <div>
+            <strong>Are you sure you want to delete this classroom?</strong>
+            <p class="mt-2">
+                Room Code: <strong>@Model.RoomCode</strong><br />
+                Room Name: <strong>@Model.RoomName</strong><br />
+                Building: @(Model.Building ?? "-")<br />
+                Capacity: @Model.Capacity<br />
+                Status: @Model.Status
+            </p>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bx bx-x-circle me-1"></i>Cancel
+        </button>
+        <button type="submit" class="btn btn-danger">
+            <i class="bx bx-trash me-1"></i>Delete
+        </button>
+    </div>
+</form>
