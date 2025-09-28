@@ -55,6 +55,9 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<ITermService, TermService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<ILevelService, LevelService>();
 
 // Register Report Export Service
 builder.Services.AddScoped<ReportExportService>();

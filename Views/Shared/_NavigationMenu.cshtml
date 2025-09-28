@@ -58,6 +58,53 @@
             ​​Company
         </a>
     </li>
+
+    <li class="menu-header small text-uppercase" asp-permissions="ViewTerm,ViewCourse,ViewClassroom,ViewClassSections,ViewTeacher,ViewLevel"><span class="menu-header-text small">ACADEMIC MANAGEMENT</span></li>
+    <li class="menu-item" asp-permissions="ViewTerm,ViewCourse,ViewClassroom,ViewClassSections,ViewTeacher,ManageTerm,DeleteTerm,ManageCourse,ViewLevel,ManageLevel,DeleteLevel,DeleteCourse,DeleteClassroom,ManageClassroom,ManageClassSections,DeleteClassSections">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons fa-solid fa-sm fa-sliders"></i>
+            Academic Settings
+        </a>
+        <ul class="menu-sub">
+            <li class="menu-item @Html.IsSelected(action: "Index", controller: " Term")" asp-permissions="ManageTerm,ViewTerm,DeleteTerm">
+                <a href="@Url.Action("Index", "Term")" class="menu-link">
+                    <div>​​Terms</div>
+                </a>
+            </li>
+            <li class="menu-item @Html.IsSelected(action: "Index", controller: " Course")" asp-permissions="ManageCourse,ViewCourse,DeleteCourse">
+                <a href="@Url.Action("Index", "Course")" class="menu-link">
+                    <div>​​Course</div>
+                </a>
+            </li>
+            <li class="menu-item @Html.IsSelected(action: "Index", controller: "Level")" asp-permissions="ViewLevel,ManageLevel,DeleteLevel">
+                <a href="@Url.Action("Index", "Level")" class="menu-link">
+                    <div>Level</div>
+                </a>
+            </li>
+            <li class="menu-item @Html.IsSelected(action: "Permission", controller: " Identity")" asp-permissions="DeleteClassroom,ViewClassroom,ManageClassroom">
+                <a href="@Url.Action("Permission", "Identity")" class="menu-link">
+                    <div>Classrooms</div>
+                </a>
+            </li>
+            <li class="menu-item @Html.IsSelected(action: "Permission", controller: " Identity")" asp-permissions="ManageClassSections,ViewClassSections,DeleteClassSections">
+                <a href="@Url.Action("Permission", "Identity")" class="menu-link">
+                    <div>Class Sections</div>
+                </a>
+            </li>
+            <li class="menu-item @Html.IsSelected(action: "Permission", controller: " Identity")" asp-permissions="ViewTeacher,ManageTeacher,DeleteTeacher">
+                <a href="@Url.Action("Permission", "Identity")" class="menu-link">
+                    <div>Teachers</div>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="menu-item @Html.IsSelected(action: "index", controller: "Company")" asp-permissions="ViewStudent,ManageStudent,DeleteStudent">
+        <a href="@Url.Action("Index", "Company")" class="menu-link">
+            <i class="menu-icon tf-icons fa-sm fa-solid fa-users"></i>
+            ​​Students
+        </a>
+    </li>
+
    @*  <!-- User Info Section (Show current user info) -->
     @if (AuthService.IsAuthenticated())
     {

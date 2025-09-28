@@ -1,0 +1,34 @@
+@model UpdateTermDTO
+
+<form asp-action="SetCurrentTermConfirmed" asp-controller="Term" method="post" autocomplete="off">
+    <input type="hidden" asp-for="TermId" />
+    @Html.AntiForgeryToken()
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Set Current Term</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    <div class="modal-body">
+        <div>
+            <strong>Are you sure you want to set this term as the current term?</strong>
+            <p class="mt-2">
+                Term Name: <strong>@Model.TermName</strong><br />
+                Term Code: <strong>@Model.TermCode</strong><br />
+                Academic Year: @Model.AcademicYear
+            </p>
+            <div class="alert alert-warning">
+                <i class="bx bx-info-circle me-2"></i>
+                <strong>Note:</strong> Setting this term as current will automatically unset any previously set current term.
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bx bx-x-circle me-1"></i>Cancel
+        </button>
+        <button type="submit" class="btn btn-primary">
+            <i class="bx bx-check-circle me-1"></i>Set as Current
+        </button>
+    </div>
+</form>

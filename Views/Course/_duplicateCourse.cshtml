@@ -1,0 +1,39 @@
+@model DuplicateCourseDTO
+
+<form asp-action="DuplicateCourseConfirmed" asp-controller="Course" method="post" autocomplete="off">
+    <input type="hidden" name="originalCourseId" value="@ViewBag.OriginalCourse.CourseId" />
+    @Html.AntiForgeryToken()
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Duplicate Course</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    <div class="modal-body">
+        <div class="mb-3">
+            <strong>Original Course Details:</strong>
+            <p class="mt-2">
+                Course Name: <strong>@ViewBag.OriginalCourse.CourseName</strong><br />
+                Course Code: <strong>@ViewBag.OriginalCourse.CourseCode</strong><br />
+                Level: @ViewBag.OriginalCourse.LevelName
+            </p>
+        </div>
+        
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <label class="form-label" asp-for="NewCourseCode">New Course Code<span class="text-danger">*</span></label>
+                <input asp-for="NewCourseCode" type="text" class="form-control" required placeholder="Enter new course code.."/>
+                <span asp-validation-for="NewCourseCode" class="text-danger"></span>
+                <div class="form-text">This will create a copy of the course with the new code.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bx bx-x-circle me-1"></i>Cancel
+        </button>
+        <button type="submit" class="btn btn-primary">
+            <i class="bx bx-copy me-1"></i>Duplicate Course
+        </button>
+    </div>
+</form>

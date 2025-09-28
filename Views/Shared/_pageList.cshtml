@@ -1,27 +1,110 @@
 ﻿@model hongWenAPP.Models.PaginationModel
-<div class="d-flex justify-content-end align-items-center">
-    <span class="me-2"><b>Total:</b> @Model.TotalItem</span>
-@*Pagination*@
-<nav aria-label="...">
-    <ul class="pagination mt-3 justify-content-end">
-        <li class="page-item @Model.HidePreviousePage">
-                <a data-page="@Model.PreviousePageIndex" data-partial="@Model.PartialAction" class="page-link" asp-action="@Model.PartialAction" asp-route-page="@Model.PreviousePageIndex"><i class="tf-icon bx bx-left-arrow-alt"></i></a>
-        </li>
+<div class="d-flex flex-column flex-sm-row justify-content-center justify-content-sm-between align-items-center gap-2 text-center text-sm-start mt-3">
+    <!-- Total count -->
+    <div class="order-2 order-sm-1">
+        <span class="fw-bold align-middle d-inline-flex align-items-center h-100">Total: @Model.TotalItem</span>
+    </div>
 
-        @* Can Select IndexPage*@
-        @for (var j = 1; j <= Model.TotalPages; j++)
-        {
-            var active = j == Model.PageIndex ? "active" : "";
-
-            <li class="page-item @active" aria-current="page">
-                    <a data-page="@j" data-partial="@Model.PartialAction" class="page-link" asp-action="@Model.PartialAction" asp-route-page="@j">@j</a>
+    <!-- Pagination navigation -->
+    <nav aria-label="Page navigation" class="order-1 order-sm-2">
+        <ul class="pagination mb-0 flex-wrap justify-content-center justify-content-sm-end align-items-center">
+            @* First page button - always show if more than 1 page *@
+            <li class="page-item @(Model.PageIndex == 1 ? "disabled" : "")">
+                <a data-page="1" data-partial="@Model.PartialAction"
+                   class="page-link"
+                   asp-action="@Model.PartialAction" asp-route-page="1"
+                   tabindex="@(Model.PageIndex == 1 ? "-1" : "0")"
+                   aria-disabled="@(Model.PageIndex == 1 ? "true" : "false")">
+                    <i class="tf-icon bx bx-first-page"></i>
+                </a>
             </li>
-        }
 
-        <li class="page-item  @Model.HideNextPage">
-                <a data-page="@Model.NextPageIndex" data-partial="@Model.PartialAction" class="page-link" asp-action="@Model.PartialAction" asp-route-page="@Model.NextPageIndex"><i class="tf-icon bx bx-right-arrow-alt"></i></a>
-        </li>
-    </ul>
-</nav>
+            @* Previous page button - responsive *@
+            <li class="page-item @(Model.PageIndex <= 1 ? "disabled" : "")">
+                <a data-page="@(Model.PageIndex - 1)"
+                   data-partial="@Model.PartialAction"
+                   class="page-link"
+                   asp-action="@Model.PartialAction"
+                   asp-route-page="@(Model.PageIndex - 1)"
+                   tabindex="@(Model.PageIndex <= 1 ? "-1" : "0")"
+                   aria-disabled="@(Model.PageIndex <= 1 ? "true" : "false")">
+                    <i class="tf-icon bx bx-left-arrow-alt"></i>
+                </a>
+            </li>
 
+            @* Show first page if not adjacent to current group - hide on mobile *@
+            @if (Model.GroupStart > 2)
+            {
+                <li class="page-item d-none d-md-block">
+                    <a data-page="1" data-partial="@Model.PartialAction"
+                       class="page-link"
+                       asp-action="@Model.PartialAction" asp-route-page="1">1</a>
+                </li>
+            }
+
+            @* Show ellipsis before current group if needed - hide on mobile *@
+            @if (Model.GroupStart > 2)
+            {
+                <li class="page-item disabled d-none d-md-block">
+                    <span class="page-link">...</span>
+                </li>
+            }
+
+            @* Page numbers (responsive group) *@
+            @foreach (var j in Model.DisplayPages)
+            {
+                var active = j == Model.PageIndex ? "active" : "";
+                var isCurrentGroup = Math.Abs(j - Model.PageIndex) <= 1; // Show current ±1 on mobile
+                var mobileClass = isCurrentGroup ? "" : "d-none d-sm-block";
+
+                <li class="page-item @active @mobileClass" aria-current="@(j == Model.PageIndex ? "page" : "")">
+                    <a data-page="@j" data-partial="@Model.PartialAction"
+                       class="page-link"
+                       asp-action="@Model.PartialAction" asp-route-page="@j">@j</a>
+                </li>
+            }
+
+            @* Show ellipsis after current group if needed - hide on mobile *@
+            @if (Model.GroupEnd < Model.TotalPages - 1)
+            {
+                <li class="page-item disabled d-none d-md-block">
+                    <span class="page-link ">...</span>
+                </li>
+            }
+
+            @* Show last page if not adjacent to current group - hide on mobile *@
+            @if (Model.GroupEnd < Model.TotalPages - 1)
+            {
+                <li class="page-item d-none d-md-block">
+                    <a data-page="@Model.TotalPages" data-partial="@Model.PartialAction"
+                       class="page-link"
+                       asp-action="@Model.PartialAction" asp-route-page="@Model.TotalPages">@Model.TotalPages</a>
+                </li>
+            }
+
+            @* Next page button - responsive *@
+            <li class="page-item @(Model.PageIndex >= Model.TotalPages ? "disabled" : "")">
+                <a data-page="@(Model.PageIndex + 1)"
+                   data-partial="@Model.PartialAction"
+                   class="page-link"
+                   asp-action="@Model.PartialAction"
+                   asp-route-page="@(Model.PageIndex + 1)"
+                   tabindex="@(Model.PageIndex >= Model.TotalPages ? "-1" : "0")"
+                   aria-disabled="@(Model.PageIndex >= Model.TotalPages ? "false" : "true")">
+                    <i class="tf-icon bx bx-right-arrow-alt"></i>
+                </a>
+            </li>
+
+            @* Last page button - always show if more than 1 page *@
+            <li class="page-item @(Model.PageIndex == Model.TotalPages ? "disabled" : "")">
+                <a data-page="@Model.TotalPages" data-partial="@Model.PartialAction"
+                   class="page-link"
+                   asp-action="@Model.PartialAction" asp-route-page="@Model.TotalPages"
+                   tabindex="@(Model.PageIndex == Model.TotalPages ? "-1" : "0")"
+                   aria-disabled="@(Model.PageIndex == Model.TotalPages ? "true" : "false")">
+                    <i class="tf-icon bx bx-last-page"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </div>

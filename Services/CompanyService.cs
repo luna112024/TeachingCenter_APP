@@ -1,8 +1,5 @@
 ﻿using hongWenAPP.Models.Common;
 using hongWenAPP.Models.CompanyModel.DTOs;
-using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using System.Text.Json;
 
 namespace hongWenAPP.Services
 {

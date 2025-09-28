@@ -1,0 +1,90 @@
+@model PageList<GetTermDTO>
+
+@{
+    GetTermDTO p = null;
+}
+<style>
+    .bg-label-success {
+        background-color: #e8fadf !important;
+        color: #71dd37 !important;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-secondary {
+        background-color: #e4e6e8 !important;
+        color: #8592a3;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-primary {
+        background-color: #e7f3ff !important;
+        color: #696cff;
+        font-size: 11px;
+        font-weight: 600;
+    }
+</style>
+<table class="table">
+    <thead>
+        <tr>
+            <th class="mcol-50">N<sup>o</sup></th>
+            <th>Term Name</th>
+            <th>Term Code</th>
+            <th>Academic Year</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+            <th class="text-end mcol-200">Actions</th>
+        </tr>
+    </thead>
+    <tbody class="table-border-bottom-0">
+        @{
+            var i = Model.Paging.StartRowNo;
+        }
+        @foreach (var m in Model)
+        {
+        <tr>
+            <td>@i</td>
+            <td>@m.TermName</td>
+            <td>@m.TermCode</td>
+            <td>@m.AcademicYear</td>
+            <td>@m.StartDate.ToString("MM/dd/yyyy")</td>
+            <td>@m.EndDate.ToString("MM/dd/yyyy")</td>
+            <td>
+                @if (m.Iscurrent)
+                {
+                    <span class="badge bg-label-primary text-capitalized">Current</span>
+                }
+                else if (m.Status == "Active")
+                {
+                    <span class="badge bg-label-success text-capitalized">Active</span>
+                }
+                else
+                {
+                    <span class="badge bg-label-secondary text-capitalized">@m.Status</span>
+                }
+            </td>
+            <td class="text-end">
+                <div class="dropdown">
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                        <i class="bx bx-dots-vertical-rounded"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" modal-popup="" modal-size="xl" asp-action="EditTerm" asp-controller="Term" asp-route-id="@m.TermId"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                        @if (!m.Iscurrent)
+                        {
+                            <a class="dropdown-item text-info" modal-popup="" asp-action="SetCurrentTerm" asp-controller="Term" asp-route-id="@m.TermId"><i class="bx bx-check-circle me-1"></i> Set Current</a>
+                        }
+                        <a class="dropdown-item text-danger" modal-popup="" asp-action="DeleteTerm" asp-controller="Term" asp-route-id="@m.TermId"><i class="bx bx-trash me-1"></i> Delete</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        i++;
+        }
+
+    </tbody>
+</table>
+
+@await Html.PartialAsync("_pageList", Model.Paging)

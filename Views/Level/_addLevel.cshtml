@@ -1,0 +1,135 @@
+@model CreateLevelDTO
+
+<form asp-action="AddLevel" asp-controller="Level" method="post" autocomplete="off">
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Create Level</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class="row g-3">
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="LevelCode">Level Code<span class="text-danger">*</span></label>
+                <input asp-for="LevelCode" type="text" class="form-control" required placeholder="e.g., HSK1, BEG, ELEM"/>
+                <span asp-validation-for="LevelCode" class="text-danger"></span>
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="LevelName">Level Name<span class="text-danger">*</span></label>
+                <input asp-for="LevelName" type="text" class="form-control" required placeholder="e.g., HSK Level 1, Beginner"/>
+                <span asp-validation-for="LevelName" class="text-danger"></span>
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="LevelNameChinese">Level Name (Chinese)</label>
+                <input asp-for="LevelNameChinese" type="text" class="form-control" placeholder="中文名称" />
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="LevelNameKhmer">Level Name (Khmer)</label>
+                <input asp-for="LevelNameKhmer" type="text" class="form-control" placeholder="ឈ្មោះជាភាសាខ្មែរ" />
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="LevelOrder">Level Order<span class="text-danger">*</span></label>
+                <input asp-for="LevelOrder" type="number" class="form-control" required min="1" placeholder="1, 2, 3..."/>
+                <span asp-validation-for="LevelOrder" class="text-danger"></span>
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="HskLevel">HSK Level</label>
+                <select asp-for="HskLevel" class="form-select">
+                    <option value="">Select HSK Level</option>
+                    <option value="HSK1">HSK1</option>
+                    <option value="HSK2">HSK2</option>
+                    <option value="HSK3">HSK3</option>
+                    <option value="HSK4">HSK4</option>
+                    <option value="HSK5">HSK5</option>
+                    <option value="HSK6">HSK6</option>
+                </select>
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="CefrEquivalent">CEFR Equivalent</label>
+                <select asp-for="CefrEquivalent" class="form-select">
+                    <option value="">Select CEFR Level</option>
+                    <option value="A1">A1</option>
+                    <option value="A2">A2</option>
+                    <option value="B1">B1</option>
+                    <option value="B2">B2</option>
+                    <option value="C1">C1</option>
+                    <option value="C2">C2</option>
+                </select>
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="MinAgeGroup">Min Age Group</label>
+                <select asp-for="MinAgeGroup" class="form-select">
+                    <option value="">Select Min Age</option>
+                    <option value="All Ages">All Ages</option>
+                    <option value="Kids">Kids</option>
+                    <option value="Teens">Teens</option>
+                    <option value="Adults">Adults</option>
+                </select>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="MaxAgeGroup">Max Age Group</label>
+                <select asp-for="MaxAgeGroup" class="form-select">
+                    <option value="">Select Max Age</option>
+                    <option value="All Ages">All Ages</option>
+                    <option value="Kids">Kids</option>
+                    <option value="Teens">Teens</option>
+                    <option value="Adults">Adults</option>
+                </select>
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="ExpectedHours">Expected Hours</label>
+                <input asp-for="ExpectedHours" type="number" class="form-control" min="1" placeholder="e.g., 40"/>
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="Description">Description</label>
+                <textarea asp-for="Description" class="form-control" rows="2" placeholder="Enter level description.."></textarea>
+            </div> 
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="DescriptionChinese">Description (Chinese)</label>
+                <textarea asp-for="DescriptionChinese" class="form-control" rows="2" placeholder="中文描述.."></textarea>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="Prerequisites">Prerequisites</label>
+                <textarea asp-for="Prerequisites" class="form-control" rows="2" placeholder="What students need before this level.."></textarea>
+            </div>
+            <div class="col-3 mb-2">
+                <label class="form-label" asp-for="LearningObjectives">Learning Objectives</label>
+                <textarea asp-for="LearningObjectives" class="form-control" rows="2" placeholder="What students will learn.."></textarea>
+            </div>
+            <div class="col-2 mb-2">
+                <div class="form-check">
+                    <input class="form-check-input" asp-for="IsActive" type="checkbox" checked>
+                    <label class="form-check-label" asp-for="IsActive">
+                        Is Active
+                    </label>
+                </div>
+            </div>
+            <div class="col-2 mb-2">
+                <div class="form-check">
+                    <input class="form-check-input" asp-for="IsForBeginner" type="checkbox">
+                    <label class="form-check-label" asp-for="IsForBeginner">
+                        Is For Beginner
+                    </label>
+                </div>
+            </div>
+            <div class="col-2 mb-2">
+                <div class="form-check">
+                    <input class="form-check-input" asp-for="IsForPlacement" type="checkbox" checked>
+                    <label class="form-check-label" asp-for="IsForPlacement">
+                        Is For Placement
+                    </label>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Close</button>
+        <button type="submit" class="btn btn-primary"><i class="bx bx-save me-1"></i>Save</button>
+    </div>
+</form>
