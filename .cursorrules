@@ -1,0 +1,854 @@
+# HongWen APP - ASP.NET Core MVC Cursor Rules
+
+## Project Overview
+
+This is an **ASP.NET Core MVC application** for a Teaching Center Management System. The application follows a clean architecture pattern with Controllers, Services, Models, and Views, using Bootstrap for UI components and AJAX for dynamic interactions.
+
+## Project Structure
+
+### Core Framework
+
+- **ASP.NET Core**: .NET 9.0 with MVC pattern
+- **Authentication**: Custom authentication middleware with JWT tokens
+- **UI Framework**: Bootstrap 5 with custom CSS
+- **JavaScript**: jQuery with AJAX for dynamic content
+- **API Integration**: HTTP client services for backend API communication
+
+### Key Directories
+
+```
+hongWen_APP/
+├── Controllers/                 # MVC Controllers
+├── Models/                      # Data Models and DTOs
+│   ├── {ModelName}Model/        # Model-specific folders
+│   │   └── DTOs/               # Data Transfer Objects
+│   └── Common/                 # Shared models
+├── Services/                   # Business logic services
+├── Views/                      # Razor views
+│   ├── {ControllerName}/       # Controller-specific views
+│   └── Shared/                 # Shared views and layouts
+├── Helpers/                    # Utility classes
+├── Middleware/                 # Custom middleware
+├── TagHelpers/                 # Custom tag helpers
+└── wwwroot/                    # Static assets
+```
+
+## Architecture Patterns
+
+### **MANDATORY: Clean Architecture Implementation**
+
+All new features MUST follow the established clean architecture pattern:
+
+#### **Controller Pattern (MANDATORY):**
+
+```csharp
+using hongWenAPP.Helpers;
+using hongWenAPP.Models;
+using hongWenAPP.Models.{ModelName}Model.DTOs;
+using hongWenAPP.Services;
+using Microsoft.AspNetCore.Mvc;
+
+namespace hongWenAPP.Controllers
+{
+    public class {ControllerName}Controller : Controller
+    {
+        private readonly I{ModelName}Service _{modelName}Service;
+        private readonly ReturnHelper _returnHelper;
+        private readonly AuthenticationService _authService;
+
+        public {ControllerName}Controller(
+            I{ModelName}Service {modelName}Service, 
+            ReturnHelper returnHelper, 
+            AuthenticationService authService)
+        {
+            _{modelName}Service = {modelName}Service;
+            _returnHelper = returnHelper;
+            _authService = authService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index(List{ModelName}DTOs model)
+        {
+            if (!_authService.HasPermission("View{ModelName}"))
+            {
+                return PartialView("_AccessDenied");
+            }
+            var items = await _{modelName}Service.GetAll{ModelName}s();
+            var list = new List{ModelName}DTOs
+            {
+                {modelName} = PageList<Get{ModelName}DTO>.Create(items, model.Page, model.PageSize, "List{ModelName}")
+            };
+            return View(list);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> List{ModelName}(List{ModelName}DTOs model)
+        {
+            if (!_authService.HasPermission("View{ModelName}"))
+            {
+                return PartialView("_AccessDenied");
+            }
+            var items = await _{modelName}Service.GetAll{ModelName}s(name: model.SearchText);
+            var list = PageList<Get{ModelName}DTO>.Create(items, model.Page, model.PageSize, "List{ModelName}");
+            return PartialView("_List{ModelName}s", list);
+        }
+
+        [HttpGet]
+        public IActionResult Add{ModelName}()
+        {
+            if (!_authService.HasPermission("Manage{ModelName}"))
+            {
+                return PartialView("_AccessDenied");
+            }
+            var model = new Create{ModelName}DTO();
+            return PartialView("_add{ModelName}", model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Add{ModelName}(Create{ModelName}DTO create{ModelName}DTO)
+        {
+            try
+            {
+                if (!_authService.HasPermission("Manage{ModelName}"))
+                {
+                    return PartialView("_AccessDenied");
+                }
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.ToDictionary(kvp => kvp.Key, kvp => kvp.Value?.Errors.Select(e => e.ErrorMessage).ToArray());
+                    return Json(new { validationErrors = errors });
+                }
+                var result = await _{modelName}Service.Create{ModelName}(create{ModelName}DTO);
+                return _returnHelper.ReturnNewResult(result.Flag, result.Message);
+            }
+            catch (Exception ex)
+            {
+                return _returnHelper.ReturnNewResult(false, $"Error: {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit{ModelName}(Guid id)
+        {
+            try
+            {
+                if (!_authService.HasPermission("Manage{ModelName}"))
+                {
+                    return PartialView("_AccessDenied");
+                }
+                var itemData = await _{modelName}Service.Get{ModelName}(id);
+                var updateDTO = new Update{ModelName}DTO
+                {
+                    {ModelName}Id = itemData.{ModelName}Id,
+                    // Map other properties
+                    ModifiedBy = itemData.ModifiedBy
+                };
+                ViewBag.{ModelName}Id = id;
+                return PartialView("_edit{ModelName}", updateDTO);
+            }
+            catch (Exception ex)
+            {
+                return _returnHelper.ReturnNewResult(false, $"Error retrieving {ModelName}: {ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit{ModelName}(Update{ModelName}DTO model)
+        {
+            try
+            {
+                if (!_authService.HasPermission("Manage{ModelName}"))
+                {
+                    return PartialView("_AccessDenied");
+                }
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.ToDictionary(kvp => kvp.Key, kvp => kvp.Value?.Errors.Select(e => e.ErrorMessage).ToArray());
+                    return Json(new { validationErrors = errors });
+                }
+                var result = await _{modelName}Service.Update{ModelName}(model);
+                return _returnHelper.ReturnNewResult(result.Flag, result.Message ?? "{ModelName} updated successfully");
+            }
+            catch (Exception ex)
+            {
+                return _returnHelper.ReturnNewResult(false, $"Error updating {ModelName}: {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete{ModelName}(Guid id)
+        {
+            try
+            {
+                if (!_authService.HasPermission("Delete{ModelName}"))
+                {
+                    return PartialView("_AccessDenied");
+                }
+                var item = await _{modelName}Service.Get{ModelName}(id);
+                if (item == null)
+                {
+                    return _returnHelper.ReturnNewResult(false, "{ModelName} not found.");
+                }
+                var itemToDelete = new Update{ModelName}DTO
+                {
+                    {ModelName}Id = item.{ModelName}Id,
+                    // Map key properties for display
+                };
+                return PartialView("_delete{ModelName}", itemToDelete);
+            }
+            catch (Exception ex)
+            {
+                return _returnHelper.ReturnNewResult(false, $"Error loading delete form: {ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete{ModelName}Confirmed(Update{ModelName}DTO model)
+        {
+            try
+            {
+                if (!_authService.HasPermission("Delete{ModelName}"))
+                {
+                    return PartialView("_AccessDenied");
+                }
+                var result = await _{modelName}Service.Delete{ModelName}(model.{ModelName}Id);
+                return _returnHelper.ReturnNewResult(result.Flag, result.Message ?? "{ModelName} deleted successfully");
+            }
+            catch (Exception ex)
+            {
+                return _returnHelper.ReturnNewResult(false, $"Error deleting {modelName}: {ex.Message}");
+            }
+        }
+    }
+}
+```
+
+#### **Service Pattern (MANDATORY):**
+
+```csharp
+using hongWenAPP.Models.Common;
+using hongWenAPP.Models.{ModelName}Model.DTOs;
+
+namespace hongWenAPP.Services
+{
+    public interface I{ModelName}Service
+    {
+        Task<Get{ModelName}DTO> Get{ModelName}(Guid {modelName}Id);
+        Task<List<Get{ModelName}DTO>> GetAll{ModelName}s(string? status = null, string? name = null);
+        Task<Response> Create{ModelName}(Create{ModelName}DTO {modelName}Dto);
+        Task<Response> Update{ModelName}(Update{ModelName}DTO {modelName}Dto);
+        Task<Response> Delete{ModelName}(Guid {modelName}Id);
+    }
+
+    public class {ModelName}Service : BaseApiService, I{ModelName}Service
+    {
+        public {ModelName}Service(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+            : base(httpClientFactory, configuration)
+        {
+        }
+
+        public async Task<Get{ModelName}DTO> Get{ModelName}(Guid {modelName}Id) =>
+            await SendRequestAsync<Get{ModelName}DTO>(
+                $"{_baseUrl}/{ModelName}/{modelName}Id",
+                HttpMethod.Get);
+
+        public async Task<List<Get{ModelName}DTO>> GetAll{ModelName}s(string? status = null, string? name = null)
+        {
+            var queryParams = new List<string>();
+            if (!string.IsNullOrEmpty(status)) queryParams.Add($"status={status}");
+            if (!string.IsNullOrEmpty(name)) queryParams.Add($"name={name}");
+
+            var queryString = queryParams.Any() ? "?" + string.Join("&", queryParams) : "";
+            return await SendRequestAsync<List<Get{ModelName}DTO>>(
+                $"{_baseUrl}/{ModelName}{queryString}",
+                HttpMethod.Get);
+        }
+
+        public async Task<Response> Create{ModelName}(Create{ModelName}DTO {modelName}Dto) =>
+            await SendRequestAsync<Response>(
+                $"{_baseUrl}/{ModelName}",
+                HttpMethod.Post,
+                {modelName}Dto);
+
+        public async Task<Response> Update{ModelName}(Update{ModelName}DTO {modelName}Dto) =>
+            await SendRequestAsync<Response>(
+                $"{_baseUrl}/{ModelName}",
+                HttpMethod.Put,
+                {modelName}Dto);
+
+        public async Task<Response> Delete{ModelName}(Guid {modelName}Id) =>
+            await SendRequestAsync<Response>(
+                $"{_baseUrl}/{ModelName}/{modelName}Id",
+                HttpMethod.Delete);
+    }
+}
+```
+
+#### **Model DTO Pattern (MANDATORY):**
+
+```csharp
+using System.ComponentModel.DataAnnotations;
+
+namespace hongWenAPP.Models.{ModelName}Model.DTOs
+{
+    public abstract record class {ModelName}BaseDTO
+    {
+        [Required]
+        [StringLength(50)]
+        public string Name { get; set; } = string.Empty;
+
+        [StringLength(500)]
+        public string? Description { get; set; }
+
+        [StringLength(20)]
+        public string Status { get; set; } = "Active";
+    }
+
+    public record class Create{ModelName}DTO : {ModelName}BaseDTO
+    {
+        public string? CreatedBy { get; set; }
+    }
+
+    public record class Update{ModelName}DTO : {ModelName}BaseDTO
+    {
+        public Guid {ModelName}Id { get; set; }
+        public string? ModifiedBy { get; set; }
+    }
+
+    public record class Get{ModelName}DTO : {ModelName}BaseDTO
+    {
+        public Guid {ModelName}Id { get; set; }
+        public string? CreatedBy { get; set; }
+        public string? ModifiedBy { get; set; }
+        public DateTime? CreateDate { get; set; }
+        public DateTime? UpdateDate { get; set; }
+    }
+}
+```
+
+#### **List DTO Pattern (MANDATORY):**
+
+```csharp
+using hongWenAPP.Models;
+
+namespace hongWenAPP.Models.{ModelName}Model.DTOs
+{
+    public class List{ModelName}DTOs:PageGeneral
+    {
+        public PageList<Get{ModelName}DTO>? {modelName} { get; set; }
+    }
+}
+```
+
+## View Patterns
+
+### **MANDATORY: Standard View Structure**
+
+All views MUST follow the established Bootstrap-based structure:
+
+#### **Index View Pattern (MANDATORY):**
+
+```html
+@model List{ModelName}DTOs
+@{
+    ViewData["Title"] = "{ModelName}";
+}
+@section TopBar {
+    <!-- Search -->
+    <div class="navbar-nav align-items-center">
+        <div class="nav-item d-flex align-items-center justify-content-center">
+            <form id="formSearch" asp-action="List{ModelName}" asp-controller="{ModelName}" class="d-flex w-100">
+                <button type="submit" id="searchButton" style="background:none; border:none">
+                    <i class="bx bx-search fs-4 lh-0"></i>
+                </button>
+                <input type="text" asp-for="@Model.SearchText" class="form-control border-0 shadow-none" placeholder="Search..." aria-label="Search..." />
+            </form>
+        </div>
+    </div>
+    <!-- /Search -->
+}
+<div class="fluid-container flex-grow-1">
+    <nav class="pt-sm-3 pb-1" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index" asp-controller="home">Dashboard</a></li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+    <div class="card">
+        <div class="card-header p-3">
+            <div class="row">
+                <div class="col-sm-5 col-12">
+                    <div class="card-title">@ViewData["Title"]</div>
+                </div>
+                <div class="col-sm-7 col-12">
+                    <div class="d-flex h-100 justify-content-end align-items-center">
+                        <div class="me-3">
+                            <select asp-for="@Model.PageSize" data-page-size class="form-select">
+                                <option selected value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                        <a type="button" class="btn btn-primary btn-icon-only" asp-action="Add{ModelName}" asp-controller="{ModelName}" modal-popup="" modal-size="xl">
+                            <i class="bx bx-plus"></i>
+                            <span class="ms-1 d-none d-md-block">Add {ModelName}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive text-nowrap p-3 pt-2">
+            <partial name="_loading" />
+            <div id="listData">
+                @{
+                    await Html.RenderPartialAsync("_List{ModelName}s", Model.{modelName});
+                }
+            </div>
+        </div>
+    </div>
+</div>
+```
+
+#### **List Partial View Pattern (MANDATORY):**
+
+```html
+@model PageList<Get{ModelName}DTO>
+@if (Model != null && Model.Items.Any())
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Created Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@(item.Description?.Length > 50 ? item.Description.Substring(0, 50) + "..." : item.Description)</td>
+                    <td>
+                        <span class="badge bg-@(item.Status == "Active" ? "success" : "secondary")">
+                            @item.Status
+                        </span>
+                    </td>
+                    <td>@item.CreateDate?.ToString("dd-MM-yyyy HH:mm")</td>
+                    <td>
+                        <div class="dropdown">
+                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-action="Edit{ModelName}" asp-controller="{ModelName}" asp-route-id="@item.{ModelName}Id" modal-popup="" modal-size="xl">
+                                    <i class="bx bx-edit-alt me-1"></i> Edit
+                                </a>
+                                <a class="dropdown-item" asp-action="Delete{ModelName}" asp-controller="{ModelName}" asp-route-id="@item.{ModelName}Id" modal-popup="" modal-size="sm">
+                                    <i class="bx bx-trash me-1"></i> Delete
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    
+    <!-- Pagination -->
+    @if (Model.TotalPages > 1)
+    {
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                @if (Model.HasPreviousPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page="@(Model.PageNumber - 1)" data-partial="List{ModelName}">Previous</a>
+                    </li>
+                }
+                
+                @for (int i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.TotalPages, Model.PageNumber + 2); i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" href="#" data-page="@i" data-partial="List{ModelName}">@i</a>
+                    </li>
+                }
+                
+                @if (Model.HasNextPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page="@(Model.PageNumber + 1)" data-partial="List{ModelName}">Next</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+}
+else
+{
+    <div class="text-center py-4">
+        <i class="bx bx-info-circle fs-1 text-muted"></i>
+        <p class="text-muted mt-2">No {modelName}s found.</p>
+    </div>
+}
+```
+
+#### **Add/Edit Modal Pattern (MANDATORY):**
+
+```html
+@model Create{ModelName}DTO
+<!-- Add Modal -->
+<div class="modal-header">
+    <h5 class="modal-title">Add {ModelName}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<form asp-action="Add{ModelName}" asp-controller="{ModelName}" method="post">
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">Name <span class="text-danger">*</span></label>
+                    <input asp-for="Name" class="form-control" placeholder="Enter {modelName} name" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Enter description"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="mb-3">
+                    <label asp-for="Status" class="form-label">Status</label>
+                    <select asp-for="Status" class="form-select">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save {ModelName}</button>
+    </div>
+</form>
+```
+
+## Bootstrap-First UI Standards
+
+### **MANDATORY: Use Bootstrap Classes Only - No Custom CSS**
+
+All UI components MUST use Bootstrap classes exclusively. Custom CSS is strictly prohibited unless absolutely necessary.
+
+#### **Required Bootstrap Patterns:**
+
+```html
+<!-- Card Layout -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Title</h5>
+        <button class="btn btn-primary">Action</button>
+    </div>
+    <div class="card-body">
+        <!-- Content -->
+    </div>
+</div>
+
+<!-- Form Layout -->
+<form class="needs-validation" novalidate>
+    <div class="mb-3">
+        <label class="form-label">Label</label>
+        <input type="text" class="form-control" required />
+    </div>
+</form>
+
+<!-- Button Groups -->
+<div class="btn-group" role="group">
+    <button type="button" class="btn btn-outline-primary">Primary</button>
+    <button type="button" class="btn btn-outline-secondary">Secondary</button>
+</div>
+
+<!-- Responsive Grid -->
+<div class="row g-3">
+    <div class="col-md-6">
+        <!-- Content -->
+    </div>
+    <div class="col-md-6">
+        <!-- Content -->
+    </div>
+</div>
+```
+
+#### **Bootstrap Utility Classes:**
+
+```html
+<!-- Spacing -->
+<div class="mb-3 mt-2 p-3">Content</div>
+
+<!-- Display -->
+<div class="d-flex justify-content-center align-items-center">Content</div>
+
+<!-- Colors -->
+<span class="text-primary bg-light">Colored text</span>
+
+<!-- Borders -->
+<div class="border rounded p-3">Bordered content</div>
+
+<!-- Sizing -->
+<button class="btn btn-sm btn-primary">Small button</button>
+```
+
+#### **Prohibited CSS Patterns:**
+
+- ❌ **NEVER** write custom CSS for layout
+- ❌ **NEVER** use custom colors when Bootstrap provides them
+- ❌ **NEVER** create custom spacing when Bootstrap utilities exist
+- ❌ **NEVER** write custom responsive breakpoints
+- ❌ **NEVER** create custom form styling
+- ❌ **NEVER** write custom button styles
+
+## Service Registration
+
+### **MANDATORY: Register All Services in Program.cs**
+
+All new services MUST be registered in the dependency injection container:
+
+```csharp
+// Register services in Program.cs
+builder.Services.AddScoped<I{ModelName}Service, {ModelName}Service>();
+```
+
+### **Required Service Registration Pattern:**
+
+```csharp
+// In Program.cs - Add after existing service registrations
+builder.Services.AddScoped<I{ModelName}Service, {ModelName}Service>();
+```
+
+## Model Registration
+
+### **MANDATORY: Register Models in _ViewImports.cshtml**
+
+All new model namespaces MUST be added to _ViewImports.cshtml:
+
+```csharp
+// Add to _ViewImports.cshtml
+@using hongWenAPP.Models.{ModelName}Model.DTOs
+```
+
+## Helper Classes
+
+### **MANDATORY: Use Helper Classes for Common Functionality**
+
+All common functionality MUST be implemented in helper classes:
+
+#### **ReturnHelper Usage:**
+
+```csharp
+// Use ReturnHelper for consistent JSON responses
+return _returnHelper.ReturnNewResult(result.Flag, result.Message);
+return _returnHelper.ReturnNewResult(false, "Error message");
+```
+
+#### **HtmlHelpers Usage:**
+
+```csharp
+// Use HtmlHelpers for common HTML generation
+@Html.DisplayFor(model => model.Property)
+@Html.EditorFor(model => model.Property)
+```
+
+## Authentication & Authorization
+
+### **MANDATORY: Permission-Based Access Control**
+
+All controller actions MUST check permissions:
+
+```csharp
+// Check permissions before actions
+if (!_authService.HasPermission("View{ModelName}"))
+{
+    return PartialView("_AccessDenied");
+}
+
+if (!_authService.HasPermission("Manage{ModelName}"))
+{
+    return PartialView("_AccessDenied");
+}
+
+if (!_authService.HasPermission("Delete{ModelName}"))
+{
+    return PartialView("_AccessDenied");
+}
+```
+
+### **Required Permission Names:**
+
+- `View{ModelName}` - View/List permissions
+- `Manage{ModelName}` - Create/Edit permissions  
+- `Delete{ModelName}` - Delete permissions
+
+## Error Handling
+
+### **MANDATORY: Consistent Error Handling**
+
+All controller actions MUST use try-catch blocks with ReturnHelper:
+
+```csharp
+try
+{
+    // Action logic
+    var result = await _service.Method();
+    return _returnHelper.ReturnNewResult(result.Flag, result.Message);
+}
+catch (Exception ex)
+{
+    return _returnHelper.ReturnNewResult(false, $"Error: {ex.Message}");
+}
+```
+
+### **Model Validation:**
+
+```csharp
+if (!ModelState.IsValid)
+{
+    var errors = ModelState.ToDictionary(kvp => kvp.Key, kvp => kvp.Value?.Errors.Select(e => e.ErrorMessage).ToArray());
+    return Json(new { validationErrors = errors });
+}
+```
+
+## JavaScript Integration
+
+### **MANDATORY: Use Standard JavaScript Patterns**
+
+All views MUST use the standard JavaScript patterns from _Layout.cshtml:
+
+#### **Modal Integration:**
+
+```html
+<!-- Use modal-popup attribute for AJAX modals -->
+<a asp-action="Add{ModelName}" asp-controller="{ModelName}" modal-popup="" modal-size="xl">
+    Add {ModelName}
+</a>
+```
+
+#### **Form Submission:**
+
+```html
+<!-- Forms automatically use AJAX submission via _Layout.cshtml -->
+<form asp-action="Add{ModelName}" asp-controller="{ModelName}" method="post">
+    <!-- Form fields -->
+</form>
+```
+
+#### **Pagination:**
+
+```html
+<!-- Use data-page and data-partial attributes -->
+<a class="page-link" href="#" data-page="@i" data-partial="List{ModelName}">@i</a>
+```
+
+## File Naming Conventions
+
+### **MANDATORY: Consistent File Naming**
+
+All files MUST follow the established naming conventions:
+
+#### **Controllers:**
+- `{ModelName}Controller.cs`
+
+#### **Services:**
+- `{ModelName}Service.cs`
+- `I{ModelName}Service.cs` (interface)
+
+#### **Models:**
+- `{ModelName}DTOs.cs` (main DTOs)
+- `List{ModelName}DTOs.cs` (list DTOs)
+
+#### **Views:**
+- `Index.cshtml` (main view)
+- `_List{ModelName}s.cshtml` (list partial)
+- `_add{ModelName}.cshtml` (add modal)
+- `_edit{ModelName}.cshtml` (edit modal)
+- `_delete{ModelName}.cshtml` (delete modal)
+
+## Documentation Standards
+
+### **MANDATORY: All Documentation Must Be in Markdown Format**
+
+All project documentation MUST be created in the `Docs/` folder using markdown format:
+
+#### **Required Documentation Structure:**
+
+```
+Docs/
+├── README.md                    # Project overview and quick start
+├── {ModelName}_Management_Documentation.md  # Feature-specific documentation
+└── API_Integration_Guide.md     # API integration patterns
+```
+
+#### **Documentation Requirements:**
+
+1. **Markdown Format**: All docs use `.md` extension
+2. **Structured Content**: Clear headings and sections
+3. **Code Examples**: Practical code snippets with syntax highlighting
+4. **Update Tracking**: Version control for all changes
+
+## Development Guidelines
+
+### **Code Style**
+
+- **C#**: Follow Microsoft C# coding conventions
+- **Razor**: Use semantic HTML with Bootstrap classes
+- **JavaScript**: Use modern ES6+ features
+- **CSS**: Use Bootstrap utility classes
+
+### **Best Practices**
+
+1. **Use Bootstrap classes** for styling instead of custom CSS
+2. **Follow ASP.NET Core conventions** for controllers and models
+3. **Use dependency injection** for all services
+4. **Implement proper form validation** on both client and server side
+5. **Use semantic HTML** for better accessibility
+6. **Follow the established modal and form patterns**
+
+### **Common Patterns**
+
+- **Cards**: Use `.card` class for content containers
+- **Buttons**: Use Bootstrap button classes with icons
+- **Forms**: Use `.form-control` and `.form-label` classes
+- **Tables**: Use Bootstrap table classes with responsive design
+- **Modals**: Use Bootstrap modal structure with proper ARIA attributes
+
+## Prohibited Patterns
+
+- ❌ **NEVER** skip permission checks in controllers
+- ❌ **NEVER** use custom CSS when Bootstrap provides the functionality
+- ❌ **NEVER** skip error handling in controller actions
+- ❌ **NEVER** forget to register services in Program.cs
+- ❌ **NEVER** skip model validation
+- ❌ **NEVER** use different patterns for similar functionality
+- ❌ **NEVER** forget to add model namespaces to _ViewImports.cshtml
+
+## Required for All Features
+
+1. **Clean architecture** with Controllers, Services, Models, and Views
+2. **Bootstrap-first UI** with responsive design
+3. **Permission-based access control** for all actions
+4. **Consistent error handling** with try-catch blocks
+5. **Form validation** on both client and server side
+6. **AJAX integration** for dynamic content
+7. **Proper service registration** in dependency injection
+8. **Model namespace registration** in _ViewImports.cshtml
+
+This template provides a solid foundation for ASP.NET Core MVC applications with modern UI components and comprehensive business logic separation.
