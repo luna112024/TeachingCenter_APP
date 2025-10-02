@@ -5,20 +5,136 @@
 }
 
 <style>
-.background-bleed {
-    position: fixed;
+/* Reset and base styles */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    background: #f8f9fa;
+}
+
+/* Animated background elements */
+/* Student Management Gradient Background */
+.display-section {
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 25%, #10b981 50%, #06b6d4 75%, #8b5cf6 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Floating Bubbles Animation */
+.display-section::before {
+    content: '';
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url('@Url.Content("~/assets/img/Cover-Page-Final.jpg")');
-    background-repeat: no-repeat;
-    background-position: center top;
-    background-size: 100% auto;
-    z-index: -1;
+    background: 
+        radial-gradient(circle at 15% 25%, rgba(255,255,255,0.18) 0%, transparent 35%),
+        radial-gradient(circle at 85% 15%, rgba(255,255,255,0.15) 0%, transparent 40%),
+        radial-gradient(circle at 45% 70%, rgba(255,255,255,0.12) 0%, transparent 45%),
+        radial-gradient(circle at 75% 85%, rgba(255,255,255,0.14) 0%, transparent 30%),
+        radial-gradient(circle at 25% 85%, rgba(255,255,255,0.10) 0%, transparent 50%);
+    animation: bubbleFloat 8s ease-in-out infinite;
 }
-.card-body {
-    padding: 2.3rem !important;
+
+/* Additional bubble elements for depth */
+.display-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 60% 20%, rgba(255,255,255,0.12) 0%, transparent 25%),
+        radial-gradient(circle at 30% 60%, rgba(255,255,255,0.16) 0%, transparent 35%),
+        radial-gradient(circle at 80% 60%, rgba(255,255,255,0.08) 0%, transparent 40%),
+        radial-gradient(circle at 10% 40%, rgba(255,255,255,0.06) 0%, transparent 30%);
+    animation: bubbleFloat 12s ease-in-out infinite reverse;
+}
+
+/* Cute bubble floating animation */
+@@keyframes bubbleFloat {
+    0%, 100% { 
+        transform: translateY(0px) translateX(0px) rotate(0deg);
+        opacity: 0.8;
+    }
+    25% { 
+        transform: translateY(-15px) translateX(5px) rotate(1deg);
+        opacity: 0.9;
+    }
+    50% { 
+        transform: translateY(-8px) translateX(-3px) rotate(-0.5deg);
+        opacity: 0.7;
+    }
+    75% { 
+        transform: translateY(-20px) translateX(8px) rotate(1.5deg);
+        opacity: 0.85;
+    }
+}
+
+/* Display content */
+.display-content {
+    position: relative;
+    z-index: 2;
+}
+
+.quote-label {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+}
+
+.quote-line {
+    width: 60px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+}
+
+.quote-title {
+    color: white;
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    font-family: 'Playfair Display', serif;
+}
+
+.quote-subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.125rem;
+    line-height: 1.6;
+    font-weight: 400;
+}
+
+/* Login section */
+.login-section {
+    background: #ffffff;
+    position: relative;
+    min-width: 350px;
+}
+
+/* Login form container */
+.login-form-container {
+    width: 100%;
+    max-width: 320px;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+/* Form styles */
+.login-form {
+    width: 100%;
 }
 
 input:focus,
@@ -81,6 +197,7 @@ input[type="password"]::-webkit-password-toggle-button {
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -92,6 +209,7 @@ input[type="password"]::-webkit-password-toggle-button {
         opacity: 1;
         transform: translateY(0);
     }
+
     to {
         opacity: 0;
         transform: translateY(10px);
@@ -108,135 +226,216 @@ input[type="password"]::-webkit-password-toggle-button {
     height: 0;
     overflow: hidden;
 }
+/* Multiple Educational Icon Bubbles */
+.education-bubbles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.education-bubble {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: educationBubbleFloat 5s ease-in-out infinite;
+}
+
+.education-bubble:nth-child(1) {
+    top: 15%;
+    right: 20%;
+    animation-delay: 0s;
+}
+
+.education-bubble:nth-child(2) {
+    top: 40%;
+    right: 10%;
+    animation-delay: 1.5s;
+}
+
+.education-bubble:nth-child(3) {
+    bottom: 25%;
+    right: 25%;
+    animation-delay: 3s;
+}
+
+.education-bubble i {
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+@@keyframes educationBubbleFloat {
+    0%, 100% {
+        transform: translateY(0px) scale(1);
+        opacity: 0.7;
+    }
+    50% {
+        transform: translateY(-12px) scale(1.05);
+        opacity: 1;
+    }
+}
 </style>
-<div class="background-bleed"></div>
-<div class="container">
-    <div class="authentication-wrapper authentication-basic container-p-y">
-        <div class="authentication-inner">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex align-items-start mb-4">
-                        <img src="/assets/img/logo.png" alt="Logo" class="me-3" style="height: 50px; width: auto;">
-                        <div>
-                            <div class="fw-bold fs-5 mb-1" style="line-height: 1.1;">HongWen School</div>
-                            <div class="text-muted fw-semibold small" style="line-height: 1.2;">Enter username and Password</div>
-                        </div>
-                    </div>                
-                    <!-- Success Messages -->
-                    @if (TempData["SuccessMessage"] != null)
-                    {
-                        <div class="alert alert-success py-2 px-3 text-center alert-animated" role="alert">
-                            <i class='bx bx-check-circle me-2'></i>
-                            <small class="fw-semibold">@TempData["SuccessMessage"]</small>
-                        </div>
-                    }
 
-                    @if (TempData["InfoMessage"] != null)
-                    {
-                        <div class="alert alert-info py-2 px-3 text-center alert-animated" role="alert">
-                            <i class='bx bx-info-circle me-2'></i>
-                            <small class="fw-semibold">@TempData["InfoMessage"]</small>
-                        </div>
-                    }
+<div class="container-fluid vh-100 p-0">
+    <div class="row g-0 h-100">
+        <!-- Left side - Display area (8 parts) -->
+        <div class="col-lg-8 display-section d-flex align-items-center justify-content-start p-5">
+            <div class="display-content">
+                <div class="quote-label">STUDENT MANAGEMENT</div>
+                <div class="quote-line"></div>
+                <h1 class="quote-title">Empowering Education</h1>
+                <p class="quote-subtitle">
+                    Transform learning experiences with our comprehensive student management system designed for modern educational institutions.
+                </p>
+            </div>
+            <!-- Education Icon Bubbles -->
+        <div class="education-bubbles">
+            <div class="education-bubble">
+                <i class='bx bx-graduation-cap'></i>
+            </div>
+            <div class="education-bubble">
+                <i class='bx bx-book-open'></i>
+            </div>
+            <div class="education-bubble">
+                <i class='bx bx-user-check'></i>
+            </div>
+        </div>
+        </div>
 
-                    <!-- Error Messages -->
-                    @if (!ViewData.ModelState.IsValid)
-                    {
-                        <div class="alert alert-danger py-2 px-3 alert-animated" role="alert">
-                            <ul class="mb-0 list-unstyled text-center fw-semibold">
-                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                                {
-                                    <li><small>@error.ErrorMessage</small></li>
-                                }
-                            </ul>
-                        </div>
-                    }
-
-                    @if (TempData["ErrorMessage"] != null)
-                    {
-                        <div class="alert alert-danger py-2 px-3 text-center alert-animated" role="alert">
-                            <small class="fw-semibold">@TempData["ErrorMessage"]</small>
-                        </div>
-                    }
-
-                    <!-- Session Expired Message -->
-                    @if (ViewBag.IsSessionExpired == true)
-                    {
-                        <div class="alert alert-warning py-2 px-3 text-center alert-animated" role="alert">
-                            <i class='bx bx-time me-2'></i>
-                            <small class="fw-semibold">@ViewBag.SessionExpiredMessage</small>
-                        </div>
-                    }
-
-                    <form id="formAuthentication" asp-controller="login" asp-action="login" class="mb-3" method="POST">
-                        @Html.AntiForgeryToken()
-                        
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between">
-                                <label for="username" class="form-label">Username</label>
-                            </div>
-                            <div class="input-group input-group-merge">
-                                <input type="text"
-                                       class="form-control"
-                                       id="username"
-                                       asp-for="Username"
-                                       placeholder="Enter your username"
-                                       autofocus
-                                       maxlength="40"
-                                       autocomplete="username" />
-                                <span class="input-group-text"><i class="bx bx-user"></i></span>
-                            </div>
-                            <small asp-validation-for="Username" class="text-danger"></small>
-                        </div>
-                        
-                        <div class="mb-3 form-password-toggle">
-                            <div class="d-flex justify-content-between">
-                                <label class="form-label" for="password">Password</label>
-                            </div>
-                            <div class="input-group input-group-merge">
-                                <input type="password"
-                                       id="password"
-                                       asp-for="Password"
-                                       class="form-control"
-                                       placeholder="Enter your password"
-                                       autocomplete="current-password"
-                                       aria-describedby="password" />
-                                <span class="input-group-text cursor-pointer" id="togglePassword">
-                                    <i class="bx bx-hide" id="toggleIcon"></i>
-                                </span>
-                            </div>
-                            <small asp-validation-for="Password" class="text-danger"></small>
-                        </div>
-                        
-                        <div class="mb-4 pt-1">
-                            <div class="d-flex justify-content-between">
-                                <div class="form-check">
-                                    <input class="form-check-input" 
-                                           type="checkbox" 
-                                           asp-for="RememberMe" 
-                                           id="rememberMe">
-                                    <label class="form-check-label" for="rememberMe">
-                                        Remember Me
-                                    </label>
-                                </div>
-                                <a href="@Url.Action("ForgotPassword", "Login")" class="text-primary">
-                                    Forgot Password?
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <button class="btn btn-primary w-100" type="submit" id="loginBtn">
-                                <i class='bx bx-log-in-circle me-1'></i>
-                                <span id="loginText">Login</span>
-                                <span id="loginSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </span>
-                            </button>
-                        </div>
-                    </form>
+        <!-- Right side - Login form (4 parts) -->
+        <div class="col-lg-4 login-section d-flex align-items-center justify-content-center p-4">
+            <div class="login-form-container">
+            <!-- Header -->
+            <div class="d-flex align-items-start mb-4">
+                <img src="/assets/img/logo.png" alt="Logo" class="me-3" style="height: 50px; width: auto;">
+                <div>
+                    <div class="fw-bold fs-5 mb-1" style="line-height: 1.1;">HongWen School</div>
+                    <div class="text-muted fw-semibold small" style="line-height: 1.2;">Enter username and Password</div>
                 </div>
             </div>
+
+            <!-- Alerts -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success" role="alert">
+                    <i class='bx bx-check-circle me-2'></i>
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
+            @if (TempData["InfoMessage"] != null)
+            {
+                <div class="alert alert-info" role="alert">
+                    <i class='bx bx-info-circle me-2'></i>
+                    @TempData["InfoMessage"]
+                </div>
+            }
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <ul class="mb-0 list-unstyled">
+                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
+            @if (ViewBag.IsSessionExpired == true)
+            {
+                <div class="alert alert-warning" role="alert">
+                    <i class='bx bx-time me-2'></i>
+                    @ViewBag.SessionExpiredMessage
+                </div>
+            }
+
+            <!-- Login Form -->
+            <form id="formAuthentication" asp-controller="login" asp-action="login" class="login-form" method="POST">
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <label for="username" class="form-label">Username</label>
+                    </div>
+                    <div class="input-group input-group-merge">
+                        <input type="text"
+                               class="form-control form-control-sm"
+                               id="username"
+                               asp-for="Username"
+                               placeholder="Enter your username"
+                               autofocus
+                               maxlength="40"
+                               autocomplete="username" />
+                        <span class="input-group-text"><i class="bx bx-user"></i></span>
+                    </div>
+                    <small asp-validation-for="Username" class="text-danger"></small>
+                </div>
+
+                <div class="mb-3 form-password-toggle">
+                    <div class="d-flex justify-content-between">
+                        <label class="form-label" for="password">Password</label>
+                    </div>
+                    <div class="input-group input-group-merge">
+                        <input type="password"
+                               id="password"
+                               asp-for="Password"
+                               class="form-control form-control-sm"
+                               placeholder="Enter your password"
+                               autocomplete="current-password"
+                               aria-describedby="password" />
+                        <span class="input-group-text cursor-pointer" id="togglePassword">
+                            <i class="bx bx-hide" id="toggleIcon"></i>
+                        </span>
+                    </div>
+                    <small asp-validation-for="Password" class="text-danger"></small>
+                </div>
+                
+                <div class="mb-3 pt-1">
+                    <div class="d-flex justify-content-between">
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   asp-for="RememberMe"
+                                   id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">
+                                Remember Me
+                            </label>
+                        </div>
+                        <a href="@Url.Action("ForgotPassword", "Login")" class="text-primary">
+                            Forgot Password?
+                        </a>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <button class="btn btn-primary btn-sm w-100" type="submit" id="loginBtn">
+                        <i class='bx bx-log-in-circle me-1'></i>
+                        <span id="loginText">Login</span>
+                        <span id="loginSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -375,13 +574,10 @@ $(document).ready(function() {
     });
 
     // Auto-hide alerts after 5 seconds
-    $('.alert-animated').each(function() {
+    $('.alert').each(function() {
         const $alert = $(this);
         setTimeout(function() {
-            $alert.addClass('fade-out');
-            setTimeout(function() {
-                $alert.addClass('alert-hidden');
-            }, 1000);
+            $alert.fadeOut();
         }, 5000);
     });
 

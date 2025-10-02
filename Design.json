@@ -1,0 +1,352 @@
+{
+    "designSystem": {
+      "systemName": "HongWen APP",
+      "framework": {
+        "backend": "ASP.NET Core MVC",
+        "frontend": {
+          "css": "Bootstrap 5 + Custom Theme",
+          "javascript": "jQuery + Vanilla JS",
+          "icons": "Boxicons + Font Awesome"
+        }
+      },
+      "metadata": {
+        "designStyle": "Modern SaaS Dashboard",
+        "colorScheme": "Light mode with subtle accents",
+        "approach": "Card-based layout with clean hierarchy"
+      },
+      "colorPalette": {
+        "primary": {
+          "main": "#2563eb",
+          "hover": "#1d4ed8",
+          "description": "Bright blue for primary actions and CTAs"
+        },
+        "background": {
+          "page": "#f8f9fa",
+          "card": "#ffffff",
+          "sidebar": "#ffffff"
+        },
+        "text": {
+          "primary": "#1f2937",
+          "secondary": "#6b7280",
+          "muted": "#9ca3af"
+        },
+        "borders": {
+          "default": "#e5e7eb",
+          "light": "#f3f4f6"
+        },
+        "status": {
+          "success": "#10b981",
+          "warning": "#f59e0b",
+          "danger": "#ef4444",
+          "info": "#3b82f6"
+        }
+      },
+      "typography": {
+        "fontFamily": {
+          "primary": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+        },
+        "scale": {
+          "display": "2.5rem / 40px",
+          "h1": "2rem / 32px",
+          "h2": "1.5rem / 24px",
+          "h3": "1.25rem / 20px",
+          "body": "0.875rem / 14px",
+          "small": "0.75rem / 12px",
+          "caption": "0.6875rem / 11px"
+        },
+        "weights": {
+          "light": 300,
+          "regular": 400,
+          "medium": 500,
+          "semibold": 600,
+          "bold": 700
+        }
+      },
+      "spacing": {
+        "system": "Bootstrap 5 spacing scale (0.25rem increments)",
+        "common": {
+          "xs": "0.25rem / 4px",
+          "sm": "0.5rem / 8px",
+          "md": "1rem / 16px",
+          "lg": "1.5rem / 24px",
+          "xl": "2rem / 32px",
+          "2xl": "3rem / 48px"
+        }
+      },
+      "layout": {
+        "structure": {
+          "type": "Sidebar + Main Content",
+          "sidebar": {
+            "width": "280px",
+            "position": "fixed-left",
+            "background": "#ffffff",
+            "borderRight": "1px solid #e5e7eb"
+          },
+          "mainContent": {
+            "marginLeft": "280px",
+            "padding": "1.5rem",
+            "background": "#f8f9fa"
+          },
+          "topBar": {
+            "height": "64px",
+            "background": "#ffffff",
+            "borderBottom": "1px solid #e5e7eb",
+            "padding": "0 1.5rem"
+          }
+        },
+        "grid": {
+          "system": "Bootstrap 5 grid (12 columns)",
+          "gutters": "1.5rem",
+          "breakpoints": {
+            "sm": "576px",
+            "md": "768px",
+            "lg": "992px",
+            "xl": "1200px",
+            "xxl": "1400px"
+          }
+        }
+      },
+      "components": {
+        "sidebar": {
+          "structure": {
+            "logo": {
+              "position": "top",
+              "padding": "1.5rem",
+              "display": "flex with icon and text"
+            },
+            "primaryButton": {
+              "type": "Quick Create / CTA",
+              "style": "Full width with icon",
+              "background": "#2563eb",
+              "color": "#ffffff",
+              "borderRadius": "0.375rem",
+              "padding": "0.625rem 1rem",
+              "margin": "0 1rem 1.5rem"
+            },
+            "navigation": {
+              "itemHeight": "40px",
+              "padding": "0.625rem 1rem",
+              "iconSize": "20px",
+              "iconSpacing": "0.75rem",
+              "hoverBackground": "#f3f4f6",
+              "activeBackground": "#eff6ff",
+              "activeColor": "#2563eb",
+              "activeBorderLeft": "3px solid #2563eb"
+            },
+            "sections": {
+              "spacing": "1.5rem between sections",
+              "headerStyle": "uppercase text-xs text-muted mb-2"
+            },
+            "userProfile": {
+              "position": "bottom",
+              "display": "Avatar + name + email",
+              "padding": "1rem",
+              "borderTop": "1px solid #e5e7eb"
+            }
+          }
+        },
+        "statCards": {
+          "layout": {
+            "display": "grid",
+            "columns": "repeat(auto-fit, minmax(250px, 1fr))",
+            "gap": "1.5rem"
+          },
+          "card": {
+            "background": "#ffffff",
+            "border": "1px solid #e5e7eb",
+            "borderRadius": "0.5rem",
+            "padding": "1.5rem",
+            "shadow": "0 1px 3px rgba(0,0,0,0.05)"
+          },
+          "structure": {
+            "header": {
+              "display": "flex justify-between",
+              "label": "text-sm text-secondary mb-1",
+              "badge": {
+                "fontSize": "0.75rem",
+                "padding": "0.125rem 0.5rem",
+                "borderRadius": "0.25rem",
+                "display": "flex items-center gap-0.25rem"
+              }
+            },
+            "value": {
+              "fontSize": "2rem",
+              "fontWeight": "600",
+              "color": "text-primary",
+              "marginBottom": "0.75rem"
+            },
+            "footer": {
+              "display": "flex items-center gap-0.5rem",
+              "status": {
+                "fontSize": "0.875rem",
+                "fontWeight": "500",
+                "icon": "16px"
+              },
+              "description": {
+                "fontSize": "0.75rem",
+                "color": "text-secondary"
+              }
+            }
+          }
+        },
+        "chartCard": {
+          "background": "#ffffff",
+          "border": "1px solid #e5e7eb",
+          "borderRadius": "0.5rem",
+          "padding": "1.5rem",
+          "shadow": "0 1px 3px rgba(0,0,0,0.05)",
+          "header": {
+            "display": "flex justify-between items-center",
+            "marginBottom": "1.5rem",
+            "title": {
+              "fontSize": "1.125rem",
+              "fontWeight": "600"
+            },
+            "subtitle": {
+              "fontSize": "0.75rem",
+              "color": "text-secondary",
+              "marginTop": "0.25rem"
+            },
+            "tabs": {
+              "display": "flex gap-0.5rem",
+              "button": {
+                "padding": "0.5rem 1rem",
+                "fontSize": "0.875rem",
+                "border": "1px solid #e5e7eb",
+                "borderRadius": "0.375rem",
+                "background": "transparent",
+                "activeBackground": "#f3f4f6"
+              }
+            }
+          },
+          "chart": {
+            "type": "Area chart with gradient fill",
+            "colors": {
+              "primary": "#3b82f6",
+              "secondary": "#93c5fd",
+              "gradient": "linear-gradient(180deg, rgba(59,130,246,0.2) 0%, rgba(59,130,246,0.05) 100%)"
+            },
+            "grid": {
+              "show": false
+            },
+            "axes": {
+              "x": {
+                "fontSize": "0.75rem",
+                "color": "#9ca3af",
+                "labelSpacing": "even distribution"
+              },
+              "y": {
+                "show": false
+              }
+            }
+          }
+        },
+        "buttons": {
+          "primary": {
+            "background": "#2563eb",
+            "color": "#ffffff",
+            "border": "none",
+            "borderRadius": "0.375rem",
+            "padding": "0.625rem 1.25rem",
+            "fontSize": "0.875rem",
+            "fontWeight": "500",
+            "hover": {
+              "background": "#1d4ed8"
+            }
+          },
+          "secondary": {
+            "background": "transparent",
+            "color": "#6b7280",
+            "border": "1px solid #e5e7eb",
+            "borderRadius": "0.375rem",
+            "padding": "0.625rem 1.25rem",
+            "fontSize": "0.875rem",
+            "hover": {
+              "background": "#f3f4f6"
+            }
+          },
+          "icon": {
+            "size": "40px square",
+            "padding": "0.625rem",
+            "borderRadius": "0.375rem",
+            "display": "flex items-center justify-center"
+          }
+        },
+        "badges": {
+          "positive": {
+            "background": "#d1fae5",
+            "color": "#065f46",
+            "icon": "↗ trending up"
+          },
+          "negative": {
+            "background": "#fee2e2",
+            "color": "#991b1b",
+            "icon": "↘ trending down"
+          },
+          "neutral": {
+            "background": "#e5e7eb",
+            "color": "#374151",
+            "icon": "→ steady"
+          }
+        },
+        "icons": {
+          "library": "Lucide icons, Feather icons, or Bootstrap Icons",
+          "size": {
+            "sm": "16px",
+            "md": "20px",
+            "lg": "24px"
+          },
+          "strokeWidth": "2px"
+        }
+      },
+      "interactionPatterns": {
+        "hover": {
+          "cards": "subtle shadow increase: 0 4px 6px rgba(0,0,0,0.07)",
+          "buttons": "background color change + cursor pointer",
+          "navItems": "background color change to #f3f4f6"
+        },
+        "transitions": {
+          "default": "all 0.2s ease-in-out",
+          "slow": "all 0.3s ease-in-out"
+        },
+        "focus": {
+          "outline": "2px solid #2563eb",
+          "outlineOffset": "2px"
+        }
+      },
+      "aspNetMvcImplementation": {
+        "layoutStructure": {
+          "masterLayout": "_Layout.cshtml",
+          "partials": [
+            "_Sidebar.cshtml",
+            "_TopBar.cshtml",
+            "_StatCard.cshtml",
+            "_ChartCard.cshtml"
+          ]
+        },
+        "viewModelPattern": {
+          "example": "DashboardViewModel with properties for stats, charts, navigation"
+        },
+        "assetManagement": {
+          "css": "/css/site.css or /css/hongwen.css",
+          "js": "/js/site.js or /js/dashboard.js",
+          "bootstrap": "CDN or npm package",
+          "chartLibrary": "Chart.js or ApexCharts via CDN"
+        },
+        "recommendations": {
+          "useTagHelpers": true,
+          "useViewComponents": "For reusable stat cards and charts",
+          "usePartialViews": "For sidebar and navigation",
+          "dataBinding": "Use ViewModels for type-safe data binding"
+        }
+      },
+      "designPrinciples": {
+        "consistency": "Use Bootstrap 5 utility classes consistently",
+        "whitespace": "Generous padding and margins for breathing room",
+        "hierarchy": "Clear visual hierarchy through size, weight, and color",
+        "responsiveness": "Mobile-first approach with Bootstrap grid",
+        "accessibility": "Semantic HTML, ARIA labels, keyboard navigation",
+        "performance": "Lazy load charts, optimize images, minimize JS"
+      }
+    }
+  }
