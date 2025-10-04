@@ -1,7 +1,7 @@
 ﻿@model LoginModel
 @{
     Layout = "_LoginLayout";
-    ViewData["Title"] = "HongWen";
+    ViewData["Title"] = "Hong Wen System";
 }
 
 <style>
@@ -13,105 +13,187 @@ body {
     background: #f8f9fa;
 }
 
-/* Animated background elements */
-/* Student Management Gradient Background */
+/* Display section styles */
 .display-section {
-    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 25%, #10b981 50%, #06b6d4 75%, #8b5cf6 100%);
+    background: linear-gradient(135deg, #3b5998 0%, #192f5d 100%);
     position: relative;
     overflow: hidden;
 }
 
-/* Floating Bubbles Animation */
-.display-section::before {
-    content: '';
+.bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    animation: floatCircle 20s ease-in-out infinite;
+}
+
+.bg-circle:nth-child(1) {
+    width: 400px;
+    height: 400px;
+    top: -200px;
+    left: -100px;
+    animation-delay: 0s;
+}
+
+.bg-circle:nth-child(2) {
+    width: 300px;
+    height: 300px;
+    bottom: -150px;
+    right: -100px;
+    animation-delay: 5s;
+}
+
+.bg-circle:nth-child(3) {
+    width: 250px;
+    height: 250px;
+    top: 50%;
+    right: -125px;
+    animation-delay: 10s;
+}
+
+@@keyframes floatCircle {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    50% {
+        transform: translate(30px, -30px) scale(1.1);
+    }
+}
+
+.floating-container {
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        radial-gradient(circle at 15% 25%, rgba(255,255,255,0.18) 0%, transparent 35%),
-        radial-gradient(circle at 85% 15%, rgba(255,255,255,0.15) 0%, transparent 40%),
-        radial-gradient(circle at 45% 70%, rgba(255,255,255,0.12) 0%, transparent 45%),
-        radial-gradient(circle at 75% 85%, rgba(255,255,255,0.14) 0%, transparent 30%),
-        radial-gradient(circle at 25% 85%, rgba(255,255,255,0.10) 0%, transparent 50%);
-    animation: bubbleFloat 8s ease-in-out infinite;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
 }
 
-/* Additional bubble elements for depth */
-.display-section::after {
-    content: '';
+.float-icon {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        radial-gradient(circle at 60% 20%, rgba(255,255,255,0.12) 0%, transparent 25%),
-        radial-gradient(circle at 30% 60%, rgba(255,255,255,0.16) 0%, transparent 35%),
-        radial-gradient(circle at 80% 60%, rgba(255,255,255,0.08) 0%, transparent 40%),
-        radial-gradient(circle at 10% 40%, rgba(255,255,255,0.06) 0%, transparent 30%);
-    animation: bubbleFloat 12s ease-in-out infinite reverse;
+    width: 70px;
+    height: 70px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    opacity: 0;
+    transform: scale(0) rotate(-180deg);
+    animation: popFloat 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
 
-/* Cute bubble floating animation */
-@@keyframes bubbleFloat {
-    0%, 100% { 
-        transform: translateY(0px) translateX(0px) rotate(0deg);
-        opacity: 0.8;
+.float-icon i {
+    font-size: 32px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.float-icon:nth-child(1) { top: 25%; left: 15%; animation-delay: 0.1s; }
+.float-icon:nth-child(2) { top: 25%; right: 15%; animation-delay: 0.2s; }
+.float-icon:nth-child(3) { bottom: 25%; left: 15%; animation-delay: 0.3s; }
+
+.float-icon:nth-child(4) {
+    bottom: 25%;
+    right: 15%;
+    animation-delay: 0.4s;
+}
+.float-icon:nth-child(5) { top: 45%; right: 8%; animation-delay: 0.5s; }
+.float-icon:nth-child(6) { top: 45%; left: 8%; animation-delay: 0.6s; }
+
+@@keyframes popFloat {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(-180deg);
     }
-    25% { 
-        transform: translateY(-15px) translateX(5px) rotate(1deg);
-        opacity: 0.9;
+    70% {
+        opacity: 1;
+        transform: scale(1.1) rotate(10deg);
     }
-    50% { 
-        transform: translateY(-8px) translateX(-3px) rotate(-0.5deg);
-        opacity: 0.7;
-    }
-    75% { 
-        transform: translateY(-20px) translateX(8px) rotate(1.5deg);
-        opacity: 0.85;
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
     }
 }
 
-/* Display content */
-.display-content {
+@@keyframes gentleFloat {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+.welcome-content {
     position: relative;
-    z-index: 2;
+    z-index: 5;
+    max-width: 600px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 1s ease-out 0.3s forwards;
+    text-align: center;
+    margin: 0 auto;
 }
 
-.quote-label {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 1rem;
-}
-
-.quote-line {
-    width: 60px;
-    height: 2px;
-    background: rgba(255, 255, 255, 0.8);
-    margin-bottom: 2rem;
-}
-
-.quote-title {
+.welcome-title {
     color: white;
-    font-size: 3rem;
-    font-weight: 700;
-    line-height: 1.1;
-    margin-bottom: 1.5rem;
-    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
 }
 
-.quote-subtitle {
+.welcome-text {
     color: rgba(255, 255, 255, 0.9);
-    font-size: 1.125rem;
-    line-height: 1.6;
+    font-size: 1.1rem;
+    line-height: 1.8;
     font-weight: 400;
+    max-width: 450px;
+    margin: 0 auto;
 }
 
+@@keyframes fadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    opacity: 0;
+    animation: dotPop 0.4s ease-out forwards, dotPulse 3s ease-in-out infinite;
+}
+
+.dot:nth-child(1) { top: 12%; left: 45%; animation-delay: 0.2s; }
+.dot:nth-child(2) { top: 35%; left: 25%; animation-delay: 0.4s; }
+.dot:nth-child(3) { top: 65%; right: 35%; animation-delay: 0.6s; }
+.dot:nth-child(4) { bottom: 25%; left: 40%; animation-delay: 0.8s; }
+.dot:nth-child(5) { top: 55%; right: 45%; animation-delay: 1s; }
+
+@@keyframes dotPop {
+    to {
+        opacity: 1;
+    }
+}
+
+@@keyframes dotPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.3;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0.6;
+    }
+}
 /* Login section */
 .login-section {
     background: #ffffff;
@@ -226,62 +308,13 @@ input[type="password"]::-webkit-password-toggle-button {
     height: 0;
     overflow: hidden;
 }
-/* Multiple Educational Icon Bubbles */
-.education-bubbles {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-    z-index: 2;
-}
-
-.education-bubble {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    animation: educationBubbleFloat 5s ease-in-out infinite;
-}
-
-.education-bubble:nth-child(1) {
-    top: 15%;
-    right: 20%;
-    animation-delay: 0s;
-}
-
-.education-bubble:nth-child(2) {
-    top: 40%;
-    right: 10%;
-    animation-delay: 1.5s;
-}
-
-.education-bubble:nth-child(3) {
-    bottom: 25%;
-    right: 25%;
-    animation-delay: 3s;
-}
-
-.education-bubble i {
-    font-size: 20px;
-    color: rgba(255, 255, 255, 0.9);
-}
-
-@@keyframes educationBubbleFloat {
-    0%, 100% {
-        transform: translateY(0px) scale(1);
-        opacity: 0.7;
+/* Responsive design */
+@@media (max-width: 991px) {
+    .display-section {
+        display: none !important;
     }
-    50% {
-        transform: translateY(-12px) scale(1.05);
-        opacity: 1;
+    .welcome-title {
+        font-size: 2.5rem;
     }
 }
 </style>
@@ -289,27 +322,51 @@ input[type="password"]::-webkit-password-toggle-button {
 <div class="container-fluid vh-100 p-0">
     <div class="row g-0 h-100">
         <!-- Left side - Display area (8 parts) -->
-        <div class="col-lg-8 display-section d-flex align-items-center justify-content-start p-5">
-            <div class="display-content">
-                <div class="quote-label">STUDENT MANAGEMENT</div>
-                <div class="quote-line"></div>
-                <h1 class="quote-title">Empowering Education</h1>
-                <p class="quote-subtitle">
-                    Transform learning experiences with our comprehensive student management system designed for modern educational institutions.
+        <div class="col-lg-8 display-section d-flex align-items-center justify-content-center p-5">
+            <div class="bg-circle"></div>
+            <div class="bg-circle"></div>
+            <div class="bg-circle"></div>
+
+            <div class="floating-container">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+
+            <div class="floating-container">
+                <div class="float-icon">
+                    <i class="text-white fs-2 fa-solid fa-graduation-cap"></i>
+                </div>
+                <div class="float-icon">
+                    <i class="text-white fs-2 fa-solid fa-book"></i>
+                </div>
+                <div class="float-icon">
+                    <i class="text-white fs-2 fa-solid fa-language"></i>
+                </div>
+                <div class="float-icon">
+                    <i class="text-white fs-2 fa-solid fa-code"></i>
+                </div>
+                <div class="float-icon">
+                    <i class="text-white fs-2 fa-solid fa-school"></i>
+                </div>
+                <div class="float-icon">
+                    <i class="text-white fs-2 fa-solid fa-users"></i>
+                </div>
+            </div>
+
+            <div class="welcome-content">
+                <div style="display: inline-flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                    <div style="width: 70px; height: 70px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.2);">
+                       <img src="~/assets/img/logo.png" width="50" height="50"/>
+                    </div>
+                </div>
+                <h1 class="welcome-title">Hong Wen System</h1>
+                <p class="welcome-text">
+                    Empowering tomorrow's leaders through excellence in education and innovation
                 </p>
             </div>
-            <!-- Education Icon Bubbles -->
-        <div class="education-bubbles">
-            <div class="education-bubble">
-                <i class='bx bx-graduation-cap'></i>
-            </div>
-            <div class="education-bubble">
-                <i class='bx bx-book-open'></i>
-            </div>
-            <div class="education-bubble">
-                <i class='bx bx-user-check'></i>
-            </div>
-        </div>
         </div>
 
         <!-- Right side - Login form (4 parts) -->
@@ -319,7 +376,7 @@ input[type="password"]::-webkit-password-toggle-button {
             <div class="d-flex align-items-start mb-4">
                 <img src="/assets/img/logo.png" alt="Logo" class="me-3" style="height: 50px; width: auto;">
                 <div>
-                    <div class="fw-bold fs-5 mb-1" style="line-height: 1.1;">HongWen School</div>
+                    <div class="fw-bold fs-5 mb-1" style="line-height: 1.1;">Hong Wen Login</div>
                     <div class="text-muted fw-semibold small" style="line-height: 1.2;">Enter username and Password</div>
                 </div>
             </div>
@@ -439,7 +496,7 @@ input[type="password"]::-webkit-password-toggle-button {
         </div>
     </div>
 </div>
-
+</div>
 @section Scripts {
 <script>
 $(document).ready(function() {
@@ -629,6 +686,13 @@ $(document).ready(function() {
     } else if ($('#password').val() === '') {
         $('#password').focus();
     }
+
+    // Float icon continuous animation
+    document.querySelectorAll('.float-icon').forEach((icon, index) => {
+        setTimeout(() => {
+            icon.style.animation = `popFloat 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards, gentleFloat 6s ease-in-out ${index * 0.5}s infinite`;
+        }, 600);
+    });
 });
 </script>
 }
