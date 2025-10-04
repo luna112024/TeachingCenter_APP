@@ -607,6 +607,88 @@ namespace hongWenAPP.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetClassSection(Guid id)
+        {
+            if (!_authService.HasPermission("ViewClassSections"))
+            {
+                return Json(new { error = "Access denied" });
+            }
+            try
+            {
+                var section = await _classSectionService.GetClassSection(id);
+                if (section == null)
+                {
+                    return Json(new { error = "Class section not found" });
+                }
+                
+                // Get term details to include term start and end dates
+                var terms = await _termService.GetAllTerms();
+                var term = terms.FirstOrDefault(t => t.TermId == section.TermId);
+                
+                // Return section data with term information including dates
+                var result = new
+                {
+                    sectionId = section.SectionId,
+                    sectionName = section.SectionName,
+                    sectionCode = section.SectionCode,
+                    termName = section.TermName,
+                    courseName = section.CourseName,
+                    teacherName = section.TeacherName,
+                    classroomName = section.ClassroomName,
+                    sectionStartDate = section.StartDate,
+                    sectionEndDate = section.EndDate,
+                    termStartDate = term?.StartDate,
+                    termEndDate = term?.EndDate
+                };
+                
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllClassSections(string q = "")
+        {
+            if (!_authService.HasPermission("ViewClassSections"))
+            {
+                return Json(new List<object>());
+            }
+            try
+            {
+                var sections = await _classSectionService.GetAllClassSections();
+                System.Diagnostics.Debug.WriteLine($"Found {sections?.Count ?? 0} class sections");
+                
+                var result = sections.Select(s => new
+                {
+                    id = s.SectionId,
+                    text = s.SectionName ?? "Unknown",
+                    sectionCode = s.SectionCode
+                }).ToList();
+
+                // Filter by search query if provided
+                if (!string.IsNullOrEmpty(q))
+                {
+                    result = result.Where(s => 
+                        s.text.ToLower().Contains(q.ToLower()) || 
+                        s.sectionCode.ToLower().Contains(q.ToLower())
+                    ).ToList();
+                }
+
+                System.Diagnostics.Debug.WriteLine($"Returning {result.Count} filtered sections");
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging
+               
+                return Json(new List<object>());
+            }
+        }
+
         private async Task LoadFilterData()
         {
             try

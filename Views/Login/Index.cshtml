@@ -71,29 +71,31 @@ body {
 
 .float-icon {
     position: absolute;
-    width: 70px;
-    height: 70px;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
+    width: 50px;
+    height: 50px;
+    /* Slightly more opaque */
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Added subtle shadow */
     opacity: 0;
     transform: scale(0) rotate(-180deg);
     animation: popFloat 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
 
 .float-icon i {
-    font-size: 32px;
+    font-size: 20px;
     color: rgba(255, 255, 255, 0.9);
 }
+
 
 .float-icon:nth-child(1) { top: 25%; left: 15%; animation-delay: 0.1s; }
 .float-icon:nth-child(2) { top: 25%; right: 15%; animation-delay: 0.2s; }
 .float-icon:nth-child(3) { bottom: 25%; left: 15%; animation-delay: 0.3s; }
-
 .float-icon:nth-child(4) {
     bottom: 25%;
     right: 15%;
@@ -119,10 +121,10 @@ body {
 
 @@keyframes gentleFloat {
     0%, 100% {
-        transform: translateY(0px);
+        transform: translateY(0px) rotate(0deg);
     }
     50% {
-        transform: translateY(-15px);
+        transform: translateY(-15px) rotate(5deg);
     }
 }
 
@@ -196,7 +198,7 @@ body {
 }
 /* Login section */
 .login-section {
-    background: #ffffff;
+    background: #fdfff5;
     position: relative;
     min-width: 350px;
 }
@@ -309,12 +311,306 @@ input[type="password"]::-webkit-password-toggle-button {
     overflow: hidden;
 }
 /* Responsive design */
-@@media (max-width: 991px) {
+@@media (max-width: 1400px) {
+    .float-icon:nth-child(1) { top: 20%; left: 12%; }
+    .float-icon:nth-child(2) { top: 20%; right: 12%; }
+    .float-icon:nth-child(3) { bottom: 20%; left: 12%; }
+    .float-icon:nth-child(4) { bottom: 20%; right: 12%; }
+    .float-icon:nth-child(5) { top: 40%; right: 5%; }
+    .float-icon:nth-child(6) { top: 40%; left: 5%; }
+
+    .welcome-title {
+        font-size: 3rem;
+    }
+
+    .welcome-text {
+        font-size: 1rem;
+    }
+}
+
+@@media (max-width: 1200px) {
+    .float-icon:nth-child(1) { top: 15%; left: 8%; }
+    .float-icon:nth-child(2) { top: 15%; right: 8%; }
+    .float-icon:nth-child(3) { bottom: 15%; left: 8%; }
+    .float-icon:nth-child(4) { bottom: 15%; right: 8%; }
+    .float-icon:nth-child(5) { top: 35%; right: 3%; }
+    .float-icon:nth-child(6) { top: 35%; left: 3%; }
+
+    .welcome-title {
+        font-size: 2.8rem;
+    }
+
+    .welcome-text {
+        font-size: 0.95rem;
+    }
+}
+
+@@media (max-width: 1038px) {
     .display-section {
         display: none !important;
     }
-    .welcome-title {
-        font-size: 2.5rem;
+    
+    body {
+        background: linear-gradient(135deg, #3b5998 0%, #192f5d 100%);
+        overflow-y: auto;
+        height: auto;
+        min-height: 100vh;
+        position: relative;
+    }
+    
+    .container-fluid {
+        background: linear-gradient(135deg, #3b5998 0%, #192f5d 100%);
+        min-height: 100vh;
+        padding: 20px;
+        position: relative;
+    }
+    
+    .row {
+        height: auto;
+        min-height: 100vh;
+    }
+    
+    .login-section {
+        min-width: unset;
+        width: 100%;
+        background: transparent;
+        padding: 40px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    
+    /* Mobile background elements */
+    .container-fluid::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+    }
+    
+    /* Mobile floating dots */
+    .container-fluid::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+        background-image: 
+            radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.3) 2px, transparent 2px),
+            radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.2) 1.5px, transparent 1.5px),
+            radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.25) 1px, transparent 1px),
+            radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.2) 2px, transparent 2px),
+            radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+        background-size: 200px 200px, 150px 150px, 180px 180px, 160px 160px, 120px 120px;
+        animation: mobileFloatDots 20s ease-in-out infinite;
+    }
+    
+    @@keyframes mobileFloatDots {
+        0%, 100% {
+            transform: translate(0, 0);
+            opacity: 0.3;
+        }
+        50% {
+            transform: translate(10px, -10px);
+            opacity: 0.6;
+        }
+    }
+    
+    /* Mobile floating bubbles */
+    .login-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+        background-image: 
+            radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.1) 30px, transparent 30px),
+            radial-gradient(circle at 85% 25%, rgba(255, 255, 255, 0.08) 25px, transparent 25px),
+            radial-gradient(circle at 25% 75%, rgba(255, 255, 255, 0.12) 35px, transparent 35px),
+            radial-gradient(circle at 75% 85%, rgba(255, 255, 255, 0.09) 28px, transparent 28px),
+            radial-gradient(circle at 60% 40%, rgba(255, 255, 255, 0.07) 22px, transparent 22px);
+        background-size: 300px 300px, 250px 250px, 280px 280px, 260px 260px, 200px 200px;
+        animation: mobileFloatBubbles 25s ease-in-out infinite;
+    }
+    
+    @@keyframes mobileFloatBubbles {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+            opacity: 0.1;
+        }
+        50% {
+            transform: translate(15px, -15px) scale(1.1);
+            opacity: 0.2;
+        }
+    }
+    
+    .login-form-container {
+        max-width: 450px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 
+                    0 0 0 1px rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        position: relative;
+        z-index: 10;
+    }
+    
+    .login-form-container .d-flex.align-items-start {
+        margin-bottom: 2rem;
+    }
+    
+    .login-form-container img {
+        height: 60px;
+        width: auto;
+    }
+    
+    .login-form-container .fw-bold.fs-5 {
+        font-size: 1.5rem !important;
+        color: #2c3e50;
+    }
+    
+    .login-form-container .text-muted {
+        color: #6c757d !important;
+        font-size: 0.9rem;
+    }
+    
+    .form-control {
+        padding: 12px 15px;
+        font-size: 16px;
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: #3b5998;
+        box-shadow: 0 0 0 0.2rem rgba(59, 89, 152, 0.25);
+    }
+    
+    .btn-primary {
+        padding: 12px 20px;
+        font-size: 16px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #3b5998 0%, #192f5d 100%);
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(59, 89, 152, 0.3);
+    }
+    
+    .input-group-text {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-left: none;
+        border-radius: 0 10px 10px 0;
+    }
+    
+    .input-group .form-control {
+        border-right: none;
+        border-radius: 10px 0 0 10px;
+    }
+    
+    .alert {
+        border-radius: 10px;
+        border: none;
+        font-size: 14px;
+    }
+}
+
+@@media (max-width: 768px) {
+    .container-fluid {
+        padding: 15px;
+    }
+    
+    .login-section {
+        padding: 20px 15px;
+    }
+    
+    .login-form-container {
+        padding: 30px 20px;
+        max-width: 100%;
+        margin: 0 10px;
+    }
+    
+    .login-form-container img {
+        height: 50px;
+    }
+    
+    .login-form-container .fw-bold.fs-5 {
+        font-size: 1.3rem !important;
+    }
+    
+    .form-control {
+        padding: 10px 12px;
+        font-size: 16px;
+    }
+    
+    .btn-primary {
+        padding: 10px 15px;
+        font-size: 15px;
+    }
+}
+
+@@media (max-width: 480px) {
+    .container-fluid {
+        padding: 10px;
+    }
+    
+    .login-section {
+        padding: 15px 10px;
+    }
+    
+    .login-form-container {
+        padding: 25px 15px;
+        margin: 0 5px;
+        border-radius: 15px;
+    }
+    
+    .login-form-container img {
+        height: 45px;
+    }
+    
+    .login-form-container .fw-bold.fs-5 {
+        font-size: 1.2rem !important;
+    }
+    
+    .login-form-container .text-muted {
+        font-size: 0.85rem;
+    }
+    
+    .form-control {
+        padding: 8px 10px;
+        font-size: 16px;
+    }
+    
+    .btn-primary {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+    
+    .form-label {
+        font-size: 13px;
+    }
+    
+    .text-primary {
+        font-size: 13px;
     }
 }
 </style>
@@ -337,22 +633,22 @@ input[type="password"]::-webkit-password-toggle-button {
 
             <div class="floating-container">
                 <div class="float-icon">
-                    <i class="text-white fs-2 fa-solid fa-graduation-cap"></i>
+                    <i class="text-white fs-3 fa-solid fa-graduation-cap"></i>
                 </div>
                 <div class="float-icon">
-                    <i class="text-white fs-2 fa-solid fa-book"></i>
+                    <i class="text-white fs-3 fa-solid fa-book"></i>
                 </div>
                 <div class="float-icon">
-                    <i class="text-white fs-2 fa-solid fa-language"></i>
+                    <i class="text-white fs-3 fa-solid fa-language"></i>
                 </div>
                 <div class="float-icon">
-                    <i class="text-white fs-2 fa-solid fa-code"></i>
+                    <i class="text-white fs-3 fa-solid fa-code"></i>
                 </div>
                 <div class="float-icon">
-                    <i class="text-white fs-2 fa-solid fa-school"></i>
+                    <i class="text-white fs-3 fa-solid fa-school"></i>
                 </div>
                 <div class="float-icon">
-                    <i class="text-white fs-2 fa-solid fa-users"></i>
+                    <i class="text-white fs-3 fa-solid fa-users"></i>
                 </div>
             </div>
 
@@ -384,27 +680,27 @@ input[type="password"]::-webkit-password-toggle-button {
             <!-- Alerts -->
             @if (TempData["SuccessMessage"] != null)
             {
-                <div class="alert alert-success" role="alert">
+                <div class="alert alert-success lh-sm fs-7" role="alert">
                     <i class='bx bx-check-circle me-2'></i>
-                    @TempData["SuccessMessage"]
+                    <small>@TempData["SuccessMessage"]</small>
                 </div>
             }
 
             @if (TempData["InfoMessage"] != null)
             {
-                <div class="alert alert-info" role="alert">
+                <div class="alert alert-info lh-sm" role="alert">
                     <i class='bx bx-info-circle me-2'></i>
-                    @TempData["InfoMessage"]
+                        <small>@TempData["InfoMessage"]</small>
                 </div>
             }
 
             @if (!ViewData.ModelState.IsValid)
             {
-                <div class="alert alert-danger" role="alert">
-                    <ul class="mb-0 list-unstyled">
+                    <div class="alert alert-danger lh-sm" role="alert">
+                        <ul class="mb-0 list-unstyled">
                         @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
                         {
-                            <li>@error.ErrorMessage</li>
+                            <li class="small">@error.ErrorMessage</li>
                         }
                     </ul>
                 </div>
@@ -412,16 +708,16 @@ input[type="password"]::-webkit-password-toggle-button {
 
             @if (TempData["ErrorMessage"] != null)
             {
-                <div class="alert alert-danger" role="alert">
-                    @TempData["ErrorMessage"]
+                    <div class="alert alert-danger lh-sm" role="alert">
+                    <small>@TempData["ErrorMessage"]</small>
                 </div>
             }
 
             @if (ViewBag.IsSessionExpired == true)
             {
-                <div class="alert alert-warning" role="alert">
+                    <div class="alert alert-warning lh-sm" role="alert">
                     <i class='bx bx-time me-2'></i>
-                    @ViewBag.SessionExpiredMessage
+                    <small>@ViewBag.SessionExpiredMessage</small>
                 </div>
             }
 
@@ -495,7 +791,6 @@ input[type="password"]::-webkit-password-toggle-button {
             </form>
         </div>
     </div>
-</div>
 </div>
 @section Scripts {
 <script>
@@ -689,9 +984,10 @@ $(document).ready(function() {
 
     // Float icon continuous animation
     document.querySelectorAll('.float-icon').forEach((icon, index) => {
+        const floatDelays = ['0s', '1s', '2s', '0.5s', '1.5s', '2.5s']; // Varied float delays
         setTimeout(() => {
-            icon.style.animation = `popFloat 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards, gentleFloat 6s ease-in-out ${index * 0.5}s infinite`;
-        }, 600);
+            icon.style.animation = `popFloat 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards, gentleFloat 6s ease-in-out ${floatDelays[index]} infinite`;
+        }, 600); // Original timeout, popFloat delay is now in CSS
     });
 });
 </script>

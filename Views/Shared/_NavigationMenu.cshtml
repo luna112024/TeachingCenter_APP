@@ -23,23 +23,20 @@
             ​​AIA Report
         </a>
     </li>
-    <li class="menu-header small text-uppercase" asp-permissions="ViewCompanies,ViewRoles,ViewPermissions,ViewAccount"><span class="menu-header-text small">User Management</span></li>
-
-    <!-- Users -->
-    <li class="menu-item @Html.IsSelected(action: "index", controller: "Identity")" asp-permissions="ViewUsers">
-        <a href="@Url.Action("Index", "Identity")" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-user"></i>
-            Users
-        </a>
-    </li>
+    <li class="menu-header small text-uppercase" asp-permissions="ViewCompanies,ViewRoles,ViewPermissions,ViewAccount,ManageCompany,ViewUsers,ViewCompany,DeleteCompany"><span class="menu-header-text small">User Management</span></li>
 
     <!-- Role & Permission -->
-    <li class="menu-item" asp-permissions="ManageRoles,ViewRoles,DeleteRoles,ManagePermissions,ViewPermissions,DeletePermissions">
+    <li class="menu-item" asp-permissions="ManageRoles,ViewRoles,DeleteRoles,ViewUsers,ManagePermissions,ViewPermissions,DeletePermissions,ManageCompany,ViewCompany,DeleteCompany">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon tf-icons bx bx-check-shield"></i>
-            Role & Permission
+            User Managements
         </a>
         <ul class="menu-sub">
+            <li class="menu-item @Html.IsSelected(action: "index", controller: "Identity")" asp-permissions="ViewUsers">
+                <a href="@Url.Action("Index", "Identity")" class="menu-link">
+                    <div>​​Users</div>
+                </a>
+            </li>
             <li class="menu-item @Html.IsSelected(action: "Role", controller: " Identity")" asp-permissions="ManageRoles,ViewRoles,DeleteRoles">
                 <a href="@Url.Action("Role", "Identity")" class="menu-link">
                     <div>​​Roles</div>
@@ -50,14 +47,14 @@
                     <div>​​Permissions</div>
                 </a>
             </li>
+            <li class="menu-item @Html.IsSelected(action: "index", controller: "Company")" asp-permissions="ManageCompany,ViewCompany,DeleteCompany">
+                <a href="@Url.Action("Index", "Company")" class="menu-link">
+                    <div>​​Company</div>
+                </a>
+            </li>
         </ul>
     </li>
-    <li class="menu-item @Html.IsSelected(action: "index", controller: "Company")" asp-permissions="ManageCompany,ViewCompany,DeleteCompany">
-        <a href="@Url.Action("Index", "Company")" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-building-house"></i>
-            ​​Company
-        </a>
-    </li>
+    
 
     <li class="menu-header small text-uppercase" asp-permissions="ViewTerm,ViewCourse,ViewClassroom,ViewClassSections,ViewTeacher,ViewLevel"><span class="menu-header-text small">ACADEMIC MANAGEMENT</span></li>
     <li class="menu-item" asp-permissions="ViewTerm,ViewCourse,ViewClassroom,ViewClassSections,ViewTeacher,ManageTerm,DeleteTerm,ManageCourse,ViewLevel,ManageLevel,DeleteLevel,DeleteCourse,DeleteClassroom,ManageClassroom,ManageClassSections,DeleteClassSections">
@@ -98,10 +95,16 @@
             </li>
         </ul>
     </li>
-    <li class="menu-item @Html.IsSelected(action: "index", controller: "Company")" asp-permissions="ViewStudent,ManageStudent,DeleteStudent">
-        <a href="@Url.Action("Index", "Company")" class="menu-link">
+    <li class="menu-item @Html.IsSelected(action: "index", controller: "Student")" asp-permissions="ViewStudent,ManageStudent,DeleteStudent">
+        <a href="@Url.Action("Index", "Student")" class="menu-link">
             <i class="menu-icon tf-icons fa-sm fa-solid fa-users"></i>
             ​​Students
+        </a>
+    </li>
+    <li class="menu-item @Html.IsSelected(action: "index", controller: "Enrollment")" asp-permissions="ViewEnrollments,ManageEnrollments,DeleteEnrollments">
+        <a href="@Url.Action("Index", "Enrollment")" class="menu-link">
+            <i class="menu-icon tf-icons fa-sm fa-solid fa-graduation-cap"></i>
+            ​​Enrollments
         </a>
     </li>
 

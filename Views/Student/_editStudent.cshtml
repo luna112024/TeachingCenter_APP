@@ -1,0 +1,279 @@
+@model UpdateStudentDTO
+
+<form asp-action="EditStudent" asp-controller="Student" method="post" autocomplete="off">
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Edit Student</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <input asp-for="StudentId" type="hidden" />
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="StudentCode">Student Code<span class="text-danger">*</span></label>
+                <input asp-for="StudentCode" type="text" class="form-control" required placeholder="e.g., STU001, STU2024001"/>
+                <span asp-validation-for="StudentCode" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="EnrollmentDate">Enrollment Date<span class="text-danger">*</span></label>
+                <input asp-for="EnrollmentDate" type="date" class="form-control" required />
+                <span asp-validation-for="EnrollmentDate" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="CurrentLevelId">Current Level</label>
+                <div class="searchable-select dropdown w-100"
+                     data-name="CurrentLevelId"
+                     data-selected-value="@(Model?.CurrentLevelId ?? Guid.Empty)"
+                     data-url="@Url.Action("GetActiveLevels", "Level")">
+                    <button class="form-select w-100 text-start d-flex justify-content-between align-items-center"
+                        type="button"
+                        id="dropdownSearchButton"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <span class="text-secondary selected-level">
+                        Select a Level
+                    </span>
+                        <i class="bx bx-chevron-down ms-2 text-secondary"></i>
+                    </button>
+                    <ul class="dropdown-menu py-2 px-1"
+                        aria-labelledby="dropdownSearchButton">
+                        <div class="px-2">
+                            <input type="text"
+                                   class="form-control form-control-sm mb-2 dropdown-search-input"
+                                   id="dropdownSearchInput"
+                                   placeholder="Search Level.."
+                                   autocomplete="off" />
+                        </div>
+                        <li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="StudentStatus">Status</label>
+                <select asp-for="StudentStatus" class="form-select">
+                    <option value="Active">Active</option>
+                    <option value="Graduated">Graduated</option>
+                    <option value="Dropped">Dropped</option>
+                    <option value="Suspended">Suspended</option>
+                    <option value="On Hold">On Hold</option>
+                </select>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="PreferredClassTime">Preferred Class Time</label>
+                <select asp-for="PreferredClassTime" class="form-select">
+                    <option value="Flexible">Flexible</option>
+                    <option value="Morning">Morning</option>
+                    <option value="Afternoon">Afternoon</option>
+                    <option value="Evening">Evening</option>
+                    <option value="Weekend">Weekend</option>
+                </select>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="StudyDurationYears">Study Duration (Years)</label>
+                <input asp-for="StudyDurationYears" type="number" class="form-control" min="0" placeholder="e.g., 2, 3"/>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="GraduationDate">Graduation Date</label>
+                <input asp-for="GraduationDate" type="date" class="form-control" />
+            </div>
+            <div class="col-6 mb-2">
+                <div class="form-check mt-4">
+                    <input asp-for="PreviousChineseStudy" type="checkbox" class="form-check-input" />
+                    <label class="form-check-label" asp-for="PreviousChineseStudy">Previous Chinese Study</label>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <label class="form-label" asp-for="LearningGoals">Learning Goals</label>
+                <textarea asp-for="LearningGoals" class="form-control" rows="3" placeholder="Describe the student's learning objectives and goals"></textarea>
+            </div>
+        </div>
+        
+        <!-- Guardian Information -->
+        <h6 class="mt-4 mb-3">Guardian Information</h6>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="GuardianName">Guardian Name</label>
+                <input asp-for="GuardianName" type="text" class="form-control" placeholder="Full name"/>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="GuardianPhone">Guardian Phone</label>
+                <input asp-for="GuardianPhone" type="tel" class="form-control" placeholder="Phone number"/>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="GuardianEmail">Guardian Email</label>
+                <input asp-for="GuardianEmail" type="email" class="form-control" placeholder="Email address"/>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="GuardianRelationship">Relationship</label>
+                <select asp-for="GuardianRelationship" class="form-select">
+                    <option value="">Select Relationship</option>
+                    <option value="Parent">Parent</option>
+                    <option value="Guardian">Guardian</option>
+                    <option value="Relative">Relative</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Emergency Contact -->
+        <h6 class="mt-4 mb-3">Emergency Contact</h6>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="EmergencyContactName">Emergency Contact Name</label>
+                <input asp-for="EmergencyContactName" type="text" class="form-control" placeholder="Full name"/>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="EmergencyContactPhone">Emergency Contact Phone</label>
+                <input asp-for="EmergencyContactPhone" type="tel" class="form-control" placeholder="Phone number"/>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="EmergencyContactRelationship">Emergency Contact Relationship</label>
+                <select asp-for="EmergencyContactRelationship" class="form-select">
+                    <option value="">Select Relationship</option>
+                    <option value="Parent">Parent</option>
+                    <option value="Guardian">Guardian</option>
+                    <option value="Relative">Relative</option>
+                    <option value="Friend">Friend</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <label class="form-label" asp-for="Notes">Notes</label>
+                <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Additional notes about the student"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Close</button>
+        <button type="submit" class="btn btn-primary"><i class="bx bx-save me-1"></i>Update</button>
+    </div>
+</form>
+
+<script>
+$(function () {
+    $('.searchable-select').each(function () {
+        const $container = $(this);
+        const $button = $container.find('button.form-select');
+        const $dropdownMenu = $container.find('.dropdown-menu');
+        const $searchInput = $container.find('.dropdown-search-input');
+        const hiddenName = $container.data('name');
+        let selectedValue = $container.data('selected-value') || '';
+        const ajaxUrl = $container.data('url')?.trim() || null;
+
+        let $hiddenInput = $container.find(`input[type="hidden"][name="${hiddenName}"]`);
+        if (!$hiddenInput.length) {
+            $hiddenInput = $('<input type="hidden">').attr('name', hiddenName);
+            $container.append($hiddenInput);
+        }
+        $hiddenInput.val(selectedValue);
+
+        function renderOptions(items) {
+            $dropdownMenu.find('li').not(':first-child').remove();
+
+            if (!Array.isArray(items)) {
+                return $dropdownMenu.append('<li><a href="#" class="dropdown-item text-danger small">Invalid data format</a></li>');
+            }
+
+            if (items.length === 0) {
+                return $dropdownMenu.append('<li><a href="#" class="dropdown-item text-muted small">No results found</a></li>');
+            }
+
+            items.forEach(item => {
+                const isActive = (selectedValue.toString() === item.id.toString()) ? ' active' : '';
+                const $li = $(`
+                    <li>
+                        <a href="#" class="dropdown-item${isActive}" data-value="${item.id}" title="${item.text}">
+                            ${item.text} (${item.code})
+                        </a>
+                    </li>
+                `);
+                $dropdownMenu.append($li);
+                if (isActive) {
+                    $button.find('.selected-level').text(item.text).removeClass('text-secondary');
+                }
+            });
+        }
+
+        function fetchOptions(query = '') {
+            if (!ajaxUrl) return;
+
+            $dropdownMenu.find('li').not(':first-child').remove();
+            $dropdownMenu.append('<li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>');
+
+            $.ajax({
+                url: ajaxUrl,
+                method: 'GET',
+                data: { q: query },
+                dataType: 'json'
+            })
+                .done(function (data) {
+                    renderOptions(data);
+                })
+                .fail(function () {
+                    $dropdownMenu.find('li').not(':first-child').remove();
+                    $dropdownMenu.append('<li><a href="#" class="dropdown-item text-danger small">Error loading data. Check console.</a></li>');
+                });
+        }
+
+        $searchInput.on('input', function () {
+            const query = $(this).val().toLowerCase();
+            if (ajaxUrl) {
+                fetchOptions(query);
+            } else {
+                $dropdownMenu.find('li').not(':first-child').each(function () {
+                    const text = $(this).find('.dropdown-item').text().toLowerCase();
+                    $(this).toggle(text.includes(query));
+                });
+            }
+        });
+
+        $container.on('show.bs.dropdown', function () {
+            $searchInput.val('').focus();
+            if (ajaxUrl) {
+                fetchOptions('');
+            } else {
+                $dropdownMenu.find('li').show();
+            }
+        });
+
+        $dropdownMenu.on('click', '.dropdown-item', function (e) {
+            e.preventDefault();
+            const $item = $(this);
+            const newValue = $item.data('value');
+            const newText = $item.text();
+
+            selectedValue = newValue;
+            $hiddenInput.val(newValue);
+            $container.data('selected-value', newValue);
+            $button.find('.selected-level').text(newText).removeClass('text-secondary');
+
+            $dropdownMenu.find('.dropdown-item').removeClass('active');
+            $item.addClass('active');
+
+            const bsDropdown = bootstrap.Dropdown.getInstance($button[0]);
+            if (bsDropdown) {
+                bsDropdown.hide();
+            }
+
+            $container.trigger('itemSelected', { id: newValue, text: newText });
+        });
+
+        if (ajaxUrl) {
+            fetchOptions('');
+        }
+    });
+});
+</script>

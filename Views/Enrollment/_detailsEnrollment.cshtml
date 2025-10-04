@@ -1,0 +1,245 @@
+@model GetEnrollmentDTO
+
+<div class="modal-header">
+    <h5 class="modal-title" id="staticBackdropLabel">Enrollment Details</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+    <div class="row g-3">
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Student</label>
+            <div class="form-control-plaintext">
+                <strong>@(Model.StudentName ?? "-")</strong>
+                @if (!string.IsNullOrEmpty(Model.StudentCode))
+                {
+                    <br><small class="text-muted">Code: @Model.StudentCode</small>
+                }
+            </div>
+        </div>
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Class Section</label>
+            <div class="form-control-plaintext">
+                <strong>@(Model.SectionName ?? "-")</strong>
+                @if (!string.IsNullOrEmpty(Model.SectionCode))
+                {
+                    <br><small class="text-muted">Code: @Model.SectionCode</small>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Course</label>
+            <div class="form-control-plaintext">
+                <strong>@(Model.CourseName ?? "-")</strong>
+                @if (!string.IsNullOrEmpty(Model.CourseCode))
+                {
+                    <br><small class="text-muted">Code: @Model.CourseCode</small>
+                }
+            </div>
+        </div>
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Teacher</label>
+            <div class="form-control-plaintext">
+                <strong>@(Model.TeacherName ?? "-")</strong>
+            </div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Term</label>
+            <div class="form-control-plaintext">
+                <strong>@(Model.TermName ?? "-")</strong>
+            </div>
+        </div>
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Classroom</label>
+            <div class="form-control-plaintext">
+                <strong>@(Model.ClassroomName ?? "-")</strong>
+            </div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Enrollment Date</label>
+            <div class="form-control-plaintext">
+                <strong>@Model.EnrollmentDate.ToString("MMMM dd, yyyy")</strong>
+                <br><small class="text-muted">@Model.EnrollmentDate.ToString("yyyy-MM-dd")</small>
+            </div>
+        </div>
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Enrollment Type</label>
+            <div class="form-control-plaintext">
+                <span class="badge bg-primary">@Model.EnrollmentType</span>
+            </div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Status</label>
+            <div class="form-control-plaintext">
+                @switch (Model.Status?.ToLower())
+                {
+                    case "enrolled":
+                    case "active":
+                        <span class="badge bg-success">@Model.Status</span>
+                        break;
+                    case "completed":
+                        <span class="badge bg-primary">Completed</span>
+                        break;
+                    case "dropped":
+                        <span class="badge bg-danger">Dropped</span>
+                        break;
+                    case "failed":
+                        <span class="badge bg-danger">Failed</span>
+                        break;
+                    case "transferred":
+                        <span class="badge bg-info">Transferred</span>
+                        break;
+                    default:
+                        <span class="badge bg-secondary">@Model.Status</span>
+                        break;
+                }
+            </div>
+        </div>
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Start Date</label>
+            <div class="form-control-plaintext">
+                @if (Model.StartDate.HasValue)
+                {
+                    <strong>@Model.StartDate.Value.ToString("MMMM dd, yyyy")</strong>
+                    <br><small class="text-muted">@Model.StartDate.Value.ToString("yyyy-MM-dd")</small>
+                }
+                else
+                {
+                    <span class="text-muted">Not set</span>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Completion Date</label>
+            <div class="form-control-plaintext">
+                @if (Model.CompletionDate.HasValue)
+                {
+                    <strong>@Model.CompletionDate.Value.ToString("MMMM dd, yyyy")</strong>
+                    <br><small class="text-muted">@Model.CompletionDate.Value.ToString("yyyy-MM-dd")</small>
+                }
+                else
+                {
+                    <span class="text-muted">Not completed</span>
+                }
+            </div>
+        </div>
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Final Grade</label>
+            <div class="form-control-plaintext">
+                @if (!string.IsNullOrEmpty(Model.FinalGrade))
+                {
+                    <span class="badge bg-primary fs-6">@Model.FinalGrade</span>
+                }
+                else
+                {
+                    <span class="text-muted">Not graded</span>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Final Score</label>
+            <div class="form-control-plaintext">
+                @if (Model.FinalScore.HasValue)
+                {
+                    <strong>@Model.FinalScore.Value.ToString("F2")%</strong>
+                }
+                else
+                {
+                    <span class="text-muted">Not scored</span>
+                }
+            </div>
+        </div>
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Attendance Rate</label>
+            <div class="form-control-plaintext">
+                @if (Model.AttendanceRate.HasValue)
+                {
+                    <strong>@Model.AttendanceRate.Value.ToString("F2")%</strong>
+                }
+                else
+                {
+                    <span class="text-muted">Not tracked</span>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Discount Percentage</label>
+            <div class="form-control-plaintext">
+                @if (Model.DiscountPercentage > 0)
+                {
+                    <strong>@Model.DiscountPercentage.ToString("F2")%</strong>
+                    @if (!string.IsNullOrEmpty(Model.DiscountReason))
+                    {
+                        <br><small class="text-muted">@Model.DiscountReason</small>
+                    }
+                }
+                else
+                {
+                    <span class="text-muted">No discount</span>
+                }
+            </div>
+        </div>
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Special Needs</label>
+            <div class="form-control-plaintext">
+                @if (!string.IsNullOrEmpty(Model.SpecialNeeds))
+                {
+                    <strong>@Model.SpecialNeeds</strong>
+                }
+                else
+                {
+                    <span class="text-muted">None</span>
+                }
+            </div>
+        </div>
+    </div>
+    @if (!string.IsNullOrEmpty(Model.Notes))
+    {
+        <div class="row g-3">
+            <div class="col-12 mb-3">
+                <label class="form-label fw-semibold">Notes</label>
+                <div class="form-control-plaintext">
+                    <strong>@Model.Notes</strong>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="row g-3">
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Created By</label>
+            <div class="form-control-plaintext">
+                <strong>@(Model.CreatedBy ?? "-")</strong>
+                @if (Model.CreateDate.HasValue)
+                {
+                    <br><small class="text-muted">@Model.CreateDate.Value.ToString("MMM dd, yyyy HH:mm")</small>
+                }
+            </div>
+        </div>
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Modified By</label>
+            <div class="form-control-plaintext">
+                <strong>@(Model.ModifiedBy ?? "-")</strong>
+                @if (Model.UpdateDate.HasValue)
+                {
+                    <br><small class="text-muted">@Model.UpdateDate.Value.ToString("MMM dd, yyyy HH:mm")</small>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Close</button>
+</div>

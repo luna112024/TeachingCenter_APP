@@ -1,0 +1,184 @@
+@model object
+
+<div class="modal-header">
+    <h5 class="modal-title" id="staticBackdropLabel">Payment History</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+    <div id="paymentHistoryContent">
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading payment history...</p>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Close</button>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Load payment history data
+    loadPaymentHistory();
+});
+
+function loadPaymentHistory() {
+    const studentId = '@ViewBag.StudentId';
+    if (!studentId) {
+        $('#paymentHistoryContent').html('<div class="alert alert-danger">Student ID not provided.</div>');
+        return;
+    }
+
+    $.ajax({
+        url: '@Url.Action("GetPaymentHistoryData", "Student")',
+        method: 'GET',
+        data: { id: studentId },
+        dataType: 'json',
+        success: function(data) {
+            displayPaymentHistory(data);
+        },
+        error: function(xhr, status, error) {
+            $('#paymentHistoryContent').html('<div class="alert alert-danger">Error loading payment history: ' + error + '</div>');
+        }
+    });
+}
+
+function displayPaymentHistory(data) {
+    let html = '';
+    
+    if (!data || (Array.isArray(data) && data.length === 0)) {
+        html = `
+            <div class="text-center py-4">
+                <i class="bx bx-credit-card display-1 text-muted"></i>
+                <h5 class="text-muted mt-3">No Payment History</h5>
+                <p class="text-muted">This student doesn't have any payment records yet.</p>
+            </div>
+        `;
+    } else {
+        // Calculate totals
+        let totalPaid = 0;
+        let totalDue = 0;
+        
+        if (Array.isArray(data)) {
+            data.forEach(function(payment) {
+                if (payment.amount) {
+                    if (payment.status && payment.status.toLowerCase() === 'paid') {
+                        totalPaid += parseFloat(payment.amount);
+                    } else {
+                        totalDue += parseFloat(payment.amount);
+                    }
+                }
+            });
+        }
+        
+        html = `
+            <div class="row mb-4">
+                <div class="col-6">
+                    <div class="card bg-success text-white">
+                        <div class="card-body text-center">
+                            <i class="bx bx-check-circle display-4"></i>
+                            <h5 class="mt-2">Total Paid</h5>
+                            <h3>$${totalPaid.toFixed(2)}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body text-center">
+                            <i class="bx bx-time display-4"></i>
+                            <h5 class="mt-2">Total Due</h5>
+                            <h3>$${totalDue.toFixed(2)}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-12">
+                    <h6 class="mb-3">Payment Records</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Payment Date</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Status</th>
+                                    <th>Description</th>
+                                    <th>Reference</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+        `;
+        
+        if (Array.isArray(data)) {
+            data.forEach(function(payment) {
+                html += `
+                    <tr>
+                        <td>${payment.paymentDate ? new Date(payment.paymentDate).toLocaleDateString() : '-'}</td>
+                        <td>
+                            <strong>$${payment.amount ? parseFloat(payment.amount).toFixed(2) : '0.00'}</strong>
+                        </td>
+                        <td>${payment.paymentMethod || '-'}</td>
+                        <td>
+                            ${getPaymentStatusBadge(payment.status)}
+                        </td>
+                        <td>${payment.description || '-'}</td>
+                        <td>${payment.referenceNumber || '-'}</td>
+                    </tr>
+                `;
+            });
+        } else {
+            // Handle single record or different data structure
+            html += `
+                <tr>
+                    <td>${data.paymentDate ? new Date(data.paymentDate).toLocaleDateString() : '-'}</td>
+                    <td>
+                        <strong>$${data.amount ? parseFloat(data.amount).toFixed(2) : '0.00'}</strong>
+                    </td>
+                    <td>${data.paymentMethod || '-'}</td>
+                    <td>
+                        ${getPaymentStatusBadge(data.status)}
+                    </td>
+                    <td>${data.description || '-'}</td>
+                    <td>${data.referenceNumber || '-'}</td>
+                </tr>
+            `;
+        }
+        
+        html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    $('#paymentHistoryContent').html(html);
+}
+
+function getPaymentStatusBadge(status) {
+    if (!status) return '<span class="text-muted">-</span>';
+    
+    const statusLower = status.toLowerCase();
+    switch(statusLower) {
+        case 'paid':
+        case 'completed':
+            return '<span class="badge bg-success">Paid</span>';
+        case 'pending':
+            return '<span class="badge bg-warning">Pending</span>';
+        case 'failed':
+        case 'declined':
+            return '<span class="badge bg-danger">Failed</span>';
+        case 'refunded':
+            return '<span class="badge bg-info">Refunded</span>';
+        case 'partial':
+            return '<span class="badge bg-primary">Partial</span>';
+        default:
+            return `<span class="badge bg-secondary">${status}</span>`;
+    }
+}
+</script>

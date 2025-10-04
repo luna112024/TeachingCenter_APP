@@ -1,0 +1,35 @@
+@model UpdateStudentDTO
+
+<form asp-action="DeleteStudentConfirmed" asp-controller="Student" method="post" autocomplete="off">
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Delete Student</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <input asp-for="StudentId" type="hidden" />
+        <div class="alert alert-warning" role="alert">
+            <i class="bx bx-error-circle me-2"></i>
+            <strong>Warning!</strong> This action cannot be undone. Are you sure you want to delete this student?
+        </div>
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <label class="form-label">Student Code</label>
+                <input type="text" class="form-control" value="@Model.StudentCode" readonly />
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label">Guardian Name</label>
+                <input type="text" class="form-control" value="@Model.GuardianName" readonly />
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label">Status</label>
+                <input type="text" class="form-control" value="@Model.StudentStatus" readonly />
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Cancel</button>
+        <button type="submit" class="btn btn-danger"><i class="bx bx-trash me-1"></i>Delete</button>
+    </div>
+</form>

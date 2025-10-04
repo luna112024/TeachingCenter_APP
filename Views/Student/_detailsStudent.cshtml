@@ -1,0 +1,158 @@
+@model GetStudentDTO
+
+<div class="modal-header">
+    <h5 class="modal-title" id="staticBackdropLabel">Student Details</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Student Code</label>
+            <p class="form-control-plaintext">@Model.StudentCode</p>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Status</label>
+            <p class="form-control-plaintext">
+                @switch (Model.StudentStatus?.ToLower())
+                {
+                    case "active":
+                        <span class="badge bg-success">Active</span>
+                        break;
+                    case "graduated":
+                        <span class="badge bg-primary">Graduated</span>
+                        break;
+                    case "dropped":
+                        <span class="badge bg-danger">Dropped</span>
+                        break;
+                    case "suspended":
+                        <span class="badge bg-warning">Suspended</span>
+                        break;
+                    case "on hold":
+                        <span class="badge bg-secondary">On Hold</span>
+                        break;
+                    default:
+                        <span class="badge bg-secondary">@Model.StudentStatus</span>
+                        break;
+                }
+            </p>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Enrollment Date</label>
+            <p class="form-control-plaintext">@Model.EnrollmentDate.ToString("yyyy-MM-dd")</p>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Graduation Date</label>
+            <p class="form-control-plaintext">@(Model.GraduationDate?.ToString("yyyy-MM-dd") ?? "N/A")</p>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Current Level</label>
+            <p class="form-control-plaintext">@(Model.CurrentLevelName ?? "N/A")</p>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Study Duration</label>
+            <p class="form-control-plaintext">@(Model.StudyDurationYears?.ToString() ?? "N/A") years</p>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Preferred Class Time</label>
+            <p class="form-control-plaintext">@(Model.PreferredClassTime ?? "N/A")</p>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Previous Chinese Study</label>
+            <p class="form-control-plaintext">@(Model.PreviousChineseStudy ? "Yes" : "No")</p>
+        </div>
+    </div>
+    
+    @if (!string.IsNullOrEmpty(Model.LearningGoals))
+    {
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <label class="form-label fw-bold">Learning Goals</label>
+                <p class="form-control-plaintext">@Model.LearningGoals</p>
+            </div>
+        </div>
+    }
+    
+    <!-- Guardian Information -->
+    <h6 class="mt-4 mb-3">Guardian Information</h6>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Guardian Name</label>
+            <p class="form-control-plaintext">@(Model.GuardianName ?? "N/A")</p>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Guardian Phone</label>
+            <p class="form-control-plaintext">@(Model.GuardianPhone ?? "N/A")</p>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Guardian Email</label>
+            <p class="form-control-plaintext">@(Model.GuardianEmail ?? "N/A")</p>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Relationship</label>
+            <p class="form-control-plaintext">@(Model.GuardianRelationship ?? "N/A")</p>
+        </div>
+    </div>
+    
+    <!-- Emergency Contact -->
+    <h6 class="mt-4 mb-3">Emergency Contact</h6>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Emergency Contact Name</label>
+            <p class="form-control-plaintext">@(Model.EmergencyContactName ?? "N/A")</p>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Emergency Contact Phone</label>
+            <p class="form-control-plaintext">@(Model.EmergencyContactPhone ?? "N/A")</p>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Emergency Contact Relationship</label>
+            <p class="form-control-plaintext">@(Model.EmergencyContactRelationship ?? "N/A")</p>
+        </div>
+    </div>
+    
+    @if (!string.IsNullOrEmpty(Model.Notes))
+    {
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <label class="form-label fw-bold">Notes</label>
+                <p class="form-control-plaintext">@Model.Notes</p>
+            </div>
+        </div>
+    }
+    
+    <!-- System Information -->
+    <h6 class="mt-4 mb-3">System Information</h6>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Created By</label>
+            <p class="form-control-plaintext">@(Model.CreatedBy ?? "N/A")</p>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Created Date</label>
+            <p class="form-control-plaintext">@(Model.CreateDate?.ToString("yyyy-MM-dd HH:mm") ?? "N/A")</p>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Modified By</label>
+            <p class="form-control-plaintext">@(Model.ModifiedBy ?? "N/A")</p>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Modified Date</label>
+            <p class="form-control-plaintext">@(Model.UpdateDate?.ToString("yyyy-MM-dd HH:mm") ?? "N/A")</p>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Close</button>
+</div>

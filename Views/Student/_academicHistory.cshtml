@@ -1,0 +1,145 @@
+@model object
+
+<div class="modal-header">
+    <h5 class="modal-title" id="staticBackdropLabel">Academic History</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+    <div id="academicHistoryContent">
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading academic history...</p>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Close</button>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Load academic history data
+    loadAcademicHistory();
+});
+
+function loadAcademicHistory() {
+    const studentId = '@ViewBag.StudentId';
+    if (!studentId) {
+        $('#academicHistoryContent').html('<div class="alert alert-danger">Student ID not provided.</div>');
+        return;
+    }
+
+    $.ajax({
+        url: '@Url.Action("GetAcademicHistoryData", "Student")',
+        method: 'GET',
+        data: { id: studentId },
+        dataType: 'json',
+        success: function(data) {
+            displayAcademicHistory(data);
+        },
+        error: function(xhr, status, error) {
+            $('#academicHistoryContent').html('<div class="alert alert-danger">Error loading academic history: ' + error + '</div>');
+        }
+    });
+}
+
+function displayAcademicHistory(data) {
+    let html = '';
+    
+    if (!data || (Array.isArray(data) && data.length === 0)) {
+        html = `
+            <div class="text-center py-4">
+                <i class="bx bx-book-open display-1 text-muted"></i>
+                <h5 class="text-muted mt-3">No Academic History</h5>
+                <p class="text-muted">This student doesn't have any academic records yet.</p>
+            </div>
+        `;
+    } else {
+        html = `
+            <div class="row">
+                <div class="col-12">
+                    <h6 class="mb-3">Academic Records</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Course</th>
+                                    <th>Level</th>
+                                    <th>Term</th>
+                                    <th>Grade</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+        `;
+        
+        if (Array.isArray(data)) {
+            data.forEach(function(record) {
+                html += `
+                    <tr>
+                        <td>${record.courseName || '-'}</td>
+                        <td>${record.levelName || '-'}</td>
+                        <td>${record.termName || '-'}</td>
+                        <td>
+                            ${record.grade ? `<span class="badge bg-primary">${record.grade}</span>` : '-'}
+                        </td>
+                        <td>
+                            ${getStatusBadge(record.status)}
+                        </td>
+                        <td>${record.date ? new Date(record.date).toLocaleDateString() : '-'}</td>
+                    </tr>
+                `;
+            });
+        } else {
+            // Handle single record or different data structure
+            html += `
+                <tr>
+                    <td>${data.courseName || '-'}</td>
+                    <td>${data.levelName || '-'}</td>
+                    <td>${data.termName || '-'}</td>
+                    <td>
+                        ${data.grade ? `<span class="badge bg-primary">${data.grade}</span>` : '-'}
+                    </td>
+                    <td>
+                        ${getStatusBadge(data.status)}
+                    </td>
+                    <td>${data.date ? new Date(data.date).toLocaleDateString() : '-'}</td>
+                </tr>
+            `;
+        }
+        
+        html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    $('#academicHistoryContent').html(html);
+}
+
+function getStatusBadge(status) {
+    if (!status) return '<span class="text-muted">-</span>';
+    
+    const statusLower = status.toLowerCase();
+    switch(statusLower) {
+        case 'completed':
+        case 'passed':
+            return '<span class="badge bg-success">Completed</span>';
+        case 'in progress':
+        case 'active':
+            return '<span class="badge bg-primary">In Progress</span>';
+        case 'failed':
+            return '<span class="badge bg-danger">Failed</span>';
+        case 'withdrawn':
+            return '<span class="badge bg-warning">Withdrawn</span>';
+        default:
+            return `<span class="badge bg-secondary">${status}</span>`;
+    }
+}
+</script>

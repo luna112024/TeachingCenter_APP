@@ -61,6 +61,8 @@ builder.Services.AddScoped<ILevelService, LevelService>();
 builder.Services.AddScoped<IClassroomService, ClassroomService>();
 builder.Services.AddScoped<ITeacherService, TeacherService>();
 builder.Services.AddScoped<IClassSectionService, ClassSectionService>();
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 
 // Register Report Export Service
 builder.Services.AddScoped<ReportExportService>();

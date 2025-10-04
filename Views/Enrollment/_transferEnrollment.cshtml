@@ -1,0 +1,181 @@
+@model TransferEnrollmentDTO
+
+<form asp-action="TransferEnrollment" asp-controller="Enrollment" method="post" autocomplete="off">
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Transfer Enrollment</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <div class="row g-3">
+            <div class="col-12 mb-3">
+                <label class="form-label" asp-for="NewSectionId">New Class Section<span class="text-danger">*</span></label>
+                <div class="searchable-select dropdown w-100"
+                     data-name="NewSectionId"
+                     data-selected-value="@(Model?.NewSectionId ?? Guid.Empty)"
+                     data-url="@Url.Action("GetAllClassSections", "ClassSection")">
+                    <button class="form-select w-100 text-start d-flex justify-content-between align-items-center"
+                        type="button"
+                        id="dropdownSearchButton"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <span class="text-secondary selected-section">
+                        Select New Section
+                    </span>
+                        <i class="bx bx-chevron-down ms-2 text-secondary"></i>
+                    </button>
+                    <ul class="dropdown-menu py-2 px-1"
+                        aria-labelledby="dropdownSearchButton">
+                        <div class="px-2">
+                            <input type="text"
+                                   class="form-control form-control-sm mb-2 dropdown-search-input"
+                                   id="dropdownSearchInput"
+                                   placeholder="Search Section.."
+                                   autocomplete="off" />
+                        </div>
+                        <li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>
+                    </ul>
+                </div>
+                <span asp-validation-for="NewSectionId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-12 mb-3">
+                <label class="form-label" asp-for="TransferDate">Transfer Date<span class="text-danger">*</span></label>
+                <input asp-for="TransferDate" type="date" class="form-control" required />
+                <span asp-validation-for="TransferDate" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-12 mb-3">
+                <label class="form-label" asp-for="TransferReason">Transfer Reason</label>
+                <textarea asp-for="TransferReason" class="form-control" rows="3" placeholder="Please provide a reason for the transfer..."></textarea>
+                <span asp-validation-for="TransferReason" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="alert alert-info" role="alert">
+            <h6 class="alert-heading"><i class="bx bx-info-circle me-2"></i>Transfer Information</h6>
+            <p class="mb-0">This will transfer the student to the new section and mark the current enrollment as "Transferred". The student's enrollment history will be preserved.</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Cancel</button>
+        <button type="submit" class="btn btn-primary"><i class="bx bx-transfer me-1"></i>Transfer</button>
+    </div>
+</form>
+
+<script>
+$(function () {
+    $('.searchable-select').each(function () {
+        const $container = $(this);
+        const $button = $container.find('button.form-select');
+        const $dropdownMenu = $container.find('.dropdown-menu');
+        const $searchInput = $container.find('.dropdown-search-input');
+        const hiddenName = $container.data('name');
+        let selectedValue = $container.data('selected-value') || '';
+        const ajaxUrl = $container.data('url')?.trim() || null;
+
+        let $hiddenInput = $container.find(`input[type="hidden"][name="${hiddenName}"]`);
+        if (!$hiddenInput.length) {
+            $hiddenInput = $('<input type="hidden">').attr('name', hiddenName);
+            $container.append($hiddenInput);
+        }
+        $hiddenInput.val(selectedValue);
+
+        function renderOptions(items) {
+            $dropdownMenu.find('li').not(':first-child').remove();
+
+            if (!Array.isArray(items)) {
+                return $dropdownMenu.append('<li><a href="#" class="dropdown-item text-danger small">Invalid data format</a></li>');
+            }
+
+            if (items.length === 0) {
+                return $dropdownMenu.append('<li><a href="#" class="dropdown-item text-muted small">No results found</a></li>');
+            }
+
+            items.forEach(item => {
+                const isActive = (selectedValue.toString() === item.id.toString()) ? ' active' : '';
+                const displayText = `${item.text} (${item.sectionCode})`;
+                const $li = $(`
+                    <li>
+                        <a href="#" class="dropdown-item${isActive}" data-value="${item.id}" title="${item.text}">
+                            ${displayText}
+                        </a>
+                    </li>
+                `);
+                $dropdownMenu.append($li);
+                if (isActive) {
+                    $button.find('.selected-section').text(item.text).removeClass('text-secondary');
+                }
+            });
+        }
+
+        function fetchOptions(query = '') {
+            if (!ajaxUrl) return;
+
+            $dropdownMenu.find('li').not(':first-child').remove();
+            $dropdownMenu.append('<li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>');
+
+            $.ajax({
+                url: ajaxUrl,
+                method: 'GET',
+                data: { q: query },
+                dataType: 'json'
+            })
+                .done(function (data) {
+                    renderOptions(data);
+                })
+                .fail(function () {
+                    $dropdownMenu.find('li').not(':first-child').remove();
+                    $dropdownMenu.append('<li><a href="#" class="dropdown-item text-danger small">Error loading data. Check console.</a></li>');
+                });
+        }
+
+        $searchInput.on('input', function () {
+            const query = $(this).val().toLowerCase();
+            if (ajaxUrl) {
+                fetchOptions(query);
+            } else {
+                $dropdownMenu.find('li').not(':first-child').each(function () {
+                    const text = $(this).find('.dropdown-item').text().toLowerCase();
+                    $(this).toggle(text.includes(query));
+                });
+            }
+        });
+
+        $container.on('show.bs.dropdown', function () {
+            $searchInput.val('').focus();
+            if (ajaxUrl) {
+                fetchOptions('');
+            } else {
+                $dropdownMenu.find('li').show();
+            }
+        });
+
+        $dropdownMenu.on('click', '.dropdown-item', function (e) {
+            e.preventDefault();
+            const $item = $(this);
+            const newValue = $item.data('value');
+            const newText = $item.text();
+
+            selectedValue = newValue;
+            $hiddenInput.val(newValue);
+            $container.data('selected-value', newValue);
+            $button.find('.selected-section').text(newText).removeClass('text-secondary');
+
+            $dropdownMenu.find('.dropdown-item').removeClass('active');
+            $item.addClass('active');
+
+            const bsDropdown = bootstrap.Dropdown.getInstance($button[0]);
+            if (bsDropdown) {
+                bsDropdown.hide();
+            }
+
+            $container.trigger('itemSelected', { id: newValue, text: newText });
+        });
+
+        if (ajaxUrl) {
+            fetchOptions('');
+        }
+    });
+});
+</script>
