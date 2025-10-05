@@ -1,8 +1,9 @@
-@model CreateEnrollmentDTO
+@model UpdateWaitlistDTO
 
-<form asp-action="AddEnrollment" asp-controller="Enrollment" method="post" autocomplete="off">
+<form asp-action="EditWaitlist" asp-controller="Waitlist" method="post" autocomplete="off">
+    <input type="hidden" asp-for="WaitlistId" />
     <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Create Enrollment</h5>
+        <h5 class="modal-title" id="staticBackdropLabel">Edit Waitlist</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
@@ -68,83 +69,26 @@
         </div>
         <div class="row g-3">
             <div class="col-6 mb-2">
-                <label class="form-label" asp-for="EnrollmentDate">Enrollment Date<span class="text-danger">*</span></label>
-                <input asp-for="EnrollmentDate" type="date" class="form-control" required />
-                <span asp-validation-for="EnrollmentDate" class="text-danger"></span>
+                <label class="form-label" asp-for="WaitlistDate">Waitlist Date<span class="text-danger">*</span></label>
+                <input asp-for="WaitlistDate" type="date" class="form-control" required />
+                <span asp-validation-for="WaitlistDate" class="text-danger"></span>
             </div>
             <div class="col-6 mb-2">
-                <label class="form-label" asp-for="EnrollmentType">Enrollment Type<span class="text-danger">*</span></label>
-                <select asp-for="EnrollmentType" class="form-select" required>
-                    <option value="Regular">Regular</option>
-                    <option value="Trial">Trial</option>
-                    <option value="Makeup">Makeup</option>
-                    <option value="Transfer">Transfer</option>
-                </select>
-                <span asp-validation-for="EnrollmentType" class="text-danger"></span>
+                <label class="form-label" asp-for="PriorityOrder">Priority Order<span class="text-danger">*</span></label>
+                <input asp-for="PriorityOrder" type="number" min="1" class="form-control" required />
+                <span asp-validation-for="PriorityOrder" class="text-danger"></span>
             </div>
         </div>
         <div class="row g-3">
             <div class="col-6 mb-2">
                 <label class="form-label" asp-for="Status">Status<span class="text-danger">*</span></label>
                 <select asp-for="Status" class="form-select" required>
+                    <option value="Waiting">Waiting</option>
                     <option value="Enrolled">Enrolled</option>
-                    <option value="Active">Active</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Dropped">Dropped</option>
-                    <option value="Failed">Failed</option>
-                    <option value="Transferred">Transferred</option>
+                    <option value="Expired">Expired</option>
+                    <option value="Cancelled">Cancelled</option>
                 </select>
                 <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="col-6 mb-2">
-                <label class="form-label" asp-for="StartDate">Start Date</label>
-                <input asp-for="StartDate" type="date" class="form-control" id="startDateInput" readonly />
-                <small class="form-text text-muted">Auto-populated from selected section's term start date</small>
-                <span asp-validation-for="StartDate" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="row g-3">
-            <div class="col-6 mb-2">
-                <label class="form-label" asp-for="CompletionDate">Completion Date</label>
-                <input asp-for="CompletionDate" type="date" class="form-control" id="completionDateInput" readonly />
-                <small class="form-text text-muted">Auto-populated from selected section's term end date</small>
-                <span asp-validation-for="CompletionDate" class="text-danger"></span>
-            </div>
-            <div class="col-6 mb-2">
-                <label class="form-label" asp-for="FinalGrade">Final Grade</label>
-                <input asp-for="FinalGrade" type="text" class="form-control" placeholder="e.g., A, B+, Pass" />
-                <span asp-validation-for="FinalGrade" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="row g-3">
-            <div class="col-6 mb-2">
-                <label class="form-label" asp-for="FinalScore">Final Score</label>
-                <input asp-for="FinalScore" type="number" step="0.01" min="0" max="100" class="form-control" placeholder="0.00" />
-                <span asp-validation-for="FinalScore" class="text-danger"></span>
-            </div>
-            <div class="col-6 mb-2">
-                <label class="form-label" asp-for="AttendanceRate">Attendance Rate (%)</label>
-                <input asp-for="AttendanceRate" type="number" step="0.01" min="0" max="100" class="form-control" placeholder="0.00" />
-                <span asp-validation-for="AttendanceRate" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="row g-3">
-            <div class="col-6 mb-2">
-                <label class="form-label" asp-for="DiscountPercentage">Discount Percentage (%)</label>
-                <input asp-for="DiscountPercentage" type="number" step="0.01" min="0" max="100" class="form-control" placeholder="0.00" />
-                <span asp-validation-for="DiscountPercentage" class="text-danger"></span>
-            </div>
-            <div class="col-6 mb-2">
-                <label class="form-label" asp-for="DiscountReason">Discount Reason</label>
-                <input asp-for="DiscountReason" type="text" class="form-control" placeholder="e.g., Early bird, Family discount" />
-                <span asp-validation-for="DiscountReason" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="row g-3">
-            <div class="col-12 mb-2">
-                <label class="form-label" asp-for="SpecialNeeds">Special Needs</label>
-                <textarea asp-for="SpecialNeeds" class="form-control" rows="2" placeholder="Any special requirements or accommodations"></textarea>
-                <span asp-validation-for="SpecialNeeds" class="text-danger"></span>
             </div>
         </div>
         <div class="row g-3">
@@ -157,7 +101,7 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Cancel</button>
-        <button type="submit" class="btn btn-primary"><i class="bx bx-save me-1"></i>Save</button>
+        <button type="submit" class="btn btn-primary"><i class="bx bx-save me-1"></i>Update</button>
     </div>
 </form>
 
@@ -280,85 +224,11 @@ $(function () {
             }
 
             $container.trigger('itemSelected', { id: newValue, text: newText });
-
-            // If a class section was selected, fetch its details and update enrollment date
-            if (hiddenName === 'SectionId' && newValue) {
-                updateEnrollmentDateFromSection(newValue);
-            }
         });
 
         if (ajaxUrl) {
             fetchOptions('');
         }
     });
-
-    // Function to update enrollment date based on selected class section
-    function updateEnrollmentDateFromSection(sectionId) {
-        $.ajax({
-            url: '@Url.Action("GetClassSection", "ClassSection")',
-            method: 'GET',
-            data: { id: sectionId },
-            dataType: 'json',
-            success: function(section) {
-                if (section) {
-                    // Update enrollment date validation
-                    if (section.termStartDate) {
-                        const termStartDate = new Date(section.termStartDate);
-                        const enrollmentDateInput = $('input[name="EnrollmentDate"]');
-                        
-                        // Set max date to term start date
-                        const maxDate = termStartDate.toISOString().split('T')[0];
-                        enrollmentDateInput.attr('max', maxDate);
-                        
-                        // If current enrollment date is after term start, update it
-                        const currentDate = new Date(enrollmentDateInput.val());
-                        if (currentDate > termStartDate) {
-                            enrollmentDateInput.val(maxDate);
-                        }
-                        
-                        // Show info message
-                        showEnrollmentDateInfo(termStartDate);
-                    }
-                    
-                    // Auto-populate start and completion dates from term dates
-                    if (section.termStartDate) {
-                        const startDate = new Date(section.termStartDate);
-                        const startDateInput = $('#startDateInput');
-                        startDateInput.val(startDate.toISOString().split('T')[0]);
-                        
-                        // Update the hidden input value for form submission
-                        $('input[name="StartDate"]').val(startDate.toISOString().split('T')[0]);
-                    }
-                    
-                    if (section.termEndDate) {
-                        const endDate = new Date(section.termEndDate);
-                        const completionDateInput = $('#completionDateInput');
-                        completionDateInput.val(endDate.toISOString().split('T')[0]);
-                        
-                        // Update the hidden input value for form submission
-                        $('input[name="CompletionDate"]').val(endDate.toISOString().split('T')[0]);
-                    }
-                    
-                    // Show info about auto-populated dates
-                    showAutoPopulatedDatesInfo(section);
-                }
-            },
-            error: function() {
-                console.error('Failed to fetch class section details');
-            }
-        });
-    }
-
-    // Function to show enrollment date information
-    // function showEnrollmentDateInfo(termStartDate) {
-    //     const message = `Enrollment date cannot be after the term start date (${termStartDate.toLocaleDateString()}).`;
-    //     myNotifyBox(message, 8000, 'info');
-    // }
-
-    // Function to show info about auto-populated dates
-    // function showAutoPopulatedDatesInfo(section) {
-    //     const message = `Start date and completion date have been automatically set based on the selected section's term dates. Term: ${section.termName} | Section: ${section.sectionName} (${section.sectionCode})`;
-    //     myNotifyBox(message, 6000, 'success');
-    // }
 });
 </script>

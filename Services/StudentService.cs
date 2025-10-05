@@ -6,7 +6,6 @@ namespace hongWenAPP.Services
     public interface IStudentService
     {
         Task<GetStudentDTO> GetStudent(Guid studentId);
-        Task<GetStudentDTO> GetStudentByUserId(Guid userId);
         Task<List<GetStudentDTO>> GetAllStudents(string? search = null, string? status = null);
         Task<List<GetStudentDTO>> GetStudentsByStatus(string status);
         Task<object> GetAcademicHistory(Guid studentId);
@@ -29,10 +28,6 @@ namespace hongWenAPP.Services
                 $"{_baseUrl}/Student/{studentId}",
                 HttpMethod.Get);
 
-        public async Task<GetStudentDTO> GetStudentByUserId(Guid userId) =>
-            await SendRequestAsync<GetStudentDTO>(
-                $"{_baseUrl}/Student/user/{userId}",
-                HttpMethod.Get);
 
         public async Task<List<GetStudentDTO>> GetAllStudents(string? search = null, string? status = null)
         {

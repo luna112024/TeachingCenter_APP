@@ -1,0 +1,36 @@
+@model WaiveStudentFeeDTO
+
+<form asp-action="WaiveStudentFee" asp-controller="StudentFee" method="post" autocomplete="off">
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Waive Student Fee</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-info" role="alert">
+                    <h6 class="alert-heading">Information</h6>
+                    <p class="mb-0">This will mark the student fee as waived. Please provide a reason for the waiver.</p>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <label class="form-label" asp-for="WaiveReason">Waive Reason<span class="text-danger">*</span></label>
+                <textarea asp-for="WaiveReason" class="form-control" rows="3" placeholder="Please provide a reason for waiving this fee" required></textarea>
+                <span asp-validation-for="WaiveReason" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <label class="form-label" asp-for="WaivedReason">Waived Reason<span class="text-danger">*</span></label>
+                <textarea asp-for="WaivedReason" class="form-control" rows="3" placeholder="Additional details about the waiver" required></textarea>
+                <span asp-validation-for="WaivedReason" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Cancel</button>
+        <button type="submit" class="btn btn-warning"><i class="bx bx-x-circle me-1"></i>Waive Fee</button>
+    </div>
+</form>

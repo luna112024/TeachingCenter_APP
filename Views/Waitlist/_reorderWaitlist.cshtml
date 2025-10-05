@@ -1,0 +1,141 @@
+@model ReorderWaitlistDTO
+
+<form asp-action="ReorderWaitlist" asp-controller="Waitlist" method="post" autocomplete="off">
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Reorder Waitlist</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <div class="alert alert-info" role="alert">
+            <i class="bx bx-info-circle me-2"></i>
+            <strong>Info:</strong> Drag and drop items to reorder the waitlist priority. Lower numbers have higher priority.
+        </div>
+        
+        <input type="hidden" asp-for="SectionId" />
+        
+        <div id="waitlistItems" class="list-group">
+            <!-- Waitlist items will be loaded here via JavaScript -->
+            <div class="text-center p-3">
+                <i class="bx bx-loader bx-spin"></i> Loading waitlist items...
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Cancel</button>
+        <button type="submit" class="btn btn-primary" id="saveOrderBtn" disabled><i class="bx bx-save me-1"></i>Save Order</button>
+    </div>
+</form>
+
+<script>
+$(function () {
+    const sectionId = '@Model.SectionId';
+    let waitlistItems = [];
+    
+    // Load waitlist items for the section
+    function loadWaitlistItems() {
+        $.ajax({
+            url: '@Url.Action("GetWaitlistBySection", "Waitlist")',
+            method: 'GET',
+            data: { sectionId: sectionId },
+            dataType: 'json',
+            success: function(data) {
+                waitlistItems = data;
+                renderWaitlistItems();
+            },
+            error: function() {
+                $('#waitlistItems').html('<div class="alert alert-danger">Error loading waitlist items</div>');
+            }
+        });
+    }
+    
+    // Render waitlist items as sortable list
+    function renderWaitlistItems() {
+        if (waitlistItems.length === 0) {
+            $('#waitlistItems').html('<div class="alert alert-info">No waitlist items found for this section</div>');
+            return;
+        }
+        
+        let html = '';
+        waitlistItems.forEach((item, index) => {
+            html += `
+                <div class="list-group-item d-flex justify-content-between align-items-center" data-waitlist-id="${item.id}">
+                    <div class="d-flex align-items-center">
+                        <i class="bx bx-menu me-2 text-muted" style="cursor: move;"></i>
+                        <div>
+                            <div class="fw-semibold">${item.studentName}</div>
+                            <small class="text-muted">${item.studentCode} - ${item.courseName}</small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-primary me-2 priority-badge">${index + 1}</span>
+                        <span class="badge bg-warning">${item.status}</span>
+                    </div>
+                </div>
+            `;
+        });
+        
+        $('#waitlistItems').html(html);
+        
+        // Make the list sortable
+        $('#waitlistItems').sortable({
+            handle: '.bx-menu',
+            update: function(event, ui) {
+                updatePriorityNumbers();
+                $('#saveOrderBtn').prop('disabled', false);
+            }
+        });
+    }
+    
+    // Update priority numbers after reordering
+    function updatePriorityNumbers() {
+        $('#waitlistItems .list-group-item').each(function(index) {
+            $(this).find('.priority-badge').text(index + 1);
+        });
+    }
+    
+    // Form submission
+    $('form').on('submit', function(e) {
+        e.preventDefault();
+        
+        const waitlistOrder = [];
+        $('#waitlistItems .list-group-item').each(function(index) {
+            const waitlistId = $(this).data('waitlist-id');
+            waitlistOrder.push({
+                WaitlistId: waitlistId,
+                PriorityOrder: index + 1
+            });
+        });
+        
+        const formData = {
+            SectionId: sectionId,
+            WaitlistOrder: waitlistOrder
+        };
+        
+        $.ajax({
+            url: '@Url.Action("ReorderWaitlist", "Waitlist")',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            headers: {
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+            },
+            success: function(response) {
+                if (response.flag) {
+                    myNotifyBox(response.message, 3000, 'success');
+                    $('.btn-close').click();
+                    // Refresh the main list
+                    $('#formSearch').submit();
+                } else {
+                    myNotifyBox(response.message, 5000, 'error');
+                }
+            },
+            error: function() {
+                myNotifyBox('Error reordering waitlist', 5000, 'error');
+            }
+        });
+    });
+    
+    // Load items when modal opens
+    loadWaitlistItems();
+});
+</script>

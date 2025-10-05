@@ -1,0 +1,129 @@
+@using hongWenAPP.Models.WaitlistModel.DTOs
+@model PageList<GetWaitlistDTO>
+
+@{
+    GetWaitlistDTO p = null;
+}
+<style>
+    .bg-label-success {
+        background-color: #e8fadf !important;
+        color: #71dd37 !important;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-secondary {
+        background-color: #e4e6e8 !important;
+        color: #8592a3;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-warning {
+        background-color: #fff3cd !important;
+        color: #856404;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-primary {
+        background-color: #e7f3ff !important;
+        color: #696cff;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-danger {
+        background-color: #f8d7da !important;
+        color: #721c24;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-info {
+        background-color: #d1ecf1 !important;
+        color: #0c5460;
+        font-size: 11px;
+        font-weight: 600;
+    }
+</style>
+<table class="table">
+    <thead>
+        <tr>
+            <th class="mcol-50">N<sup>o</sup></th>
+            <th>Student</th>
+            <th>Course & Section</th>
+            <th>Waitlist Date</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th class="text-end mcol-200">Actions</th>
+        </tr>
+    </thead>
+    <tbody class="table-border-bottom-0">
+        @{
+            var i = Model.Paging.StartRowNo;
+        }
+        @foreach (var m in Model)
+        {
+        <tr>
+            <td>@i</td>
+            <td>
+                <div class="d-flex flex-column">
+                    <span class="fw-semibold">@(m.StudentName ?? "-")</span>
+                    <small class="text-muted">@m.StudentCode</small>
+                </div>
+            </td>
+            <td>
+                <div class="d-flex flex-column">
+                    <span class="fw-semibold">@(m.CourseName ?? "-")</span>
+                    <small class="text-muted">@(m.SectionName ?? "-")</small>
+                </div>
+            </td>
+            <td>@m.WaitlistDate.ToString("yyyy-MM-dd")</td>
+            <td>
+                <span class="badge bg-label-primary">@m.PriorityOrder</span>
+            </td>
+            <td>
+                @switch (m.Status?.ToLower())
+                {
+                    case "waiting":
+                        <span class="badge bg-label-warning text-capitalized">@m.Status</span>
+                        break;
+                    case "enrolled":
+                        <span class="badge bg-label-success text-capitalized">@m.Status</span>
+                        break;
+                    case "expired":
+                        <span class="badge bg-label-danger text-capitalized">@m.Status</span>
+                        break;
+                    case "cancelled":
+                        <span class="badge bg-label-secondary text-capitalized">@m.Status</span>
+                        break;
+                    default:
+                        <span class="badge bg-label-secondary text-capitalized">@m.Status</span>
+                        break;
+                }
+            </td>
+            <td class="text-end">
+                <div class="dropdown">
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                        <i class="bx bx-dots-vertical-rounded"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" modal-popup="" modal-size="xl" asp-action="DetailsWaitlist" asp-controller="Waitlist" asp-route-id="@m.WaitlistId"><i class="bx bx-show me-1"></i> Details</a>
+                        <a class="dropdown-item" modal-popup="" modal-size="xl" asp-action="EditWaitlist" asp-controller="Waitlist" asp-route-id="@m.WaitlistId"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                        @if (m.Status?.ToLower() == "waiting")
+                        {
+                            <a class="dropdown-item" modal-popup="" modal-size="lg" asp-action="PromoteFromWaitlist" asp-controller="Waitlist" asp-route-id="@m.WaitlistId"><i class="bx bx-up-arrow-alt me-1"></i> Promote</a>
+                        }
+                        <a class="dropdown-item text-danger" modal-popup="" asp-action="DeleteWaitlist" asp-controller="Waitlist" asp-route-id="@m.WaitlistId"><i class="bx bx-trash me-1"></i> Delete</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        i++;
+        }
+
+    </tbody>
+</table>
+
+@await Html.PartialAsync("_pageList", Model.Paging)

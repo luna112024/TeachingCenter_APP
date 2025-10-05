@@ -1,0 +1,130 @@
+@model GetStudentFeeDTO
+
+<div class="modal-header">
+    <h5 class="modal-title" id="staticBackdropLabel">Student Fee Details</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Student</label>
+            <div class="form-control-plaintext">
+                <div class="d-flex flex-column">
+                    <span class="fw-semibold">@(Model.StudentName ?? "-")</span>
+                    <small class="text-muted">@(Model.StudentCode ?? "-")</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Fee Name</label>
+            <div class="form-control-plaintext">@(Model.FeeName ?? "-")</div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Fee Type</label>
+            <div class="form-control-plaintext">
+                <span class="badge bg-label-primary">@(Model.FeeType ?? "-")</span>
+            </div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Template</label>
+            <div class="form-control-plaintext">@(Model.TemplateName ?? "-")</div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Original Amount</label>
+            <div class="form-control-plaintext">
+                <span class="fw-semibold">@Model.OriginalAmount.ToString("C")</span>
+            </div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Discount Amount</label>
+            <div class="form-control-plaintext">
+                <span class="text-success">@Model.DiscountAmount.ToString("C")</span>
+            </div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Final Amount</label>
+            <div class="form-control-plaintext">
+                <span class="fw-semibold">@Model.FinalAmount.ToString("C")</span>
+            </div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Currency</label>
+            <div class="form-control-plaintext">
+                <span class="badge bg-label-info">@(Model.Currency ?? "USD")</span>
+            </div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Due Date</label>
+            <div class="form-control-plaintext">@Model.DueDate.ToString("yyyy-MM-dd")</div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Status</label>
+            <div class="form-control-plaintext">
+                @switch (Model.Status?.ToLower())
+                {
+                    case "pending":
+                        <span class="badge bg-label-warning text-capitalized">@Model.Status</span>
+                        break;
+                    case "paid":
+                        <span class="badge bg-label-success text-capitalized">@Model.Status</span>
+                        break;
+                    case "partial":
+                        <span class="badge bg-label-info text-capitalized">@Model.Status</span>
+                        break;
+                    case "overdue":
+                        <span class="badge bg-label-danger text-capitalized">@Model.Status</span>
+                        break;
+                    case "waived":
+                        <span class="badge bg-label-secondary text-capitalized">@Model.Status</span>
+                        break;
+                    case "cancelled":
+                        <span class="badge bg-label-secondary text-capitalized">@Model.Status</span>
+                        break;
+                    default:
+                        <span class="badge bg-label-secondary text-capitalized">@Model.Status</span>
+                        break;
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Amount Paid</label>
+            <div class="form-control-plaintext">@Model.AmountPaid.ToString("C")</div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Amount Outstanding</label>
+            <div class="form-control-plaintext">@Model.AmountOutstanding.ToString("C")</div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Created By</label>
+            <div class="form-control-plaintext">@(Model.CreatedBy ?? "-")</div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Created Date</label>
+            <div class="form-control-plaintext">@(Model.CreateDate?.ToString("yyyy-MM-dd HH:mm") ?? "-")</div>
+        </div>
+    </div>
+    @if (!string.IsNullOrEmpty(Model.Notes))
+    {
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <label class="form-label fw-semibold">Notes</label>
+                <div class="form-control-plaintext">@Model.Notes</div>
+            </div>
+        </div>
+    }
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Close</button>
+</div>

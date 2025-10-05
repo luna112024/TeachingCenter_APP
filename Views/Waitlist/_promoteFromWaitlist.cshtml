@@ -1,0 +1,62 @@
+@model PromoteFromWaitlistDTO
+
+<form asp-action="PromoteFromWaitlist" asp-controller="Waitlist" asp-route-id="@ViewBag.WaitlistId" method="post" autocomplete="off">
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Promote from Waitlist</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <div class="alert alert-info" role="alert">
+            <i class="bx bx-info-circle me-2"></i>
+            <strong>Info:</strong> This will create a new enrollment and remove the student from the waitlist.
+        </div>
+        
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="EnrollmentDate">Enrollment Date<span class="text-danger">*</span></label>
+                <input asp-for="EnrollmentDate" type="date" class="form-control" required />
+                <span asp-validation-for="EnrollmentDate" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="EnrollmentType">Enrollment Type<span class="text-danger">*</span></label>
+                <select asp-for="EnrollmentType" class="form-select" required>
+                    <option value="Regular">Regular</option>
+                    <option value="Trial">Trial</option>
+                    <option value="Makeup">Makeup</option>
+                    <option value="Transfer">Transfer</option>
+                </select>
+                <span asp-validation-for="EnrollmentType" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="DiscountPercentage">Discount Percentage (%)</label>
+                <input asp-for="DiscountPercentage" type="number" step="0.01" min="0" max="100" class="form-control" placeholder="0.00" />
+                <span asp-validation-for="DiscountPercentage" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="DiscountReason">Discount Reason</label>
+                <input asp-for="DiscountReason" type="text" class="form-control" placeholder="e.g., Early bird, Family discount" />
+                <span asp-validation-for="DiscountReason" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <label class="form-label" asp-for="SpecialNeeds">Special Needs</label>
+                <textarea asp-for="SpecialNeeds" class="form-control" rows="2" placeholder="Any special requirements or accommodations"></textarea>
+                <span asp-validation-for="SpecialNeeds" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <label class="form-label" asp-for="Notes">Notes</label>
+                <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Additional notes or comments"></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Cancel</button>
+        <button type="submit" class="btn btn-success"><i class="bx bx-up-arrow-alt me-1"></i>Promote to Enrollment</button>
+    </div>
+</form>

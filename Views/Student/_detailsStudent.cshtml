@@ -5,6 +5,8 @@
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+    <!-- Personal Information -->
+    <h6 class="mb-3">Personal Information</h6>
     <div class="row g-3">
         <div class="col-6 mb-2">
             <label class="form-label fw-bold">Student Code</label>
@@ -39,6 +41,91 @@
     </div>
     <div class="row g-3">
         <div class="col-6 mb-2">
+            <label class="form-label fw-bold">First Name</label>
+            <p class="form-control-plaintext">@Model.FirstName</p>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Last Name</label>
+            <p class="form-control-plaintext">@Model.LastName</p>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Khmer Name</label>
+            <p class="form-control-plaintext">@(Model.KhmerName ?? "N/A")</p>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Chinese Name</label>
+            <p class="form-control-plaintext">@(Model.ChineseName ?? "N/A")</p>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Gender</label>
+            <p class="form-control-plaintext">@(Model.Gender ?? "N/A")</p>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Date of Birth</label>
+            <p class="form-control-plaintext">@(Model.DateOfBirth?.ToString("yyyy-MM-dd") ?? "N/A")</p>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Nationality</label>
+            <p class="form-control-plaintext">@(Model.Nationality ?? "N/A")</p>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">ID Card Number</label>
+            <p class="form-control-plaintext">@(Model.IdCardNumber ?? "N/A")</p>
+        </div>
+    </div>
+    
+    <!-- Contact Information -->
+    <h6 class="mt-4 mb-3">Contact Information</h6>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Phone</label>
+            <p class="form-control-plaintext">@(Model.Phone ?? "N/A")</p>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Email</label>
+            <p class="form-control-plaintext">@(Model.Email ?? "N/A")</p>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-12 mb-2">
+            <label class="form-label fw-bold">Address</label>
+            <p class="form-control-plaintext">@(Model.Address ?? "N/A")</p>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-4 mb-2">
+            <label class="form-label fw-bold">City</label>
+            <p class="form-control-plaintext">@(Model.City ?? "N/A")</p>
+        </div>
+        <div class="col-4 mb-2">
+            <label class="form-label fw-bold">Province</label>
+            <p class="form-control-plaintext">@(Model.Province ?? "N/A")</p>
+        </div>
+        <div class="col-4 mb-2">
+            <label class="form-label fw-bold">Postal Code</label>
+            <p class="form-control-plaintext">@(Model.PostalCode ?? "N/A")</p>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Enrollment Date</label>
+            <p class="form-control-plaintext">@Model.EnrollmentDate.ToString("yyyy-MM-dd")</p>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Graduation Date</label>
+            <p class="form-control-plaintext">@(Model.GraduationDate?.ToString("yyyy-MM-dd") ?? "N/A")</p>
+        </div>
+    </div>
+    <!-- Academic Information -->
+    <h6 class="mt-4 mb-3">Academic Information</h6>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
             <label class="form-label fw-bold">Enrollment Date</label>
             <p class="form-control-plaintext">@Model.EnrollmentDate.ToString("yyyy-MM-dd")</p>
         </div>
@@ -50,33 +137,29 @@
     <div class="row g-3">
         <div class="col-6 mb-2">
             <label class="form-label fw-bold">Current Level</label>
-            <p class="form-control-plaintext">@(Model.CurrentLevelName ?? "N/A")</p>
+            <p class="form-control-plaintext">@(Model.CurrentLevel ?? "N/A")</p>
         </div>
         <div class="col-6 mb-2">
             <label class="form-label fw-bold">Study Duration</label>
-            <p class="form-control-plaintext">@(Model.StudyDurationYears?.ToString() ?? "N/A") years</p>
+            <p class="form-control-plaintext">@Model.StudyDurationYears years</p>
         </div>
     </div>
     <div class="row g-3">
         <div class="col-6 mb-2">
-            <label class="form-label fw-bold">Preferred Class Time</label>
-            <p class="form-control-plaintext">@(Model.PreferredClassTime ?? "N/A")</p>
-        </div>
-        <div class="col-6 mb-2">
             <label class="form-label fw-bold">Previous Chinese Study</label>
             <p class="form-control-plaintext">@(Model.PreviousChineseStudy ? "Yes" : "No")</p>
         </div>
-    </div>
-    
-    @if (!string.IsNullOrEmpty(Model.LearningGoals))
-    {
-        <div class="row g-3">
-            <div class="col-12 mb-2">
-                <label class="form-label fw-bold">Learning Goals</label>
-                <p class="form-control-plaintext">@Model.LearningGoals</p>
-            </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Preferred Class Time</label>
+            <p class="form-control-plaintext">@(Model.PreferredClassTime ?? "N/A")</p>
         </div>
-    }
+    </div>
+    <div class="row g-3">
+        <div class="col-12 mb-2">
+            <label class="form-label fw-bold">Learning Goals</label>
+            <p class="form-control-plaintext">@(Model.LearningGoals ?? "N/A")</p>
+        </div>
+    </div>
     
     <!-- Guardian Information -->
     <h6 class="mt-4 mb-3">Guardian Information</h6>
@@ -98,6 +181,22 @@
         <div class="col-6 mb-2">
             <label class="form-label fw-bold">Relationship</label>
             <p class="form-control-plaintext">@(Model.GuardianRelationship ?? "N/A")</p>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Guardian ID Card</label>
+            <p class="form-control-plaintext">@(Model.GuardianIdCard ?? "N/A")</p>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-bold">Guardian Occupation</label>
+            <p class="form-control-plaintext">@(Model.GuardianOccupation ?? "N/A")</p>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-12 mb-2">
+            <label class="form-label fw-bold">Guardian Address</label>
+            <p class="form-control-plaintext">@(Model.GuardianAddress ?? "N/A")</p>
         </div>
     </div>
     

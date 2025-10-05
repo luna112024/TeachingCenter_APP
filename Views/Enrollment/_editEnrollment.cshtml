@@ -358,62 +358,21 @@ $(function () {
     }
 
     // Function to show enrollment date information
-    function showEnrollmentDateInfo(termStartDate) {
-        const infoHtml = `
-            <div class="alert alert-info alert-dismissible fade show mt-2" role="alert">
-                <i class="bx bx-info-circle me-2"></i>
-                <strong>Enrollment Date Limit:</strong> 
-                Enrollment date cannot be after the term start date (${termStartDate.toLocaleDateString()}).
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        `;
-        
-        // Remove existing alerts
-        $('.alert-info, .alert-warning').remove();
-        
-        // Add new info alert after the enrollment date field
-        $('input[name="EnrollmentDate"]').closest('.mb-2').after(infoHtml);
-    }
+    // function showEnrollmentDateInfo(termStartDate) {
+    //     const message = `Enrollment date cannot be after the term start date (${termStartDate.toLocaleDateString()}).`;
+    //     myNotifyBox(message, 8000, 'info');
+    // }
 
     // Function to show enrollment date warning (for edit mode)
-    function showEnrollmentDateWarning(termStartDate) {
-        const warningHtml = `
-            <div class="alert alert-warning alert-dismissible fade show mt-2" role="alert">
-                <i class="bx bx-error-circle me-2"></i>
-                <strong>Warning:</strong> 
-                Current enrollment date is after the term start date (${termStartDate.toLocaleDateString()}). 
-                Please update the enrollment date to be on or before the term start date.
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        `;
-        
-        // Remove existing alerts
-        $('.alert-info, .alert-warning').remove();
-        
-        // Add new warning alert after the enrollment date field
-        $('input[name="EnrollmentDate"]').closest('.mb-2').after(warningHtml);
-    }
+    // function showEnrollmentDateWarning(termStartDate) {
+    //     const message = `Current enrollment date is after the term start date (${termStartDate.toLocaleDateString()}). Please update the enrollment date to be on or before the term start date.`;
+    //     myNotifyBox(message, 10000, 'warning');
+    // }
 
     // Function to show info about auto-populated dates
-    function showAutoPopulatedDatesInfo(section) {
-        const infoHtml = `
-            <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
-                <i class="bx bx-info-circle me-2"></i>
-                <strong>Auto-populated Dates:</strong> 
-                Start date and completion date have been automatically set based on the selected section's term dates.
-                <br><small class="text-muted">
-                    Term: ${section.termName} | 
-                    Section: ${section.sectionName} (${section.sectionCode})
-                </small>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        `;
-        
-        // Remove existing success alerts
-        $('.alert-success').remove();
-        
-        // Add new info alert after the completion date field
-        $('#completionDateInput').closest('.mb-2').after(infoHtml);
-    }
+    // function showAutoPopulatedDatesInfo(section) {
+    //     const message = `Start date and completion date have been automatically set based on the selected section's term dates. Term: ${section.termName} | Section: ${section.sectionName} (${section.sectionCode})`;
+    //     myNotifyBox(message, 6000, 'success');
+    // }
 });
 </script>

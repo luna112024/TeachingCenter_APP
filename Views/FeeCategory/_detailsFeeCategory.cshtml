@@ -1,0 +1,73 @@
+@model GetFeeCategoryDTO
+
+<div class="modal-header">
+    <h5 class="modal-title" id="staticBackdropLabel">Fee Category Details</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Category Name</label>
+            <div class="form-control-plaintext">@(Model.CategoryName ?? "-")</div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Category Code</label>
+            <div class="form-control-plaintext">@(Model.CategoryCode ?? "-")</div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-12 mb-2">
+            <label class="form-label fw-semibold">Description</label>
+            <div class="form-control-plaintext">@(Model.Description ?? "-")</div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-4 mb-2">
+            <label class="form-label fw-semibold">Mandatory</label>
+            <div class="form-control-plaintext">
+                @if (Model.IsMandatory)
+                {
+                    <span class="badge bg-label-success">Yes</span>
+                }
+                else
+                {
+                    <span class="badge bg-label-secondary">No</span>
+                }
+            </div>
+        </div>
+        <div class="col-4 mb-2">
+            <label class="form-label fw-semibold">Display Order</label>
+            <div class="form-control-plaintext">@Model.DisplayOrder</div>
+        </div>
+        <div class="col-4 mb-2">
+            <label class="form-label fw-semibold">Status</label>
+            <div class="form-control-plaintext">
+                @switch (Model.Status?.ToLower())
+                {
+                    case "active":
+                        <span class="badge bg-label-success text-capitalized">@Model.Status</span>
+                        break;
+                    case "inactive":
+                        <span class="badge bg-label-secondary text-capitalized">@Model.Status</span>
+                        break;
+                    default:
+                        <span class="badge bg-label-secondary text-capitalized">@Model.Status</span>
+                        break;
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Created By</label>
+            <div class="form-control-plaintext">@(Model.CreatedBy ?? "-")</div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Created Date</label>
+            <div class="form-control-plaintext">@(Model.CreateDate?.ToString("yyyy-MM-dd HH:mm") ?? "-")</div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Close</button>
+</div>

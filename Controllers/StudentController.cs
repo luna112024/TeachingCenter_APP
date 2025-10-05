@@ -61,6 +61,7 @@ namespace hongWenAPP.Controllers
             {
                 s.StudentId,
                 s.StudentCode,
+                StudentName = $"{s.FirstName} {s.LastName}",
                 s.CurrentLevelName,
                 s.StudentStatus,
                 s.EnrollmentDate,
@@ -136,8 +137,25 @@ namespace hongWenAPP.Controllers
                 {
                     StudentId = studentData.StudentId,
                     StudentCode = studentData.StudentCode,
-                    CurrentLevelId = studentData.CurrentLevelId,
+                    FirstName = studentData.FirstName,
+                    LastName = studentData.LastName,
+                    KhmerName = studentData.KhmerName,
+                    ChineseName = studentData.ChineseName,
+                    Gender = studentData.Gender,
+                    DateOfBirth = studentData.DateOfBirth,
+                    Nationality = studentData.Nationality,
+                    IdCardNumber = studentData.IdCardNumber,
+                    Phone = studentData.Phone,
+                    Email = studentData.Email,
+                    Address = studentData.Address,
+                    City = studentData.City,
+                    Province = studentData.Province,
+                    PostalCode = studentData.PostalCode,
+                    CurrentLevel = studentData.CurrentLevel,
                     LearningGoals = studentData.LearningGoals,
+                    PreviousChineseStudy = studentData.PreviousChineseStudy,
+                    StudyDurationYears = studentData.StudyDurationYears,
+                    PreferredClassTime = studentData.PreferredClassTime,
                     EmergencyContactName = studentData.EmergencyContactName,
                     EmergencyContactPhone = studentData.EmergencyContactPhone,
                     EmergencyContactRelationship = studentData.EmergencyContactRelationship,
@@ -145,11 +163,12 @@ namespace hongWenAPP.Controllers
                     GuardianPhone = studentData.GuardianPhone,
                     GuardianEmail = studentData.GuardianEmail,
                     GuardianRelationship = studentData.GuardianRelationship,
+                    GuardianIdCard = studentData.GuardianIdCard,
+                    GuardianOccupation = studentData.GuardianOccupation,
+                    GuardianAddress = studentData.GuardianAddress,
                     EnrollmentDate = studentData.EnrollmentDate,
                     GraduationDate = studentData.GraduationDate,
-                    PreviousChineseStudy = studentData.PreviousChineseStudy,
-                    StudyDurationYears = studentData.StudyDurationYears,
-                    PreferredClassTime = studentData.PreferredClassTime,
+                    ProfilePhoto = studentData.ProfilePhoto,
                     StudentStatus = studentData.StudentStatus,
                     Notes = studentData.Notes,
                     ModifiedBy = studentData.ModifiedBy
@@ -275,7 +294,7 @@ namespace hongWenAPP.Controllers
                 var result = students.Select(s => new
                 {
                     id = s.StudentId,
-                    text = s.GuardianName ?? "Unknown",
+                    text = $"{s.FirstName} {s.LastName}" ?? "Unknown",
                     studentCode = s.StudentCode
                 }).ToList();
 
@@ -309,10 +328,11 @@ namespace hongWenAPP.Controllers
                 var result = students.Select(s => new
                 {
                     id = s.StudentId,
-                    text = $"{s.StudentCode} - {s.GuardianName}",
+                    text = $"{s.StudentCode} - {s.FirstName} {s.LastName}",
                     code = s.StudentCode,
                     status = s.StudentStatus,
                     enrollmentDate = s.EnrollmentDate.ToString("yyyy-MM-dd"),
+                    studentName = $"{s.FirstName} {s.LastName}",
                     guardianName = s.GuardianName,
                     guardianPhone = s.GuardianPhone
                 }).ToList();

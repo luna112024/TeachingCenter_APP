@@ -6,6 +6,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <!-- Personal Information -->
+        <h6 class="mb-3">Personal Information</h6>
         <div class="row g-3">
             <div class="col-6 mb-2">
                 <label class="form-label" asp-for="StudentCode">Student Code<span class="text-danger">*</span></label>
@@ -20,33 +22,97 @@
         </div>
         <div class="row g-3">
             <div class="col-6 mb-2">
-                <label class="form-label" asp-for="CurrentLevelId">Current Level</label>
-                <div class="searchable-select dropdown w-100"
-                     data-name="CurrentLevelId"
-                     data-selected-value="@(Model?.CurrentLevelId ?? Guid.Empty)"
-                     data-url="@Url.Action("GetActiveLevels", "Level")">
-                    <button class="form-select w-100 text-start d-flex justify-content-between align-items-center"
-                        type="button"
-                        id="dropdownSearchButton"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                    <span class="text-secondary selected-level">
-                        Select a Level
-                    </span>
-                        <i class="bx bx-chevron-down ms-2 text-secondary"></i>
-                    </button>
-                    <ul class="dropdown-menu py-2 px-1"
-                        aria-labelledby="dropdownSearchButton">
-                        <div class="px-2">
-                            <input type="text"
-                                   class="form-control form-control-sm mb-2 dropdown-search-input"
-                                   id="dropdownSearchInput"
-                                   placeholder="Search Level.."
-                                   autocomplete="off" />
+                <label class="form-label" asp-for="FirstName">First Name<span class="text-danger">*</span></label>
+                <input asp-for="FirstName" type="text" class="form-control" required placeholder="Enter first name"/>
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="LastName">Last Name<span class="text-danger">*</span></label>
+                <input asp-for="LastName" type="text" class="form-control" required placeholder="Enter last name"/>
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="KhmerName">Khmer Name</label>
+                <input asp-for="KhmerName" type="text" class="form-control" placeholder="Enter Khmer name"/>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="ChineseName">Chinese Name</label>
+                <input asp-for="ChineseName" type="text" class="form-control" placeholder="Enter Chinese name"/>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="Gender">Gender</label>
+                <select asp-for="Gender" class="form-select">
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="DateOfBirth">Date of Birth</label>
+                <input asp-for="DateOfBirth" type="date" class="form-control" />
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="Nationality">Nationality</label>
+                <input asp-for="Nationality" type="text" class="form-control" placeholder="e.g., Cambodian, Chinese"/>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="IdCardNumber">ID Card Number</label>
+                <input asp-for="IdCardNumber" type="text" class="form-control" placeholder="ID Card or Passport Number"/>
+            </div>
+        </div>
+        
+        <!-- Contact Information -->
+        <h6 class="mt-4 mb-3">Contact Information</h6>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="Phone">Phone Number</label>
+                <input asp-for="Phone" type="tel" class="form-control" placeholder="Phone number"/>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="Email">Email Address</label>
+                <input asp-for="Email" type="email" class="form-control" placeholder="Email address"/>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <label class="form-label" asp-for="Address">Address</label>
+                <textarea asp-for="Address" class="form-control" rows="2" placeholder="Full address"></textarea>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-4 mb-2">
+                <label class="form-label" asp-for="City">City</label>
+                <input asp-for="City" type="text" class="form-control" placeholder="City"/>
+            </div>
+            <div class="col-4 mb-2">
+                <label class="form-label" asp-for="Province">Province</label>
+                <input asp-for="Province" type="text" class="form-control" placeholder="Province"/>
+            </div>
+            <div class="col-4 mb-2">
+                <label class="form-label" asp-for="PostalCode">Postal Code</label>
+                <input asp-for="PostalCode" type="text" class="form-control" placeholder="Postal code"/>
                         </div>
-                        <li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>
-                    </ul>
                 </div>
+        <!-- Academic Information -->
+        <h6 class="mt-4 mb-3">Academic Information</h6>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="CurrentLevel">Current Level</label>
+                <select asp-for="CurrentLevel" class="form-select">
+                    <option value="">Select Level</option>
+                    <option value="Beginner">Beginner</option>
+                    <option value="Elementary">Elementary</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                    <option value="Expert">Expert</option>
+                </select>
             </div>
             <div class="col-6 mb-2">
                 <label class="form-label" asp-for="StudentStatus">Status</label>
@@ -106,6 +172,22 @@
                     <option value="Relative">Relative</option>
                     <option value="Other">Other</option>
                 </select>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="GuardianIdCard">Guardian ID Card</label>
+                <input asp-for="GuardianIdCard" type="text" class="form-control" placeholder="ID Card Number"/>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="GuardianOccupation">Guardian Occupation</label>
+                <input asp-for="GuardianOccupation" type="text" class="form-control" placeholder="Occupation"/>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <label class="form-label" asp-for="GuardianAddress">Guardian Address</label>
+                <textarea asp-for="GuardianAddress" class="form-control" rows="2" placeholder="Guardian's address"></textarea>
             </div>
         </div>
         

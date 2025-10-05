@@ -1,0 +1,56 @@
+@model ListStudentFeeDTOs
+@{
+    ViewData["Title"] = "Student Fees";
+}
+@section TopBar {
+    <!-- Search -->
+    <div class="navbar-nav align-items-center">
+        <div class="nav-item d-flex align-items-center justify-content-center">
+            <form id="formSearch" asp-action="ListStudentFee" asp-controller="StudentFee" class="d-flex w-100">
+                <button type="submit" id="searchButton" style="background:none; border:none">
+                    <i class="bx bx-search fs-4 lh-0"></i>
+                </button>
+                <input type="text" asp-for="@Model.SearchText" class="form-control border-0 shadow-none" placeholder="Search..." aria-label="Search..." />
+            </form>
+        </div>
+    </div>
+    <!-- /Search -->
+}
+<div class="fluid-container flex-grow-1">
+    <nav class="pt-sm-3 pb-1" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index" asp-controller="home">Dashboard</a></li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+    <div class="card">
+        <div class="card-header p-3">
+            <div class="row">
+                <div class="col-sm-5 col-12">
+                    <div class="card-title">@ViewData["Title"]</div>
+                </div>
+                <div class="col-sm-7 col-12">
+                    <div class="d-flex h-100 justify-content-end align-items-center">
+                        <div class="me-3">
+                            <select asp-for="@Model.PageSize" data-page-size class="form-select">
+                                <option selected value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                        <a type="button" class="btn btn-primary btn-icon-only" asp-action="AssignFeeToStudent" asp-controller="StudentFee" modal-popup="" modal-size="xl"><i class="bx bx-plus"></i><span class="ms-1 d-none d-md-block">Assign Fee</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive text-nowrap p-3 pt-2">
+            <partial name="_loading" />
+            <div id="listData">
+                @{
+                    await Html.RenderPartialAsync("_ListStudentFees", Model.studentFee);
+                }
+            </div>
+        </div>
+    </div>
+</div>

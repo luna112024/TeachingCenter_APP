@@ -1,0 +1,110 @@
+@model GetFeeTemplateDTO
+
+<div class="modal-header">
+    <h5 class="modal-title" id="staticBackdropLabel">Fee Template Details</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Template Name</label>
+            <div class="form-control-plaintext">@(Model.TemplateName ?? "-")</div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Category</label>
+            <div class="form-control-plaintext">@(Model.CategoryName ?? "-")</div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Fee Type</label>
+            <div class="form-control-plaintext">
+                <span class="badge bg-label-primary">@(Model.FeeType ?? "-")</span>
+            </div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Base Amount</label>
+            <div class="form-control-plaintext">
+                <span class="fw-semibold">@Model.BaseAmount.ToString("C")</span>
+            </div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Currency</label>
+            <div class="form-control-plaintext">
+                <span class="badge bg-label-info">@(Model.Currency ?? "USD")</span>
+            </div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Applicable To</label>
+            <div class="form-control-plaintext">@(Model.ApplicableTo ?? "-")</div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Due Days After Enrollment</label>
+            <div class="form-control-plaintext">@Model.DueDaysAfterEnrollment days</div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Late Fee Days</label>
+            <div class="form-control-plaintext">@Model.LateFeeDays days</div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Late Fee Amount</label>
+            <div class="form-control-plaintext">@Model.LateFeeAmount.ToString("C")</div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Early Payment Discount</label>
+            <div class="form-control-plaintext">@Model.EarlyPaymentDiscountPercent%</div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Effective Date</label>
+            <div class="form-control-plaintext">@Model.EffectiveDate.ToString("yyyy-MM-dd")</div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Expiry Date</label>
+            <div class="form-control-plaintext">@(Model.ExpiryDate?.ToString("yyyy-MM-dd") ?? "-")</div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Status</label>
+            <div class="form-control-plaintext">
+                @switch (Model.Status?.ToLower())
+                {
+                    case "active":
+                        <span class="badge bg-label-success text-capitalized">@Model.Status</span>
+                        break;
+                    case "inactive":
+                        <span class="badge bg-label-secondary text-capitalized">@Model.Status</span>
+                        break;
+                    default:
+                        <span class="badge bg-label-secondary text-capitalized">@Model.Status</span>
+                        break;
+                }
+            </div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Created By</label>
+            <div class="form-control-plaintext">@(Model.CreatedBy ?? "-")</div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Created Date</label>
+            <div class="form-control-plaintext">@(Model.CreateDate?.ToString("yyyy-MM-dd HH:mm") ?? "-")</div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Applicable Levels</label>
+            <div class="form-control-plaintext">@(Model.ApplicableLevels ?? "-")</div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Close</button>
+</div>

@@ -1,0 +1,57 @@
+@model UpdateFeeCategoryDTO
+
+<form asp-action="EditFeeCategory" asp-controller="FeeCategory" method="post" autocomplete="off">
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Edit Fee Category</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <input asp-for="CategoryId" type="hidden" />
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="CategoryName">Category Name<span class="text-danger">*</span></label>
+                <input asp-for="CategoryName" type="text" class="form-control" placeholder="e.g., Tuition Fees" required />
+                <span asp-validation-for="CategoryName" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="CategoryCode">Category Code<span class="text-danger">*</span></label>
+                <input asp-for="CategoryCode" type="text" class="form-control" placeholder="e.g., TUITION" required />
+                <span asp-validation-for="CategoryCode" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <label class="form-label" asp-for="Description">Description</label>
+                <textarea asp-for="Description" class="form-control" rows="3" placeholder="Description of the fee category"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-4 mb-2">
+                <label class="form-label" asp-for="IsMandatory">Mandatory</label>
+                <div class="form-check form-switch">
+                    <input asp-for="IsMandatory" class="form-check-input" type="checkbox" />
+                    <label class="form-check-label" asp-for="IsMandatory">Required</label>
+                </div>
+                <span asp-validation-for="IsMandatory" class="text-danger"></span>
+            </div>
+            <div class="col-4 mb-2">
+                <label class="form-label" asp-for="DisplayOrder">Display Order</label>
+                <input asp-for="DisplayOrder" type="number" min="0" class="form-control" placeholder="0" />
+                <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+            </div>
+            <div class="col-4 mb-2">
+                <label class="form-label" asp-for="Status">Status<span class="text-danger">*</span></label>
+                <select asp-for="Status" class="form-select" required>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Cancel</button>
+        <button type="submit" class="btn btn-primary"><i class="bx bx-save me-1"></i>Update</button>
+    </div>
+</form>

@@ -93,6 +93,21 @@
                     <div>Teachers</div>
                 </a>
             </li>
+            <li class="menu-item @Html.IsSelected(action: "Index", controller: "FeeCategory")" asp-permissions="ViewFee,ManageFee,DeleteFee">
+                <a href="@Url.Action("Index", "FeeCategory")" class="menu-link">
+                    <div>Fee Categories</div>
+                </a>
+            </li>
+            <li class="menu-item @Html.IsSelected(action: "Index", controller: "FeeTemplate")" asp-permissions="ViewFee,ManageFee,DeleteFee">
+                <a href="@Url.Action("Index", "FeeTemplate")" class="menu-link">
+                    <div>Fee Templates</div>
+                </a>
+            </li>
+            <li class="menu-item @Html.IsSelected(action: "Index", controller: "StudentFee")" asp-permissions="ViewFee,ManageFee,DeleteFee">
+                <a href="@Url.Action("Index", "StudentFee")" class="menu-link">
+                    <div>Student Fees</div>
+                </a>
+            </li>
         </ul>
     </li>
     <li class="menu-item @Html.IsSelected(action: "index", controller: "Student")" asp-permissions="ViewStudent,ManageStudent,DeleteStudent">
@@ -105,6 +120,18 @@
         <a href="@Url.Action("Index", "Enrollment")" class="menu-link">
             <i class="menu-icon tf-icons fa-sm fa-solid fa-graduation-cap"></i>
             ​​Enrollments
+        </a>
+    </li>
+    <li class="menu-item @Html.IsSelected(action: "index", controller: "Waitlist")" asp-permissions="ViewWaitlist,ManageWaitlist,DeleteWaitlist">
+        <a href="@Url.Action("Index", "Waitlist")" class="menu-link">
+            <i class="menu-icon tf-icons fa-sm fa-solid fa-clock"></i>
+            ​​Waitlist
+        </a>
+    </li>
+    <li class="menu-item @Html.IsSelected(action: "index", controller: "Assessment")" asp-permissions="ViewAssessment,ManageAssessment,DeleteAssessment">
+        <a href="@Url.Action("Index", "Assessment")" class="menu-link">
+            <i class="menu-icon tf-icons fa-sm fa-solid fa-clipboard-check"></i>
+            ​​Assessments
         </a>
     </li>
 

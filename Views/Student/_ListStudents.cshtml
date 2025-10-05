@@ -45,8 +45,8 @@
         <tr>
             <th class="mcol-50">N<sup>o</sup></th>
             <th>Student Code</th>
-            <th>Guardian Name</th>
-            <th>Guardian Phone</th>
+            <th>Student Name</th>
+            <th>Phone</th>
             <th>Current Level</th>
             <th>Enrollment Date</th>
             <th>Status</th>
@@ -62,9 +62,9 @@
         <tr>
             <td>@i</td>
             <td>@m.StudentCode</td>
-            <td>@(m.GuardianName ?? "-")</td>
-            <td>@(m.GuardianPhone ?? "-")</td>
-            <td>@(m.CurrentLevelName ?? "-")</td>
+            <td>@($"{m.FirstName} {m.LastName}")</td>
+            <td>@(m.Phone ?? "-")</td>
+            <td>@(m.CurrentLevel ?? "-")</td>
             <td>@m.EnrollmentDate.ToString("yyyy-MM-dd")</td>
             <td>
                 @switch (m.StudentStatus?.ToLower())

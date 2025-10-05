@@ -1,0 +1,357 @@
+@model AssignFeeToStudentDTO
+
+<form asp-action="AssignFeeToStudent" asp-controller="StudentFee" method="post" autocomplete="off">
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Assign Fee to Student</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="StudentId">Student<span class="text-danger">*</span></label>
+                <div class="searchable-select dropdown w-100"
+                     data-name="StudentId"
+                     data-selected-value="@(Model?.StudentId ?? Guid.Empty)"
+                     data-url="@Url.Action("GetAllStudents", "Student")">
+                    <button class="form-select w-100 text-start d-flex justify-content-between align-items-center"
+                        type="button"
+                        id="dropdownSearchButton"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <span class="text-secondary selected-student">
+                        Select a Student
+                    </span>
+                        <i class="bx bx-chevron-down ms-2 text-secondary"></i>
+                    </button>
+                    <ul class="dropdown-menu py-2 px-1"
+                        aria-labelledby="dropdownSearchButton">
+                        <div class="px-2">
+                            <input type="text"
+                                   class="form-control form-control-sm mb-2 dropdown-search-input"
+                                   id="dropdownSearchInput"
+                                   placeholder="Search Student.."
+                                   autocomplete="off" />
+                        </div>
+                        <li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>
+                    </ul>
+                </div>
+                <span asp-validation-for="StudentId" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="TemplateId">Fee Template<span class="text-danger">*</span></label>
+                <div class="searchable-select dropdown w-100"
+                     data-name="TemplateId"
+                     data-selected-value="@(Model?.TemplateId ?? Guid.Empty)"
+                     data-url="@Url.Action("FetchFeeTemplate", "FeeTemplate")">
+                    <button class="form-select w-100 text-start d-flex justify-content-between align-items-center"
+                        type="button"
+                        id="dropdownSearchButton2"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <span class="text-secondary selected-template">
+                        Select a Fee Template
+                    </span>
+                        <i class="bx bx-chevron-down ms-2 text-secondary"></i>
+                    </button>
+                    <ul class="dropdown-menu py-2 px-1"
+                        aria-labelledby="dropdownSearchButton2">
+                        <div class="px-2">
+                            <input type="text"
+                                   class="form-control form-control-sm mb-2 dropdown-search-input"
+                                   id="dropdownSearchInput2"
+                                   placeholder="Search Template.."
+                                   autocomplete="off" />
+                        </div>
+                        <li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>
+                    </ul>
+                </div>
+                <span asp-validation-for="TemplateId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="FeeName">Fee Name<span class="text-danger">*</span></label>
+                <input asp-for="FeeName" type="text" class="form-control" placeholder="Fee name" required />
+                <span asp-validation-for="FeeName" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="FeeType">Fee Type<span class="text-danger">*</span></label>
+                <select asp-for="FeeType" class="form-select" required>
+                    <option value="">Select Fee Type</option>
+                    <option value="Tuition">Tuition</option>
+                    <option value="Registration">Registration</option>
+                    <option value="Materials">Materials</option>
+                    <option value="Exam">Exam</option>
+                    <option value="Certificate">Certificate</option>
+                    <option value="Late Fee">Late Fee</option>
+                    <option value="Deposit">Deposit</option>
+                    <option value="Other">Other</option>
+                </select>
+                <span asp-validation-for="FeeType" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="OriginalAmount">Original Amount<span class="text-danger">*</span></label>
+                <input asp-for="OriginalAmount" type="number" step="0.01" min="0.01" class="form-control" placeholder="0.00" required />
+                <span asp-validation-for="OriginalAmount" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="DiscountAmount">Discount Amount</label>
+                <input asp-for="DiscountAmount" type="number" step="0.01" min="0" class="form-control" placeholder="0.00" />
+                <span asp-validation-for="DiscountAmount" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="FinalAmount">Final Amount<span class="text-danger">*</span></label>
+                <input asp-for="FinalAmount" type="number" step="0.01" min="0.01" class="form-control" placeholder="0.00" required />
+                <span asp-validation-for="FinalAmount" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="Currency">Currency<span class="text-danger">*</span></label>
+                <select asp-for="Currency" class="form-select" required>
+                    <option value="USD">USD</option>
+                    <option value="KHR">KHR</option>
+                    <option value="EUR">EUR</option>
+                </select>
+                <span asp-validation-for="Currency" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="DueDate">Due Date<span class="text-danger">*</span></label>
+                <input asp-for="DueDate" type="date" class="form-control" required />
+                <span asp-validation-for="DueDate" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="Status">Status<span class="text-danger">*</span></label>
+                <select asp-for="Status" class="form-select" required>
+                    <option value="Pending">Pending</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Partial">Partial</option>
+                    <option value="Overdue">Overdue</option>
+                    <option value="Waived">Waived</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="AmountPaid">Amount Paid</label>
+                <input asp-for="AmountPaid" type="number" step="0.01" min="0" class="form-control" placeholder="0.00" />
+                <span asp-validation-for="AmountPaid" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="AmountOutstanding">Amount Outstanding</label>
+                <input asp-for="AmountOutstanding" type="number" step="0.01" min="0" class="form-control" placeholder="0.00" readonly />
+                <small class="form-text text-muted">Auto-calculated: Final Amount - Amount Paid</small>
+                <span asp-validation-for="AmountOutstanding" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <label class="form-label" asp-for="Notes">Notes</label>
+                <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Additional notes"></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Cancel</button>
+        <button type="submit" class="btn btn-primary"><i class="bx bx-save me-1"></i>Assign Fee</button>
+    </div>
+</form>
+
+<script>
+$(function () {
+    $('.searchable-select').each(function () {
+        const $container = $(this);
+        const $button = $container.find('button.form-select');
+        const $dropdownMenu = $container.find('.dropdown-menu');
+        const $searchInput = $container.find('.dropdown-search-input');
+        const hiddenName = $container.data('name');
+        let selectedValue = $container.data('selected-value') || '';
+        const ajaxUrl = $container.data('url')?.trim() || null;
+
+        let $hiddenInput = $container.find(`input[type="hidden"][name="${hiddenName}"]`);
+        if (!$hiddenInput.length) {
+            $hiddenInput = $('<input type="hidden">').attr('name', hiddenName);
+            $container.append($hiddenInput);
+        }
+        $hiddenInput.val(selectedValue);
+
+        function renderOptions(items) {
+            $dropdownMenu.find('li').not(':first-child').remove();
+
+            if (!Array.isArray(items)) {
+                return $dropdownMenu.append('<li><a href="#" class="dropdown-item text-danger small">Invalid data format</a></li>');
+            }
+
+            if (items.length === 0) {
+                return $dropdownMenu.append('<li><a href="#" class="dropdown-item text-muted small">No results found</a></li>');
+            }
+
+            items.forEach(item => {
+                const isActive = (selectedValue.toString() === item.id.toString()) ? ' active' : '';
+                let displayText, selectedTextClass;
+                
+                if (hiddenName === 'StudentId') {
+                    displayText = `${item.text} (${item.studentCode})`;
+                    selectedTextClass = '.selected-student';
+                } else if (hiddenName === 'TemplateId') {
+                    displayText = `${item.templateName || item.text} - ${item.baseAmount ? '$' + parseFloat(item.baseAmount).toFixed(2) : ''}`;
+                    selectedTextClass = '.selected-template';
+                } else {
+                    displayText = `${item.text} (${item.code || item.studentCode || ''})`;
+                    selectedTextClass = '.selected-category';
+                }
+                
+                const $li = $(`
+                    <li>
+                        <a href="#" class="dropdown-item${isActive}" data-value="${item.templateId || item.id}" title="${item.templateName || item.text}" data-amount="${item.baseAmount || ''}" data-type="${item.feeType || ''}">
+                            ${displayText}
+                        </a>
+                    </li>
+                `);
+                $dropdownMenu.append($li);
+                if (isActive) {
+                    const displayName = hiddenName === 'TemplateId' ? (item.templateName || item.text) : item.text;
+                    $button.find(selectedTextClass).text(displayName).removeClass('text-secondary');
+                }
+            });
+        }
+
+        function fetchOptions(query = '') {
+            if (!ajaxUrl) return;
+
+            $dropdownMenu.find('li').not(':first-child').remove();
+            $dropdownMenu.append('<li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>');
+
+            $.ajax({
+                url: ajaxUrl,
+                method: 'GET',
+                data: { q: query },
+                dataType: 'json'
+            })
+                .done(function (data) {
+                    console.log(`Dropdown ${hiddenName} data received:`, data);
+                    renderOptions(data);
+                })
+                .fail(function (xhr, status, error) {
+                    console.error(`Dropdown ${hiddenName} AJAX error:`, { xhr, status, error, url: ajaxUrl });
+                    $dropdownMenu.find('li').not(':first-child').remove();
+                    $dropdownMenu.append('<li><a href="#" class="dropdown-item text-danger small">Error loading data. Check console.</a></li>');
+                });
+        }
+
+        $searchInput.on('input', function () {
+            const query = $(this).val().toLowerCase();
+            if (ajaxUrl) {
+                fetchOptions(query);
+            } else {
+                $dropdownMenu.find('li').not(':first-child').each(function () {
+                    const text = $(this).find('.dropdown-item').text().toLowerCase();
+                    $(this).toggle(text.includes(query));
+                });
+            }
+        });
+
+        $container.on('show.bs.dropdown', function () {
+            $searchInput.val('').focus();
+            if (ajaxUrl) {
+                fetchOptions('');
+            } else {
+                $dropdownMenu.find('li').show();
+            }
+        });
+
+        $dropdownMenu.on('click', '.dropdown-item', function (e) {
+            e.preventDefault();
+            const $item = $(this);
+            const newValue = $item.data('value');
+            const newText = $item.attr('title') || $item.text();
+            const baseAmount = parseFloat($item.data('amount')) || 0;
+            const feeType = $item.data('type') || '';
+
+            selectedValue = newValue;
+            $hiddenInput.val(newValue);
+            $container.data('selected-value', newValue);
+            
+            // Update the correct selected text element based on dropdown type
+            if (hiddenName === 'StudentId') {
+                $button.find('.selected-student').text(newText).removeClass('text-secondary');
+            } else if (hiddenName === 'TemplateId') {
+                $button.find('.selected-template').text(newText).removeClass('text-secondary');
+                
+                // Auto-populate form fields when template is selected
+                if (baseAmount > 0) {
+                    $('input[name="OriginalAmount"]').val(baseAmount.toFixed(2));
+                    $('input[name="FinalAmount"]').val(baseAmount.toFixed(2));
+                    calculateOutstandingAmount();
+                }
+                
+                if (feeType) {
+                    $('select[name="FeeType"]').val(feeType);
+                }
+                
+                // Auto-populate fee name if empty
+                if (!$('input[name="FeeName"]').val()) {
+                    $('input[name="FeeName"]').val(newText);
+                }
+            }
+
+            $dropdownMenu.find('.dropdown-item').removeClass('active');
+            $item.addClass('active');
+
+            const bsDropdown = bootstrap.Dropdown.getInstance($button[0]);
+            if (bsDropdown) {
+                bsDropdown.hide();
+            }
+
+            $container.trigger('itemSelected', { id: newValue, text: newText });
+        });
+
+        if (ajaxUrl) {
+            fetchOptions('');
+        }
+    });
+
+    // Auto-calculation functions
+    function calculateFinalAmount() {
+        const originalAmount = parseFloat($('input[name="OriginalAmount"]').val()) || 0;
+        const discountAmount = parseFloat($('input[name="DiscountAmount"]').val()) || 0;
+        const finalAmount = Math.max(0, originalAmount - discountAmount);
+        $('input[name="FinalAmount"]').val(finalAmount.toFixed(2));
+        calculateOutstandingAmount();
+    }
+
+    function calculateOutstandingAmount() {
+        const finalAmount = parseFloat($('input[name="FinalAmount"]').val()) || 0;
+        const amountPaid = parseFloat($('input[name="AmountPaid"]').val()) || 0;
+        const outstandingAmount = Math.max(0, finalAmount - amountPaid);
+        $('input[name="AmountOutstanding"]').val(outstandingAmount.toFixed(2));
+    }
+
+    // Event handlers for auto-calculation
+    $('input[name="OriginalAmount"]').on('input', function() {
+        calculateFinalAmount();
+    });
+
+    $('input[name="DiscountAmount"]').on('input', function() {
+        calculateFinalAmount();
+    });
+
+    $('input[name="FinalAmount"]').on('input', function() {
+        calculateOutstandingAmount();
+    });
+
+    $('input[name="AmountPaid"]').on('input', function() {
+        calculateOutstandingAmount();
+    });
+
+    // Initialize calculations on page load
+    calculateFinalAmount();
+});
+</script>

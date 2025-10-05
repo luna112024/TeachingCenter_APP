@@ -1,0 +1,104 @@
+@model GetWaitlistDTO
+
+<div class="modal-header">
+    <h5 class="modal-title" id="staticBackdropLabel">Waitlist Details</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <div class="row g-3">
+        <div class="col-6">
+            <label class="form-label fw-semibold">Student:</label>
+            <p class="form-control-plaintext">@(Model.StudentName ?? "-") (@Model.StudentCode)</p>
+        </div>
+        <div class="col-6">
+            <label class="form-label fw-semibold">Course & Section:</label>
+            <p class="form-control-plaintext">@(Model.CourseName ?? "-") - @(Model.SectionName ?? "-")</p>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6">
+            <label class="form-label fw-semibold">Teacher:</label>
+            <p class="form-control-plaintext">@(Model.TeacherName ?? "-")</p>
+        </div>
+        <div class="col-6">
+            <label class="form-label fw-semibold">Classroom:</label>
+            <p class="form-control-plaintext">@(Model.ClassroomName ?? "-")</p>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6">
+            <label class="form-label fw-semibold">Waitlist Date:</label>
+            <p class="form-control-plaintext">@Model.WaitlistDate.ToString("yyyy-MM-dd")</p>
+        </div>
+        <div class="col-6">
+            <label class="form-label fw-semibold">Priority Order:</label>
+            <p class="form-control-plaintext">
+                <span class="badge bg-primary">@Model.PriorityOrder</span>
+            </p>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6">
+            <label class="form-label fw-semibold">Status:</label>
+            <p class="form-control-plaintext">
+                @switch (Model.Status?.ToLower())
+                {
+                    case "waiting":
+                        <span class="badge bg-warning text-capitalized">@Model.Status</span>
+                        break;
+                    case "enrolled":
+                        <span class="badge bg-success text-capitalized">@Model.Status</span>
+                        break;
+                    case "expired":
+                        <span class="badge bg-danger text-capitalized">@Model.Status</span>
+                        break;
+                    case "cancelled":
+                        <span class="badge bg-secondary text-capitalized">@Model.Status</span>
+                        break;
+                    default:
+                        <span class="badge bg-secondary text-capitalized">@Model.Status</span>
+                        break;
+                }
+            </p>
+        </div>
+        <div class="col-6">
+            <label class="form-label fw-semibold">Term:</label>
+            <p class="form-control-plaintext">@(Model.TermName ?? "-")</p>
+        </div>
+    </div>
+    @if (!string.IsNullOrEmpty(Model.Notes))
+    {
+        <div class="row g-3">
+            <div class="col-12">
+                <label class="form-label fw-semibold">Notes:</label>
+                <p class="form-control-plaintext">@Model.Notes</p>
+            </div>
+        </div>
+    }
+    <div class="row g-3">
+        <div class="col-6">
+            <label class="form-label fw-semibold">Created By:</label>
+            <p class="form-control-plaintext">@(Model.CreatedBy ?? "-")</p>
+        </div>
+        <div class="col-6">
+            <label class="form-label fw-semibold">Created Date:</label>
+            <p class="form-control-plaintext">@(Model.CreateDate?.ToString("yyyy-MM-dd HH:mm") ?? "-")</p>
+        </div>
+    </div>
+    @if (!string.IsNullOrEmpty(Model.ModifiedBy))
+    {
+        <div class="row g-3">
+            <div class="col-6">
+                <label class="form-label fw-semibold">Modified By:</label>
+                <p class="form-control-plaintext">@Model.ModifiedBy</p>
+            </div>
+            <div class="col-6">
+                <label class="form-label fw-semibold">Modified Date:</label>
+                <p class="form-control-plaintext">@(Model.UpdateDate?.ToString("yyyy-MM-dd HH:mm") ?? "-")</p>
+            </div>
+        </div>
+    }
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Close</button>
+</div>

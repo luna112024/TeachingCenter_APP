@@ -63,6 +63,9 @@ builder.Services.AddScoped<ITeacherService, TeacherService>();
 builder.Services.AddScoped<IClassSectionService, ClassSectionService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
+builder.Services.AddScoped<IWaitlistService, WaitlistService>();
+builder.Services.AddScoped<IFeeService, FeeService>();
+builder.Services.AddScoped<IAssessmentService, AssessmentService>();
 
 // Register Report Export Service
 builder.Services.AddScoped<ReportExportService>();

@@ -1,0 +1,126 @@
+@model GetAssessmentDTO
+
+<div class="modal-header">
+    <h5 class="modal-title" id="staticBackdropLabel">Assessment Details</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">Basic Information</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Name:</strong></div>
+                        <div class="col-8">@Model.AssessmentName</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Type:</strong></div>
+                        <div class="col-8">
+                            <span class="badge bg-label-primary">@Model.AssessmentType</span>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Section:</strong></div>
+                        <div class="col-8">
+                            <div class="d-flex flex-column">
+                                <span class="fw-semibold">@Model.SectionName</span>
+                                <small class="text-muted">@Model.SectionCode</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Course:</strong></div>
+                        <div class="col-8">@Model.CourseName</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Term:</strong></div>
+                        <div class="col-8">@Model.TermName</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">Scoring Information</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Max Score:</strong></div>
+                        <div class="col-8">@Model.MaxScore</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Weight:</strong></div>
+                        <div class="col-8">@Model.WeightPercentage%</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Assessment Date:</strong></div>
+                        <div class="col-8">@Model.AssessmentDate.ToString("MMM dd, yyyy HH:mm")</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4"><strong>Due Date:</strong></div>
+                        <div class="col-8">
+                            @if (Model.DueDate.HasValue)
+                            {
+                                @Model.DueDate.Value.ToString("MMM dd, yyyy HH:mm")
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not set</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.Description))
+    {
+        <div class="card mb-3">
+            <div class="card-header">
+                <h6 class="card-title mb-0">Description</h6>
+            </div>
+            <div class="card-body">
+                <p class="mb-0">@Model.Description</p>
+            </div>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.MaterialsNeeded))
+    {
+        <div class="card mb-3">
+            <div class="card-header">
+                <h6 class="card-title mb-0">Materials Needed</h6>
+            </div>
+            <div class="card-body">
+                <p class="mb-0">@Model.MaterialsNeeded</p>
+            </div>
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-header">
+            <h6 class="card-title mb-0">System Information</h6>
+        </div>
+        <div class="card-body">
+            <div class="row mb-2">
+                <div class="col-4"><strong>Created By:</strong></div>
+                <div class="col-8">@(Model.CreatedBy ?? "Unknown")</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-4"><strong>Created Date:</strong></div>
+                <div class="col-8">@(Model.CreateDate?.ToString("MMM dd, yyyy HH:mm") ?? "Unknown")</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+    <a class="btn btn-primary" asp-action="EditAssessment" asp-controller="Assessment" asp-route-id="@Model.AssessmentId" modal-popup="" modal-size="xl">
+        <i class="bx bx-edit-alt me-1"></i> Edit Assessment
+    </a>
+</div>

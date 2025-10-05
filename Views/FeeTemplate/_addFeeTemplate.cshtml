@@ -1,0 +1,285 @@
+@model CreateFeeTemplateDTO
+
+<form asp-action="AddFeeTemplate" asp-controller="FeeTemplate" method="post" autocomplete="off">
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Create Fee Template</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="TemplateName">Template Name<span class="text-danger">*</span></label>
+                <input asp-for="TemplateName" type="text" class="form-control" placeholder="e.g., Tuition Fee Template" required />
+                <span asp-validation-for="TemplateName" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="CategoryId">Category<span class="text-danger">*</span></label>
+                <div class="searchable-select dropdown w-100"
+                     data-name="CategoryId"
+                     data-selected-value="@(Model?.CategoryId ?? Guid.Empty)"
+                     data-url="@Url.Action("GetActiveFeeCategories", "FeeCategory")">
+                    <button class="form-select w-100 text-start d-flex justify-content-between align-items-center"
+                        type="button"
+                        id="dropdownSearchButton"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <span class="text-secondary selected-category">
+                        Select a Category
+                    </span>
+                        <i class="bx bx-chevron-down ms-2 text-secondary"></i>
+                    </button>
+                    <ul class="dropdown-menu py-2 px-1"
+                        aria-labelledby="dropdownSearchButton">
+                        <div class="px-2">
+                            <input type="text"
+                                   class="form-control form-control-sm mb-2 dropdown-search-input"
+                                   id="dropdownSearchInput"
+                                   placeholder="Search Category.."
+                                   autocomplete="off" />
+                        </div>
+                        <li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>
+                    </ul>
+                </div>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="FeeType">Fee Type<span class="text-danger">*</span></label>
+                <select asp-for="FeeType" class="form-select" required>
+                    <option value="">Select Fee Type</option>
+                    <option value="Tuition">Tuition</option>
+                    <option value="Registration">Registration</option>
+                    <option value="Materials">Materials</option>
+                    <option value="Exam">Exam</option>
+                    <option value="Certificate">Certificate</option>
+                    <option value="Late Fee">Late Fee</option>
+                    <option value="Deposit">Deposit</option>
+                    <option value="Other">Other</option>
+                </select>
+                <span asp-validation-for="FeeType" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="BaseAmount">Base Amount<span class="text-danger">*</span></label>
+                <input asp-for="BaseAmount" type="number" step="0.01" min="0.01" class="form-control" placeholder="0.00" required />
+                <span asp-validation-for="BaseAmount" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="Currency">Currency<span class="text-danger">*</span></label>
+                <select asp-for="Currency" class="form-select" required>
+                    <option value="USD">USD</option>
+                    <option value="KHR">KHR</option>
+                    <option value="EUR">EUR</option>
+                </select>
+                <span asp-validation-for="Currency" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="ApplicableTo">Applicable To<span class="text-danger">*</span></label>
+                <select asp-for="ApplicableTo" class="form-select" required>
+                    <option value="All">All</option>
+                    <option value="New Students">New Students</option>
+                    <option value="Returning Students">Returning Students</option>
+                    <option value="Specific Levels">Specific Levels</option>
+                </select>
+                <span asp-validation-for="ApplicableTo" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="DueDaysAfterEnrollment">Due Days After Enrollment</label>
+                <input asp-for="DueDaysAfterEnrollment" type="number" min="0" class="form-control" placeholder="7" />
+                <span asp-validation-for="DueDaysAfterEnrollment" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="LateFeeDays">Late Fee Days</label>
+                <input asp-for="LateFeeDays" type="number" min="0" class="form-control" placeholder="7" />
+                <span asp-validation-for="LateFeeDays" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="LateFeeAmount">Late Fee Amount</label>
+                <input asp-for="LateFeeAmount" type="number" step="0.01" min="0" class="form-control" placeholder="0.00" />
+                <span asp-validation-for="LateFeeAmount" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="EarlyPaymentDiscountPercent">Early Payment Discount %</label>
+                <input asp-for="EarlyPaymentDiscountPercent" type="number" step="0.01" min="0" max="100" class="form-control" placeholder="0.00" />
+                <span asp-validation-for="EarlyPaymentDiscountPercent" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="EffectiveDate">Effective Date<span class="text-danger">*</span></label>
+                <input asp-for="EffectiveDate" type="date" class="form-control" required />
+                <span asp-validation-for="EffectiveDate" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="ExpiryDate">Expiry Date</label>
+                <input asp-for="ExpiryDate" type="date" class="form-control" />
+                <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="Status">Status<span class="text-danger">*</span></label>
+                <select asp-for="Status" class="form-select" required>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="ApplicableLevels">Applicable Levels</label>
+                <input asp-for="ApplicableLevels" type="text" class="form-control" placeholder="JSON array of level IDs" />
+                <span asp-validation-for="ApplicableLevels" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Cancel</button>
+        <button type="submit" class="btn btn-primary"><i class="bx bx-save me-1"></i>Save</button>
+    </div>
+</form>
+
+<script>
+$(function () {
+      $('.searchable-select').each(function () {
+        const $container = $(this);
+        const $button = $container.find('button.form-select');
+        const $dropdownMenu = $container.find('.dropdown-menu');
+        const $searchInput = $container.find('.dropdown-search-input');
+        const hiddenName = $container.data('name');
+        let selectedValue = $container.data('selected-value') || '';
+        const ajaxUrl = $container.data('url')?.trim() || null;
+
+        let $hiddenInput = $container.find(`input[type="hidden"][name="${hiddenName}"]`);
+        if (!$hiddenInput.length) {
+            $hiddenInput = $('<input type="hidden">').attr('name', hiddenName);
+            $container.append($hiddenInput);
+        }
+        $hiddenInput.val(selectedValue);
+
+        function renderOptions(items) {
+            $dropdownMenu.find('li').not(':first-child').remove();
+
+            if (!Array.isArray(items)) {
+                return $dropdownMenu.append('<li><a href="#" class="dropdown-item text-danger small">Invalid data format</a></li>');
+            }
+
+            if (items.length === 0) {
+                return $dropdownMenu.append('<li><a href="#" class="dropdown-item text-muted small">No results found</a></li>');
+            }
+
+            items.forEach(item => {
+                const isActive = (selectedValue.toString() === item.id.toString()) ? ' active' : '';
+                const displayText = `${item.text} (${item.code})`;
+                const $li = $(`
+                    <li>
+                        <a href="#" class="dropdown-item${isActive}" data-value="${item.id}" title="${item.text}">
+                            ${displayText}
+                        </a>
+                    </li>
+                `);
+                $dropdownMenu.append($li);
+                if (isActive) {
+                    $button.find('.selected-category').text(item.text).removeClass('text-secondary');
+                }
+            });
+        }
+
+        function fetchOptions(query = '') {
+            if (!ajaxUrl) return;
+
+            $dropdownMenu.find('li').not(':first-child').remove();
+            $dropdownMenu.append('<li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>');
+
+            $.ajax({
+                url: ajaxUrl,
+                method: 'GET',
+                data: { q: query },
+                dataType: 'json'
+            })
+                .done(function (data) {
+                    console.log('Dropdown data received:', data);
+                    renderOptions(data);
+                })
+                .fail(function (xhr, status, error) {
+                    console.error('Dropdown AJAX error:', { xhr, status, error, url: ajaxUrl });
+                    $dropdownMenu.find('li').not(':first-child').remove();
+                    $dropdownMenu.append('<li><a href="#" class="dropdown-item text-danger small">Error loading data. Check console.</a></li>');
+                });
+        }
+
+        $searchInput.on('input', function () {
+            const query = $(this).val().toLowerCase();
+            if (ajaxUrl) {
+                fetchOptions(query);
+            } else {
+                $dropdownMenu.find('li').not(':first-child').each(function () {
+                    const text = $(this).find('.dropdown-item').text().toLowerCase();
+                    $(this).toggle(text.includes(query));
+                });
+            }
+        });
+
+        $container.on('show.bs.dropdown', function () {
+            $searchInput.val('').focus();
+            if (ajaxUrl) {
+                fetchOptions('');
+            } else {
+                $dropdownMenu.find('li').show();
+            }
+        });
+
+        $dropdownMenu.on('click', '.dropdown-item', function (e) {
+            e.preventDefault();
+            const $item = $(this);
+            const newValue = $item.data('value');
+            const newText = $item.attr('title') || $item.text(); // Use title attribute for clean text
+
+            selectedValue = newValue;
+            $hiddenInput.val(newValue);
+            $container.data('selected-value', newValue);
+            $button.find('.selected-category').text(newText).removeClass('text-secondary');
+
+            // Debug: Log the selection
+            console.log('Category selected:', { id: newValue, text: newText, hiddenInputValue: $hiddenInput.val() });
+
+            $dropdownMenu.find('.dropdown-item').removeClass('active');
+            $item.addClass('active');
+
+            const bsDropdown = bootstrap.Dropdown.getInstance($button[0]);
+            if (bsDropdown) {
+                bsDropdown.hide();
+            }
+
+            $container.trigger('itemSelected', { id: newValue, text: newText });
+        });
+
+        if (ajaxUrl) {
+            fetchOptions('');
+        }
+    });
+
+    // Debug: Add form submission logging
+    $('form').on('submit', function(e) {
+        const categoryId = $('input[name="CategoryId"]').val();
+        const categoryName = $('.selected-category').text();
+        console.log('Form submission:', { 
+            categoryId: categoryId, 
+            categoryName: categoryName,
+            formData: $(this).serialize()
+        });
+        
+        if (!categoryId || categoryId === '') {
+            console.error('No category selected!');
+            e.preventDefault();
+            alert('Please select a category before submitting.');
+            return false;
+        }
+    });
+});
+</script>

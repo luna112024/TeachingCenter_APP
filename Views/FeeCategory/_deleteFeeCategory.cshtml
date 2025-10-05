@@ -1,0 +1,39 @@
+@model GetFeeCategoryDTO
+
+<div class="modal-header">
+    <h5 class="modal-title" id="staticBackdropLabel">Delete Fee Category</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-warning" role="alert">
+                <h6 class="alert-heading">Warning!</h6>
+                <p class="mb-0">Are you sure you want to delete this fee category? This action cannot be undone.</p>
+            </div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Category Name</label>
+            <div class="form-control-plaintext">@(Model.CategoryName ?? "-")</div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Category Code</label>
+            <div class="form-control-plaintext">@(Model.CategoryCode ?? "-")</div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-12 mb-2">
+            <label class="form-label fw-semibold">Description</label>
+            <div class="form-control-plaintext">@(Model.Description ?? "-")</div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Cancel</button>
+    <form asp-action="DeleteFeeCategoryConfirmed" asp-controller="FeeCategory" method="post" style="display: inline;">
+        <input type="hidden" asp-for="CategoryId" />
+        <button type="submit" class="btn btn-danger"><i class="bx bx-trash me-1"></i>Delete</button>
+    </form>
+</div>

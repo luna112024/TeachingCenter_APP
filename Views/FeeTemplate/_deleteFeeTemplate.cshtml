@@ -1,0 +1,47 @@
+@model GetFeeTemplateDTO
+
+<div class="modal-header">
+    <h5 class="modal-title" id="staticBackdropLabel">Delete Fee Template</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-warning" role="alert">
+                <h6 class="alert-heading">Warning!</h6>
+                <p class="mb-0">Are you sure you want to delete this fee template? This action cannot be undone.</p>
+            </div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Template Name</label>
+            <div class="form-control-plaintext">@(Model.TemplateName ?? "-")</div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Category</label>
+            <div class="form-control-plaintext">@(Model.CategoryName ?? "-")</div>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Fee Type</label>
+            <div class="form-control-plaintext">
+                <span class="badge bg-label-primary">@(Model.FeeType ?? "-")</span>
+            </div>
+        </div>
+        <div class="col-6 mb-2">
+            <label class="form-label fw-semibold">Base Amount</label>
+            <div class="form-control-plaintext">
+                <span class="fw-semibold">@Model.BaseAmount.ToString("C")</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1"></i>Cancel</button>
+    <form asp-action="DeleteFeeTemplateConfirmed" asp-controller="FeeTemplate" method="post" style="display: inline;">
+        <input type="hidden" asp-for="TemplateId" />
+        <button type="submit" class="btn btn-danger"><i class="bx bx-trash me-1"></i>Delete</button>
+    </form>
+</div>
