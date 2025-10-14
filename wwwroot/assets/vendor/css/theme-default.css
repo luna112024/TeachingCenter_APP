@@ -86,9 +86,15 @@ $form-select-feedback-icon-padding-lg: $form-select-indicator-padding + $input-h
 }
 .layout-wrapper:not(.layout-horizontal) .bg-menu-theme .menu-inner .menu-item .menu-link {
   border-radius: 0.375rem;
+  transition: all 0.3s ease-in-out;
 }
 .layout-horizontal .bg-menu-theme .menu-inner > .menu-item > .menu-link {
   border-radius: 0.375rem;
+  transition: all 0.3s ease-in-out;
+}
+.layout-wrapper:not(.layout-horizontal) .bg-menu-theme .menu-inner > .menu-item .menu-link {
+  border-end-end-radius: 50rem;
+  border-start-end-radius: 50rem;
 }
 @media (min-width: 1200px) {
   .layout-horizontal .bg-menu-theme .menu-inner > .menu-item {

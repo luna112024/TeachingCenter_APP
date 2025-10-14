@@ -66,6 +66,9 @@ builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 builder.Services.AddScoped<IWaitlistService, WaitlistService>();
 builder.Services.AddScoped<IFeeService, FeeService>();
 builder.Services.AddScoped<IAssessmentService, AssessmentService>();
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+builder.Services.AddScoped<IGradeService, GradeService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 // Register Report Export Service
 builder.Services.AddScoped<ReportExportService>();

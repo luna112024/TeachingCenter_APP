@@ -1,0 +1,118 @@
+@model List<AttendanceAlertDTO>
+
+<div class="modal-header">
+    <h4 class="modal-title">Attendance Alerts</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+    @if (Model == null || !Model.Any())
+    {
+        <div class="text-center py-4">
+            <div class="mb-3">
+                <i class="bx bx-check-circle bx-lg text-success"></i>
+            </div>
+            <h5 class="text-success">No Alerts</h5>
+            <p class="text-muted">All students have good attendance records.</p>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning" role="alert">
+            <i class="bx bx-error-circle me-2"></i>
+            <strong>@Model.Count</strong> attendance alert(s) require attention.
+        </div>
+
+        <div class="row">
+            @foreach (var alert in Model)
+            {
+                <div class="col-md-6 mb-3">
+                    <div class="card border-warning">
+                        <div class="card-header bg-warning bg-opacity-10">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">@alert.StudentName</h6>
+                                <span class="badge bg-warning">@alert.AlertType</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <small class="text-muted">Student Code:</small><br>
+                                    <strong>@alert.StudentCode</strong>
+                                </div>
+                                <div class="col-md-6">
+                                    <small class="text-muted">Section:</small><br>
+                                    <strong>@alert.SectionCode</strong>
+                                </div>
+                            </div>
+                            
+                            <hr class="my-2">
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <small class="text-muted">Current Rate:</small><br>
+                                    <span class="badge @(alert.CurrentAttendanceRate >= 80 ? "bg-success" : alert.CurrentAttendanceRate >= 60 ? "bg-warning" : "bg-danger")">
+                                        @alert.CurrentAttendanceRate.ToString("F1")%
+                                    </span>
+                                </div>
+                                <div class="col-md-6">
+                                    <small class="text-muted">Consecutive Absences:</small><br>
+                                    <span class="badge bg-danger">@alert.ConsecutiveAbsences</span>
+                                </div>
+                            </div>
+                            
+                            <hr class="my-2">
+                            
+                            <div class="mb-2">
+                                <small class="text-muted">Alert Message:</small><br>
+                                <p class="mb-1">@alert.AlertMessage</p>
+                            </div>
+                            
+                            <div class="mb-2">
+                                <small class="text-muted">Last Attendance:</small><br>
+                                <span class="text-muted">@alert.LastAttendanceDate.ToString("MMM dd, yyyy")</span>
+                            </div>
+                            
+                            @if (!string.IsNullOrEmpty(alert.RecommendedAction))
+                            {
+                                <div class="alert alert-info py-2">
+                                    <small class="text-muted">Recommended Action:</small><br>
+                                    <small>@alert.RecommendedAction</small>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+    @if (Model != null && Model.Any())
+    {
+        <button type="button" class="btn btn-warning" onclick="sendAlerts()">
+            <i class="bx bx-send me-1"></i> Send Alerts
+        </button>
+    }
+</div>
+
+<script>
+    function sendAlerts() {
+        $.ajax({
+            url: '@Url.Action("SendAttendanceAlerts", "Attendance")',
+            type: 'POST',
+            success: function(response) {
+                if (response.flag) {
+                    showNotification('success', response.message);
+                } else {
+                    showNotification('error', response.message);
+                }
+            },
+            error: function() {
+                showNotification('error', 'An error occurred while sending alerts.');
+            }
+        });
+    }
+</script>

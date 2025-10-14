@@ -5,8 +5,26 @@
 'use strict';
 
 let menu, animate;
+document.addEventListener('DOMContentLoaded', function () {
+  // class for ios specific styles
+  if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+    document.body.classList.add('ios');
+  }
+});
 
 (function () {
+  // Button & Pagination Waves effect
+  if (typeof Waves !== 'undefined') {
+    Waves.init();
+    Waves.attach(".btn[class*='btn-']:not(.position-relative):not([class*='btn-outline-'])", ['waves-light']);
+    Waves.attach("[class*='btn-outline-']:not(.position-relative)");
+    Waves.attach('.pagination .page-item .page-link');
+    Waves.attach('.dropdown-menu .dropdown-item');
+    Waves.attach('[data-bs-theme="light"] .list-group .list-group-item-action');
+    Waves.attach('.nav-tabs:not(.nav-tabs-widget) .nav-item .nav-link');
+    Waves.attach('.nav-pills .nav-item .nav-link', ['waves-light']);
+  }
+
   // Initialize menu
   //-----------------
 
@@ -79,12 +97,14 @@ let menu, animate;
     return new bootstrap.Tooltip(tooltipTriggerEl);
   });
 
-  // Accordion active class
+  // Accordion active class and previous-active class
   const accordionActiveFunction = function (e) {
     if (e.type == 'show.bs.collapse' || e.type == 'show.bs.collapse') {
       e.target.closest('.accordion-item').classList.add('active');
+      e.target.closest('.accordion-item').previousElementSibling?.classList.add('previous-active');
     } else {
       e.target.closest('.accordion-item').classList.remove('active');
+      e.target.closest('.accordion-item').previousElementSibling?.classList.remove('previous-active');
     }
   };
 

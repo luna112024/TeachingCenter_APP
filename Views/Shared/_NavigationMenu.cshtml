@@ -5,7 +5,7 @@
     <!-- Dashboard -->
     <li class="menu-item @Html.IsSelected(action: "index", controller: "home")">
         <a href="/home" class="menu-link ">
-            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+            <i class="menu-icon icon-base ri ri-home-smile-line"></i>
             <div>Dashboard</div>
         </a>
     </li>
@@ -13,13 +13,13 @@
     <li class="menu-header small text-uppercase" asp-permissions="ViewAccountStatements,ViewAIAReports"><span class="menu-header-text small">Report</span></li>
     <li class="menu-item @Html.IsSelected(action: "ViewStatement", controller: "AccountStatement")" asp-permissions="ViewAccountStatements">
         <a href="@Url.Action("ViewStatement", "AccountStatement")" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-dollar-circle"></i>
+            <i class="menu-icon icon-base ri ri-money-dollar-circle-line"></i>
             ​View E-Satement
         </a>
     </li>
     <li class="menu-item @Html.IsSelected(action: "index", controller: "AIAStatement")" asp-permissions="ViewAIAReports">
         <a href="@Url.Action("index", "AIAStatement")" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-file"></i>
+            <i class="menu-icon icon-base ri ri-file-list-3-line"></i>
             ​​AIA Report
         </a>
     </li>
@@ -28,7 +28,7 @@
     <!-- Role & Permission -->
     <li class="menu-item" asp-permissions="ManageRoles,ViewRoles,DeleteRoles,ViewUsers,ManagePermissions,ViewPermissions,DeletePermissions,ManageCompany,ViewCompany,DeleteCompany">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons bx bx-check-shield"></i>
+            <i class="menu-icon icon-base ri ri-shield-keyhole-line"></i>
             User Managements
         </a>
         <ul class="menu-sub">
@@ -59,7 +59,7 @@
     <li class="menu-header small text-uppercase" asp-permissions="ViewTerm,ViewCourse,ViewClassroom,ViewClassSections,ViewTeacher,ViewLevel"><span class="menu-header-text small">ACADEMIC MANAGEMENT</span></li>
     <li class="menu-item" asp-permissions="ViewTerm,ViewCourse,ViewClassroom,ViewClassSections,ViewTeacher,ManageTerm,DeleteTerm,ManageCourse,ViewLevel,ManageLevel,DeleteLevel,DeleteCourse,DeleteClassroom,ManageClassroom,ManageClassSections,DeleteClassSections">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons fa-solid fa-sm fa-sliders"></i>
+            <i class="menu-icon icon-base ri ri-settings-4-line"></i>
             Academic Settings
         </a>
         <ul class="menu-sub">
@@ -112,26 +112,44 @@
     </li>
     <li class="menu-item @Html.IsSelected(action: "index", controller: "Student")" asp-permissions="ViewStudent,ManageStudent,DeleteStudent">
         <a href="@Url.Action("Index", "Student")" class="menu-link">
-            <i class="menu-icon tf-icons fa-sm fa-solid fa-users"></i>
+            <i class="menu-icon icon-base ri ri-group-line"></i>
             ​​Students
         </a>
     </li>
     <li class="menu-item @Html.IsSelected(action: "index", controller: "Enrollment")" asp-permissions="ViewEnrollments,ManageEnrollments,DeleteEnrollments">
         <a href="@Url.Action("Index", "Enrollment")" class="menu-link">
-            <i class="menu-icon tf-icons fa-sm fa-solid fa-graduation-cap"></i>
+            <i class="menu-icon icon-base ri ri-graduation-cap-line"></i>
             ​​Enrollments
         </a>
     </li>
     <li class="menu-item @Html.IsSelected(action: "index", controller: "Waitlist")" asp-permissions="ViewWaitlist,ManageWaitlist,DeleteWaitlist">
         <a href="@Url.Action("Index", "Waitlist")" class="menu-link">
-            <i class="menu-icon tf-icons fa-sm fa-solid fa-clock"></i>
+            <i class="menu-icon icon-base ri ri-time-line"></i>
             ​​Waitlist
         </a>
     </li>
     <li class="menu-item @Html.IsSelected(action: "index", controller: "Assessment")" asp-permissions="ViewAssessment,ManageAssessment,DeleteAssessment">
         <a href="@Url.Action("Index", "Assessment")" class="menu-link">
-            <i class="menu-icon tf-icons fa-sm fa-solid fa-clipboard-check"></i>
+            <i class="menu-icon icon-base ri ri-clipboard-line"></i>
             ​​Assessments
+        </a>
+    </li>
+    <li class="menu-item @Html.IsSelected(action: "index", controller: "Attendance")" asp-permissions="ViewAttendance,ManageAttendance,DeleteAttendance">
+        <a href="@Url.Action("Index", "Attendance")" class="menu-link">
+            <i class="menu-icon icon-base ri ri-calendar-check-line"></i>
+            ​​Attendance
+        </a>
+    </li>
+    <li class="menu-item @Html.IsSelected(action: "index", controller: "Grade")" asp-permissions="ViewGrade,ManageGrade,DeleteGrade">
+        <a href="@Url.Action("Index", "Grade")" class="menu-link">
+            <i class="menu-icon icon-base ri ri-graduation-cap-line"></i>
+            ​​Grades
+        </a>
+    </li>
+    <li class="menu-item @Html.IsSelected(action: "index", controller: "Payment")" asp-permissions="ViewPayment,ManagePayment,DeletePayment">
+        <a href="@Url.Action("Index", "Payment")" class="menu-link">
+            <i class="menu-icon icon-base ri ri-bank-card-line"></i>
+            ​​Payments
         </a>
     </li>
 

@@ -651,6 +651,45 @@ namespace hongWenAPP.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetClassSections(string q = "")
+        {
+            if (!_authService.HasPermission("ViewClassSections"))
+            {
+                return Json(new List<object>());
+            }
+            try
+            {
+                var sections = await _classSectionService.GetAllClassSections();
+                System.Diagnostics.Debug.WriteLine($"Found {sections?.Count ?? 0} class sections");
+                
+                var result = sections.Select(s => new
+                {
+                    id = s.SectionId,
+                    text = s.SectionName ?? "Unknown",
+                    code = s.SectionCode
+                }).ToList();
+
+                // Filter by search query if provided
+                if (!string.IsNullOrEmpty(q))
+                {
+                    result = result.Where(s => 
+                        s.text.ToLower().Contains(q.ToLower()) || 
+                        s.code.ToLower().Contains(q.ToLower())
+                    ).ToList();
+                }
+
+                System.Diagnostics.Debug.WriteLine($"Returning {result.Count} filtered sections");
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging
+                System.Diagnostics.Debug.WriteLine($"Error in GetClassSections: {ex.Message}");
+                return Json(new List<object>());
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetAllClassSections(string q = "")
         {
             if (!_authService.HasPermission("ViewClassSections"))

@@ -1,0 +1,232 @@
+@model GetAttendanceDTO
+
+<div class="modal-header">
+    <h4 class="modal-title">Attendance Details</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Student Name</label>
+            <p class="form-control-plaintext">@Model.StudentName</p>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Student Code</label>
+            <p class="form-control-plaintext">@Model.StudentCode</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Section</label>
+            <p class="form-control-plaintext">@Model.SectionName (@Model.SectionCode)</p>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Course</label>
+            <p class="form-control-plaintext">@Model.CourseName</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Class Date</label>
+            <p class="form-control-plaintext">@Model.ClassDate.ToString("MMM dd, yyyy")</p>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Status</label>
+            <p class="form-control-plaintext">
+                @{
+                    var statusClass = Model.Status switch
+                    {
+                        "Present" => "badge bg-success",
+                        "Absent" => "badge bg-danger",
+                        "Late" => "badge bg-warning",
+                        "Excused" => "badge bg-info",
+                        "Sick" => "badge bg-secondary",
+                        "Emergency" => "badge bg-primary",
+                        _ => "badge bg-secondary"
+                    };
+                }
+                <span class="@statusClass">@Model.Status</span>
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Scheduled Start Time</label>
+            <p class="form-control-plaintext">@Model.ScheduledStartTime.ToString(@"hh\:mm")</p>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Scheduled End Time</label>
+            <p class="form-control-plaintext">@Model.ScheduledEndTime.ToString(@"hh\:mm")</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Check In Time</label>
+            <p class="form-control-plaintext">
+                @if (Model.CheckInTime.HasValue)
+                {
+                    @Model.CheckInTime.Value.ToString(@"hh\:mm")
+                }
+                else
+                {
+                    <span class="text-muted">Not recorded</span>
+                }
+            </p>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Check Out Time</label>
+            <p class="form-control-plaintext">
+                @if (Model.CheckOutTime.HasValue)
+                {
+                    @Model.CheckOutTime.Value.ToString(@"hh\:mm")
+                }
+                else
+                {
+                    <span class="text-muted">Not recorded</span>
+                }
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Minutes Late</label>
+            <p class="form-control-plaintext">
+                @if (Model.MinutesLate > 0)
+                {
+                    <span class="text-warning">@Model.MinutesLate minutes</span>
+                }
+                else
+                {
+                    <span class="text-muted">On time</span>
+                }
+            </p>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Participation Score</label>
+            <p class="form-control-plaintext">
+                <div class="d-flex align-items-center">
+                    @{
+                        int displayStars = Model.ParticipationScore;
+                        
+                        // Auto-adjust stars based on status
+                        switch (Model.Status?.ToLower())
+                        {
+                            case "absent":
+                                displayStars = 0; // Absent = 0 stars
+                                break;
+                            case "late":
+                                // Late students get reduced stars based on minutes
+                                if (Model.MinutesLate >= 30)
+                                    displayStars = 2; // 30+ minutes late = 2 stars
+                                else if (Model.MinutesLate >= 15)
+                                    displayStars = 3; // 15-29 minutes late = 3 stars
+                                else if (Model.MinutesLate > 0)
+                                    displayStars = 4; // Less than 15 min = 4 stars
+                                else
+                                    displayStars = 3; // Late but no minutes recorded = 3 stars (default penalty)
+                                break;
+                            case "excused":
+                                displayStars = 5; // Excused = full 5 stars
+                                break;
+                            case "sick":
+                                displayStars = 4; // Sick = 4 stars
+                                break;
+                            case "emergency":
+                                displayStars = 5; // Emergency = full 5 stars
+                                break;
+                            case "present":
+                            default:
+                                displayStars = Model.ParticipationScore; // Present = original score
+                                break;
+                        }
+                    }
+                    
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <i class="bx @(i <= displayStars ? "bxs-star text-warning" : "bx-star text-muted") me-1"></i>
+                    }
+                    <span class="ms-2">(@displayStars/5)</span>
+                </div>
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Makeup Required</label>
+            <p class="form-control-plaintext">
+                @if (Model.MakeupRequired)
+                {
+                    <span class="badge bg-warning">Yes</span>
+                }
+                else
+                {
+                    <span class="badge bg-success">No</span>
+                }
+            </p>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Makeup Scheduled Date</label>
+            <p class="form-control-plaintext">
+                @if (Model.MakeupScheduledDate.HasValue)
+                {
+                    @Model.MakeupScheduledDate.Value.ToString("MMM dd, yyyy")
+                }
+                else
+                {
+                    <span class="text-muted">Not scheduled</span>
+                }
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Homework Submitted</label>
+            <p class="form-control-plaintext">
+                @if (Model.HomeworkSubmitted)
+                {
+                    <span class="badge bg-success">Yes</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger">No</span>
+                }
+            </p>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Recorded At</label>
+            <p class="form-control-plaintext">
+                @if (Model.RecordedAt.HasValue)
+                {
+                    @Model.RecordedAt.Value.ToString("MMM dd, yyyy hh:mm tt")
+                }
+                else
+                {
+                    <span class="text-muted">Not available</span>
+                }
+            </p>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.Notes))
+    {
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Notes</label>
+            <p class="form-control-plaintext">@Model.Notes</p>
+        </div>
+    }
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+    <a class="btn btn-primary" modal-popup="" modal-size="lg" asp-action="EditAttendance" asp-controller="Attendance" asp-route-id="@Model.AttendanceId">
+        <i class="bx bx-edit-alt me-1"></i> Edit
+    </a>
+</div>

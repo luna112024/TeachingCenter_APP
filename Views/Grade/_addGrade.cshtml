@@ -1,0 +1,286 @@
+@model CreateGradeDTO
+
+<form asp-action="AddGrade" asp-controller="Grade" method="post" autocomplete="off">
+    <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Create Grade</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <!-- Student Information -->
+        <h6 class="mb-3">Student Information</h6>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="StudentId">Student<span class="text-danger">*</span></label>
+                <div class="searchable-select dropdown w-100"
+                     data-name="StudentId"
+                     data-selected-value="@(Model?.StudentId ?? Guid.Empty)"
+                     data-url="@Url.Action("GetAllStudents", "Student")">
+                    <button class="form-select w-100 text-start d-flex justify-content-between align-items-center"
+                        type="button"
+                        id="dropdownSearchButton"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <span class="text-secondary selected-student">
+                        Select a Student
+                    </span>
+                        <i class="bx bx-chevron-down ms-2 text-secondary"></i>
+                    </button>
+                    <ul class="dropdown-menu py-2 px-1"
+                        aria-labelledby="dropdownSearchButton">
+                        <div class="px-2">
+                            <input type="text"
+                                   class="form-control form-control-sm mb-2 dropdown-search-input"
+                                   id="dropdownSearchInput"
+                                   placeholder="Search Student.."
+                                   autocomplete="off" />
+                        </div>
+                        <li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>
+                    </ul>
+                </div>
+                <span asp-validation-for="StudentId" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="EnrollmentId">Enrollment<span class="text-danger">*</span></label>
+                <div class="searchable-select dropdown w-100"
+                     data-name="EnrollmentId"
+                     data-selected-value="@(Model?.EnrollmentId ?? Guid.Empty)"
+                     data-url="@Url.Action("GetEnrollments", "Enrollment")">
+                    <button class="form-select w-100 text-start d-flex justify-content-between align-items-center"
+                        type="button"
+                        id="dropdownSearchButton2"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <span class="text-secondary selected-enrollment">
+                        Select an Enrollment
+                    </span>
+                        <i class="bx bx-chevron-down ms-2 text-secondary"></i>
+                    </button>
+                    <ul class="dropdown-menu py-2 px-1"
+                        aria-labelledby="dropdownSearchButton2">
+                        <div class="px-2">
+                            <input type="text"
+                                   class="form-control form-control-sm mb-2 dropdown-search-input"
+                                   id="dropdownSearchInput2"
+                                   placeholder="Search Enrollment.."
+                                   autocomplete="off" />
+                        </div>
+                        <li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>
+                    </ul>
+                </div>
+                <span asp-validation-for="EnrollmentId" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Assessment Information -->
+        <h6 class="mt-4 mb-3">Assessment Information</h6>
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <label class="form-label" asp-for="AssessmentId">Assessment<span class="text-danger">*</span></label>
+                <div class="searchable-select dropdown w-100"
+                     data-name="AssessmentId"
+                     data-selected-value="@(Model?.AssessmentId ?? Guid.Empty)"
+                     data-url="@Url.Action("GetAllAssessments", "Assessment")">
+                    <button class="form-select w-100 text-start d-flex justify-content-between align-items-center"
+                        type="button"
+                        id="dropdownSearchButton3"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <span class="text-secondary selected-assessment">
+                        Select an Assessment
+                    </span>
+                        <i class="bx bx-chevron-down ms-2 text-secondary"></i>
+                    </button>
+                    <ul class="dropdown-menu py-2 px-1"
+                        aria-labelledby="dropdownSearchButton3">
+                        <div class="px-2">
+                            <input type="text"
+                                   class="form-control form-control-sm mb-2 dropdown-search-input"
+                                   id="dropdownSearchInput3"
+                                   placeholder="Search Assessment.."
+                                   autocomplete="off" />
+                        </div>
+                        <li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>
+                    </ul>
+                </div>
+                <span asp-validation-for="AssessmentId" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Grade Information -->
+        <h6 class="mt-4 mb-3">Grade Information</h6>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="EarnedScore">Earned Score<span class="text-danger">*</span></label>
+                <input asp-for="EarnedScore" type="number" step="0.01" min="0" class="form-control" required placeholder="e.g., 85.5"/>
+                <span asp-validation-for="EarnedScore" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="GradedDate">Graded Date<span class="text-danger">*</span></label>
+                <input asp-for="GradedDate" type="datetime-local" class="form-control" required />
+                <span asp-validation-for="GradedDate" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Additional Information -->
+        <h6 class="mt-4 mb-3">Additional Information</h6>
+        <div class="row g-3">
+            <div class="col-12 mb-2">
+                <label class="form-label" asp-for="TeacherComments">Teacher Comments</label>
+                <textarea asp-for="TeacherComments" class="form-control" rows="3" placeholder="Comments about the student's performance"></textarea>
+                <span asp-validation-for="TeacherComments" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="Strengths">Strengths</label>
+                <textarea asp-for="Strengths" class="form-control" rows="2" placeholder="Student's strengths"></textarea>
+                <span asp-validation-for="Strengths" class="text-danger"></span>
+            </div>
+            <div class="col-6 mb-2">
+                <label class="form-label" asp-for="AreasForImprovement">Areas for Improvement</label>
+                <textarea asp-for="AreasForImprovement" class="form-control" rows="2" placeholder="Areas where student can improve"></textarea>
+                <span asp-validation-for="AreasForImprovement" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Options -->
+        <h6 class="mt-4 mb-3">Options</h6>
+        <div class="row g-3">
+            <div class="col-6 mb-2">
+                <div class="form-check">
+                    <input asp-for="LateSubmission" class="form-check-input" type="checkbox" />
+                    <label class="form-check-label" asp-for="LateSubmission">
+                        Late Submission
+                    </label>
+                </div>
+            </div>
+            <div class="col-6 mb-2">
+                <div class="form-check">
+                    <input asp-for="ResubmissionAllowed" class="form-check-input" type="checkbox" />
+                    <label class="form-check-label" asp-for="ResubmissionAllowed">
+                        Resubmission Allowed
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create Grade</button>
+    </div>
+</form>
+
+<script>
+$(function () {
+    // Initialize searchable dropdowns
+    $('.searchable-select').each(function () {
+        const $container = $(this);
+        const $button = $container.find('button.form-select');
+        const $dropdownMenu = $container.find('.dropdown-menu');
+        const $searchInput = $container.find('.dropdown-search-input');
+        const hiddenName = $container.data('name');
+        let selectedValue = $container.data('selected-value') || '';
+        const ajaxUrl = $container.data('url')?.trim() || null;
+
+        let $hiddenInput = $container.find(`input[type="hidden"][name="${hiddenName}"]`);
+        if (!$hiddenInput.length) {
+            $hiddenInput = $('<input type="hidden">').attr('name', hiddenName);
+            $container.append($hiddenInput);
+        }
+        $hiddenInput.val(selectedValue);
+
+        function renderOptions(items) {
+            $dropdownMenu.find('li').not(':first-child').remove();
+
+            if (!Array.isArray(items)) {
+                return $dropdownMenu.append('<li><a href="#" class="dropdown-item text-danger small">Invalid data format</a></li>');
+            }
+
+            if (items.length === 0) {
+                return $dropdownMenu.append('<li><a href="#" class="dropdown-item text-muted small">No results found</a></li>');
+            }
+
+            items.forEach(item => {
+                const isActive = (selectedValue.toString() === item.id.toString()) ? ' active' : '';
+                const displayText = item.text || item.name || item.studentName || item.assessmentName;
+                const $li = $(`
+                    <li>
+                        <a href="#" class="dropdown-item${isActive}" data-value="${item.id}" title="${displayText}">
+                            ${displayText}
+                        </a>
+                    </li>
+                `);
+                $dropdownMenu.append($li);
+                if (isActive) {
+                    $button.find('.selected-student, .selected-enrollment, .selected-assessment').text(displayText).removeClass('text-secondary');
+                }
+            });
+        }
+
+        function fetchOptions(query = '') {
+            if (!ajaxUrl) return;
+
+            $dropdownMenu.find('li').not(':first-child').remove();
+            $dropdownMenu.append('<li><span class="dropdown-item text-muted small"><i class="bx bx-loader bx-spin"></i> Loading...</span></li>');
+
+            $.ajax({
+                url: ajaxUrl,
+                method: 'GET',
+                data: { q: query },
+                dataType: 'json'
+            })
+                .done(function (data) {
+                    renderOptions(data);
+                })
+                .fail(function (xhr, status, error) {
+                    $dropdownMenu.find('li').not(':first-child').remove();
+                    $dropdownMenu.append('<li><a href="#" class="dropdown-item text-danger small">Error loading data</a></li>');
+                });
+        }
+
+        $searchInput.on('input', function () {
+            const query = $(this).val().toLowerCase();
+            if (ajaxUrl) {
+                fetchOptions(query);
+            }
+        });
+
+        $container.on('show.bs.dropdown', function () {
+            $searchInput.val('').focus();
+            if (ajaxUrl) {
+                fetchOptions('');
+            }
+        });
+
+        $dropdownMenu.on('click', '.dropdown-item', function (e) {
+            e.preventDefault();
+            const $item = $(this);
+            const newValue = $item.data('value');
+            const newText = $item.text();
+
+            selectedValue = newValue;
+            $hiddenInput.val(newValue);
+            $container.data('selected-value', newValue);
+            
+            $button.find('.selected-student, .selected-enrollment, .selected-assessment').text(newText).removeClass('text-secondary');
+
+            $dropdownMenu.find('.dropdown-item').removeClass('active');
+            $item.addClass('active');
+
+            const bsDropdown = bootstrap.Dropdown.getInstance($button[0]);
+            if (bsDropdown) {
+                bsDropdown.hide();
+            }
+        });
+
+        if (ajaxUrl) {
+            fetchOptions('');
+        }
+    });
+
+    // Set default graded date to now
+    var now = new Date();
+    var localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+    $('#GradedDate').val(localDateTime);
+});
+</script>

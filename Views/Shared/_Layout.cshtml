@@ -15,6 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400..800&family=Gugi&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Public+Sans:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="~/assets/vendor/fonts/boxicons.css" />
+    <link rel="stylesheet" href="~/assets/vendor/fonts/remixicon.css" />
 
     <link rel="stylesheet" href="~/assets/vendor/css/core.min.css" />
     <link rel="stylesheet" href="~/assets/vendor/css/theme-default.css" />
@@ -36,23 +37,20 @@
         <div class="layout-container">
             <!-- Menu -->
 
-            <aside id="layout-menu" class="layout-menu cont menu-vertical menu bg-menu-theme">
-                <div class="app-brand demo d-flex flex-column align-items-start justify-content-between">
-                    <!-- Logo on top -->
-                    <a href="/home" class="d-block pb-1">
-                        <img src="~/assets/img/logo.png" alt="Logo" width="50" height="50" />
+            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+                <div class="app-brand demo">
+                    <a href="/home" class="app-brand-link">
+                        <!-- Logo -->
+                        <span class="app-brand-logo demo me-1">
+                            <img src="~/assets/img/logo.png" alt="Logo" width="50" height="50" />
+                        </span>
+                        <!-- App Name -->
+                        <span class="app-brand-text demo menu-text fw-semibold ms-2">HongWen APP</span>
                     </a>
 
-                    <!-- Text below the logo -->
-                    <a href="/home" class="d-block ml-2">
-                        <span class="app-brand-text demo menu-text fw-bolder pb-3">HongWen APP</span>
-                        <br />
-                        <small class="fs-8 text-white">Teaching Center</small>
-                    </a>
-
-                    <!-- Menu toggle for mobile -->
-                    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none mt-2">
-                        <i class="bx bx-chevron-left bx-sm align-middle"></i>
+                    <!-- Desktop Menu Toggle -->
+                    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-xl-block d-none">
+                        <i class="menu-toggle-icon d-xl-inline-block align-middle"></i>
                     </a>
                 </div>
 
@@ -150,6 +148,7 @@
     <script src="~/js/rangedate.js"></script>
     <script src="~/js/exportLibrary.js"></script>
     <script src="~/js/searchselect.js"></script>
+
     @RenderSection("Scripts", required: false)
 
     <script>

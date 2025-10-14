@@ -1,0 +1,152 @@
+@model AttendanceReportDTO
+
+<div class="modal-header">
+    <h4 class="modal-title">Attendance Report</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h5>@Model.SectionName</h5>
+            <p class="text-muted">@Model.SectionCode - @Model.CourseName</p>
+        </div>
+        <div class="col-md-6 text-end">
+            <p class="text-muted">Period: @Model.StartDate.ToString("MMM dd") - @Model.EndDate.ToString("MMM dd, yyyy")</p>
+        </div>
+    </div>
+
+    <!-- Statistics Summary -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">@Model.Statistics.TotalStudents</h5>
+                    <p class="card-text">Total Students</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-success">@Model.Statistics.AverageAttendanceRate.ToString("F1")%</h5>
+                    <p class="card-text">Average Rate</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-info">@Model.Statistics.StudentsAboveThreshold</h5>
+                    <p class="card-text">Above Threshold</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">@Model.Statistics.StudentsBelowThreshold</h5>
+                    <p class="card-text">Below Threshold</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Attendance Details -->
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Total Classes</th>
+                    <th>Present</th>
+                    <th>Absent</th>
+                    <th>Late</th>
+                    <th>Excused</th>
+                    <th>Attendance Rate</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var student in Model.StudentAttendances)
+                {
+                    <tr>
+                        <td>
+                            <div>
+                                <strong>@student.StudentName</strong>
+                                <br>
+                                <small class="text-muted">@student.StudentCode</small>
+                            </div>
+                        </td>
+                        <td>@student.TotalClasses</td>
+                        <td>
+                            <span class="badge bg-success">@student.PresentCount</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-danger">@student.AbsentCount</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-warning">@student.LateCount</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-info">@student.ExcusedCount</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="progress me-2" style="width: 60px; height: 8px;">
+                                    <div class="progress-bar @(student.AttendanceRate >= 80 ? "bg-success" : student.AttendanceRate >= 60 ? "bg-warning" : "bg-danger")" 
+                                         style="width: @student.AttendanceRate%"></div>
+                                </div>
+                                <span class="fw-semibold">@student.AttendanceRate.ToString("F1")%</span>
+                            </div>
+                        </td>
+                        <td>
+                            @if (student.AttendanceRate >= 80)
+                            {
+                                <span class="badge bg-success">Good</span>
+                            }
+                            else if (student.AttendanceRate >= 60)
+                            {
+                                <span class="badge bg-warning">Fair</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Poor</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Attendance Alerts -->
+    @if (Model.Statistics.Alerts.Any())
+    {
+        <div class="mt-4">
+            <h6 class="text-warning">Attendance Alerts</h6>
+            <div class="alert alert-warning">
+                @foreach (var alert in Model.Statistics.Alerts)
+                {
+                    <div class="mb-2">
+                        <strong>@alert.StudentName (@alert.StudentCode)</strong><br>
+                        <small>@alert.AlertMessage</small>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-primary" onclick="printReport()">
+        <i class="bx bx-printer me-1"></i> Print Report
+    </button>
+</div>
+
+<script>
+    function printReport() {
+        window.print();
+    }
+</script>

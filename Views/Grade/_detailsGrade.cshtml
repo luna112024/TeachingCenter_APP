@@ -1,0 +1,175 @@
+@model GetGradeDTO
+
+<div class="modal-header">
+    <h5 class="modal-title" id="staticBackdropLabel">Grade Details</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+    <div class="row g-3">
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Student</label>
+            <div class="form-control-plaintext">
+                <div class="d-flex flex-column">
+                    <span class="fw-semibold">@Model.StudentName</span>
+                    <small class="text-muted">@Model.StudentCode</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Assessment</label>
+            <div class="form-control-plaintext">
+                <div class="d-flex flex-column">
+                    <span class="fw-semibold">@Model.AssessmentName</span>
+                    <small class="text-muted">@Model.AssessmentType</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Section</label>
+            <div class="form-control-plaintext">@Model.SectionName</div>
+        </div>
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Course</label>
+            <div class="form-control-plaintext">@Model.CourseName</div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-4 mb-3">
+            <label class="form-label fw-semibold">Earned Score</label>
+            <div class="form-control-plaintext">
+                <span class="fw-semibold">@Model.EarnedScore</span>
+                <small class="text-muted">/ @Model.MaxScore</small>
+            </div>
+        </div>
+        <div class="col-4 mb-3">
+            <label class="form-label fw-semibold">Percentage</label>
+            <div class="form-control-plaintext">@Model.Percentage.ToString("F1")%</div>
+        </div>
+        <div class="col-4 mb-3">
+            <label class="form-label fw-semibold">Letter Grade</label>
+            <div class="form-control-plaintext">
+                @if (!string.IsNullOrEmpty(Model.LetterGrade))
+                {
+                    var gradeClass = Model.LetterGrade.StartsWith("A") ? "grade-a" : 
+                                   Model.LetterGrade.StartsWith("B") ? "grade-b" : 
+                                   Model.LetterGrade.StartsWith("C") ? "grade-c" : 
+                                   Model.LetterGrade.StartsWith("D") ? "grade-d" : "grade-f";
+                    <span class="grade-badge @gradeClass">@Model.LetterGrade</span>
+                }
+                else
+                {
+                    <span class="text-muted">-</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Graded Date</label>
+            <div class="form-control-plaintext">@Model.GradedDate.ToString("MMM dd, yyyy HH:mm")</div>
+        </div>
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Graded By</label>
+            <div class="form-control-plaintext">@(Model.GradedByUsername ?? "Unknown")</div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.TeacherComments))
+    {
+        <div class="row g-3">
+            <div class="col-12 mb-3">
+                <label class="form-label fw-semibold">Teacher Comments</label>
+                <div class="form-control-plaintext">@Model.TeacherComments</div>
+            </div>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.Strengths))
+    {
+        <div class="row g-3">
+            <div class="col-6 mb-3">
+                <label class="form-label fw-semibold">Strengths</label>
+                <div class="form-control-plaintext">@Model.Strengths</div>
+            </div>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.AreasForImprovement))
+    {
+        <div class="row g-3">
+            <div class="col-6 mb-3">
+                <label class="form-label fw-semibold">Areas for Improvement</label>
+                <div class="form-control-plaintext">@Model.AreasForImprovement</div>
+            </div>
+        </div>
+    }
+
+    <div class="row g-3">
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Late Submission</label>
+            <div class="form-control-plaintext">
+                @if (Model.LateSubmission)
+                {
+                    <span class="badge bg-label-warning">Yes</span>
+                }
+                else
+                {
+                    <span class="badge bg-label-success">No</span>
+                }
+            </div>
+        </div>
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Resubmission Allowed</label>
+            <div class="form-control-plaintext">
+                @if (Model.ResubmissionAllowed)
+                {
+                    <span class="badge bg-label-success">Yes</span>
+                }
+                else
+                {
+                    <span class="badge bg-label-secondary">No</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (Model.CreateDate.HasValue)
+    {
+        <div class="row g-3">
+            <div class="col-6 mb-3">
+                <label class="form-label fw-semibold">Created Date</label>
+                <div class="form-control-plaintext">@Model.CreateDate.Value.ToString("MMM dd, yyyy HH:mm")</div>
+            </div>
+            @if (Model.UpdateDate.HasValue)
+            {
+                <div class="col-6 mb-3">
+                    <label class="form-label fw-semibold">Last Updated</label>
+                    <div class="form-control-plaintext">@Model.UpdateDate.Value.ToString("MMM dd, yyyy HH:mm")</div>
+                </div>
+            }
+        </div>
+    }
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+</div>
+
+<style>
+    .grade-badge {
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+
+    .grade-a { background-color: #d4edda; color: #155724; }
+    .grade-b { background-color: #cce5ff; color: #004085; }
+    .grade-c { background-color: #fff3cd; color: #856404; }
+    .grade-d { background-color: #f8d7da; color: #721c24; }
+    .grade-f { background-color: #f5c6cb; color: #721c24; }
+</style>

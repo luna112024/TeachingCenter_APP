@@ -27,14 +27,26 @@
     }
   }
 
+  // Menu link border radius
   .menu-inner .menu-item .menu-link {
     .layout-wrapper:not(.layout-horizontal) & {
       border-radius: $border-radius;
+      transition: all 0.3s ease-in-out;
     }
   }
+  
   .menu-inner > .menu-item > .menu-link {
     .layout-horizontal & {
       border-radius: $border-radius;
+      transition: all 0.3s ease-in-out;
+    }
+  }
+  
+  // Enhanced menu link styling
+  .menu-inner > .menu-item .menu-link {
+    .layout-wrapper:not(.layout-horizontal) & {
+      border-end-end-radius: 50rem;
+      border-start-end-radius: 50rem;
     }
   }
 

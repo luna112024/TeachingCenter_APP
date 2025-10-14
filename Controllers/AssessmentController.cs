@@ -308,5 +308,36 @@ namespace hongWenAPP.Controllers
             var isValid = await _assessmentService.ValidateAssessmentWeight(sectionId, excludeAssessmentId);
             return Json(new { isValid });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllAssessments(string q = "")
+        {
+            if (!_authService.HasPermission("ViewAssessment"))
+            {
+                return Json(new List<object>());
+            }
+            var assessments = await _assessmentService.GetAllAssessments();
+            var result = assessments.Select(a => new
+            {
+                id = a.AssessmentId,
+                text = $"{a.AssessmentName} - {a.AssessmentType}" ?? "Unknown",
+                assessmentName = a.AssessmentName,
+                assessmentType = a.AssessmentType,
+                maxScore = a.MaxScore,
+                weightPercentage = a.WeightPercentage
+            }).ToList();
+
+            // Filter by search query if provided
+            if (!string.IsNullOrEmpty(q))
+            {
+                result = result.Where(a => 
+                    a.text.ToLower().Contains(q.ToLower()) || 
+                    a.assessmentName.ToLower().Contains(q.ToLower()) ||
+                    a.assessmentType.ToLower().Contains(q.ToLower())
+                ).ToList();
+            }
+
+            return Json(result);
+        }
     }
 }

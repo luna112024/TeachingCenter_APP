@@ -289,6 +289,45 @@ namespace hongWenAPP.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetEnrollments(string q = "")
+        {
+            if (!_authService.HasPermission("ViewEnrollments"))
+            {
+                return Json(new List<object>());
+            }
+            try
+            {
+                var enrollments = await _enrollmentService.GetAllEnrollments();
+                var result = enrollments.Select(e => new
+                {
+                    id = e.EnrollmentId,
+                    text = $"{e.StudentName} ({e.SectionName})",
+                    code = e.StudentCode,
+                    studentName = e.StudentName,
+                    sectionName = e.SectionName,
+                    status = e.Status,
+                    enrollmentDate = e.EnrollmentDate.ToString("yyyy-MM-dd")
+                }).ToList();
+
+                // Filter by search query if provided
+                if (!string.IsNullOrEmpty(q))
+                {
+                    result = result.Where(e => 
+                        e.studentName.ToLower().Contains(q.ToLower()) || 
+                        e.sectionName.ToLower().Contains(q.ToLower()) ||
+                        e.code.ToLower().Contains(q.ToLower())
+                    ).ToList();
+                }
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new List<object>());
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetEnrollmentsBySection(Guid sectionId)
         {
             if (!_authService.HasPermission("ViewEnrollments"))
@@ -300,8 +339,7 @@ namespace hongWenAPP.Controllers
                 var enrollments = await _enrollmentService.GetEnrollmentsBySection(sectionId);
                 var result = enrollments.Select(e => new
                 {
-                    id = e.EnrollmentId,
-                    text = $"{e.StudentName} ({e.StudentCode})",
+                    enrollmentId = e.EnrollmentId,
                     studentName = e.StudentName,
                     studentCode = e.StudentCode,
                     status = e.Status,

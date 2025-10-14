@@ -1,0 +1,205 @@
+@model GetPaymentDTO
+
+<div class="modal-header">
+    <h5 class="modal-title">💳 Payment Details</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <!-- Void Status Alert -->
+    @if (Model.Status == "Voided")
+    {
+        <div class="alert alert-warning">
+            <h6 class="alert-heading"><strong>⚠️ VOIDED PAYMENT</strong></h6>
+            <hr/>
+            <p><strong>Reason:</strong> @Model.VoidReason</p>
+            <p><strong>Voided By:</strong> @Model.VoidedBy</p>
+            <p><strong>Voided Date:</strong> @Model.VoidedDate?.ToString("yyyy-MM-dd HH:mm")</p>
+        </div>
+    }
+
+    <!-- Payment Information -->
+    <div class="card mb-3">
+        <div class="card-header bg-primary text-white">
+            <strong>Payment Information</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <strong>Payment Reference:</strong>
+                    <p class="text-muted">@Model.PaymentReference</p>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <strong>Status:</strong>
+                    <p>
+                        @if (Model.Status == "Completed")
+                        {
+                            <span class="badge bg-success">Completed</span>
+                        }
+                        else if (Model.Status == "Voided")
+                        {
+                            <span class="badge bg-warning">Voided</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@Model.Status</span>
+                        }
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <strong>Payment Date:</strong>
+                    <p class="text-muted">@Model.PaymentDate.ToString("yyyy-MM-dd")</p>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <strong>Recorded Date:</strong>
+                    <p class="text-muted">@Model.CreateDate.ToString("yyyy-MM-dd HH:mm")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Information -->
+    <div class="card mb-3">
+        <div class="card-header bg-info text-white">
+            <strong>Student Information</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <strong>Student Name:</strong>
+                    <p class="text-muted">@Model.StudentName</p>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <strong>Student Code:</strong>
+                    <p class="text-muted">@Model.StudentCode</p>
+                </div>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.PayerName))
+            {
+                <div class="row">
+                    <div class="col-12 mb-2">
+                        <strong>Payer Name:</strong>
+                        <p class="text-muted">@Model.PayerName</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Payment Amount -->
+    <div class="card mb-3">
+        <div class="card-header bg-success text-white">
+            <strong>Payment Amount</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <strong>Amount:</strong>
+                    <h4 class="text-success">@Model.Amount @Model.Currency</h4>
+                </div>
+                @if (Model.AmountInKHR.HasValue && Model.Currency == "USD")
+                {
+                    <div class="col-md-6 mb-2">
+                        <strong>Amount in KHR:</strong>
+                        <h5 class="text-muted">@Model.AmountInKHR.Value ៛</h5>
+                        <small class="text-muted">(Rate: 1 USD = 4,100 KHR)</small>
+                    </div>
+                }
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <strong>Payment For:</strong>
+                    <p class="text-muted">@Model.PaymentFor</p>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.Term))
+                {
+                    <div class="col-md-6 mb-2">
+                        <strong>Term:</strong>
+                        <p class="text-muted">@Model.Term</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Method -->
+    <div class="card mb-3">
+        <div class="card-header bg-warning text-dark">
+            <strong>Payment Method</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <strong>Method:</strong>
+                    <p class="text-muted">@Model.PaymentMethodName</p>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.TransactionReference))
+                {
+                    <div class="col-md-6 mb-2">
+                        <strong>Transaction Reference:</strong>
+                        <p class="text-muted">@Model.TransactionReference</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes -->
+    @if (!string.IsNullOrEmpty(Model.Notes))
+    {
+        <div class="card mb-3">
+            <div class="card-header bg-secondary text-white">
+                <strong>Notes</strong>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">@Model.Notes</p>
+            </div>
+        </div>
+    }
+
+    <!-- Recorded By -->
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                @if (!string.IsNullOrEmpty(Model.ReceivedBy))
+                {
+                    <div class="col-md-6 mb-2">
+                        <strong>Recorded By:</strong>
+                        <p class="text-muted">@Model.ReceivedBy</p>
+                    </div>
+                }
+                <div class="col-md-6 mb-2">
+                    <strong>Record Date:</strong>
+                    <p class="text-muted">@Model.CreateDate.ToString("yyyy-MM-dd HH:mm")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    @if (Model.Status == "Completed")
+    {
+        <button type="button" class="btn btn-warning" onclick="voidPayment('@Model.PaymentId')">
+            <i class="bx bx-x-circle"></i> Void Payment
+        </button>
+    }
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-primary" onclick="printReceipt('@Model.PaymentId')">
+        <i class="bx bx-printer"></i> Print Receipt
+    </button>
+</div>
+
+<script>
+    function voidPayment(paymentId) {
+        // Load void payment form
+        $.get('@Url.Action("VoidPayment", "Payment")?paymentId=' + paymentId, function(html) {
+            $('#modalContainer').html(html);
+            $('#modalContainer .modal').modal('show');
+        });
+    }
+
+    function printReceipt(paymentId) {
+        window.open('@Url.Action("Invoice", "Payment")?paymentId=' + paymentId, '_blank');
+    }
+</script>

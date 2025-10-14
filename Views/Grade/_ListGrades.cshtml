@@ -1,0 +1,139 @@
+@using hongWenAPP.Models.GradeModel.DTOs
+@model PageList<GetGradeDTO>
+
+@{
+    GetGradeDTO p = null;
+}
+
+<style>
+    .bg-label-success {
+        background-color: #e8fadf !important;
+        color: #71dd37 !important;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-secondary {
+        background-color: #e4e6e8 !important;
+        color: #8592a3;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-warning {
+        background-color: #fff3cd !important;
+        color: #856404;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-primary {
+        background-color: #e7f3ff !important;
+        color: #696cff;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-danger {
+        background-color: #f8d7da !important;
+        color: #721c24;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .grade-badge {
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+
+    .grade-a { background-color: #d4edda; color: #155724; }
+    .grade-b { background-color: #cce5ff; color: #004085; }
+    .grade-c { background-color: #fff3cd; color: #856404; }
+    .grade-d { background-color: #f8d7da; color: #721c24; }
+    .grade-f { background-color: #f5c6cb; color: #721c24; }
+
+    .bg-label-info {
+        background-color: #d1ecf1 !important;
+        color: #0c5460;
+        font-size: 11px;
+        font-weight: 600;
+    }
+</style>
+<table class="table">
+    <thead>
+        <tr>
+            <th class="mcol-50">N<sup>o</sup></th>
+            <th>Student</th>
+            <th>Assessment</th>
+            <th>Section</th>
+            <th>Course</th>
+            <th>Score</th>
+            <th>Percentage</th>
+            <th>Letter Grade</th>
+            <th>Graded Date</th>
+            <th class="text-end mcol-200">Actions</th>
+        </tr>
+    </thead>
+    <tbody class="table-border-bottom-0">
+        @{
+            var i = Model.Paging.StartRowNo;
+        }
+        @foreach (var m in Model)
+        {
+        <tr>
+            <td>@i</td>
+            <td>
+                <div class="d-flex flex-column">
+                    <span class="fw-semibold">@(m.StudentName ?? "-")</span>
+                    <small class="text-muted">@(m.StudentCode ?? "-")</small>
+                </div>
+            </td>
+            <td>
+                <div class="d-flex flex-column">
+                    <span class="fw-semibold">@(m.AssessmentName ?? "-")</span>
+                    <small class="text-muted">@(m.AssessmentType ?? "-")</small>
+                </div>
+            </td>
+            <td>@(m.SectionName ?? "-")</td>
+            <td>@(m.CourseName ?? "-")</td>
+            <td>
+                <span class="fw-semibold">@m.EarnedScore / @m.MaxScore</span>
+            </td>
+            <td>@m.Percentage.ToString("F1")%</td>
+            <td>
+                @if (!string.IsNullOrEmpty(m.LetterGrade))
+                {
+                    var gradeClass = m.LetterGrade.StartsWith("A") ? "grade-a" : 
+                                   m.LetterGrade.StartsWith("B") ? "grade-b" : 
+                                   m.LetterGrade.StartsWith("C") ? "grade-c" : 
+                                   m.LetterGrade.StartsWith("D") ? "grade-d" : "grade-f";
+                    <span class="grade-badge @gradeClass">@m.LetterGrade</span>
+                }
+                else
+                {
+                    <span class="text-muted">-</span>
+                }
+            </td>
+            <td>@m.GradedDate.ToString("MMM dd, yyyy")</td>
+            <td class="text-end">
+                <div class="dropdown">
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                        <i class="bx bx-dots-vertical-rounded"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" modal-popup="" modal-size="xl" asp-action="DetailsGrade" asp-controller="Grade" asp-route-id="@m.GradeId"><i class="bx bx-show me-1"></i> Details</a>
+                        <a class="dropdown-item" modal-popup="" modal-size="xl" asp-action="EditGrade" asp-controller="Grade" asp-route-id="@m.GradeId"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                        <a class="dropdown-item text-danger" modal-popup="" asp-action="DeleteGrade" asp-controller="Grade" asp-route-id="@m.GradeId"><i class="bx bx-trash me-1"></i> Delete</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        i++;
+        }
+
+    </tbody>
+</table>
+
+@await Html.PartialAsync("_pageList", Model.Paging)

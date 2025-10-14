@@ -1,0 +1,178 @@
+@model UpdateAttendanceDTO
+
+<div class="modal-header">
+    <h4 class="modal-title">Edit Attendance</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<form asp-action="EditAttendance" asp-controller="Attendance" method="post" id="editAttendanceForm">
+    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <input asp-for="AttendanceId" type="hidden" />
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="ClassDate" class="form-label">Class Date <span class="text-danger">*</span></label>
+                <input asp-for="ClassDate" type="date" class="form-control" required />
+                <span asp-validation-for="ClassDate" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="Status" class="form-label">Status <span class="text-danger">*</span></label>
+                <select asp-for="Status" class="form-select" required>
+                    <option value="">Select Status</option>
+                    <option value="Present">Present</option>
+                    <option value="Absent">Absent</option>
+                    <option value="Late">Late</option>
+                    <option value="Excused">Excused</option>
+                    <option value="Sick">Sick</option>
+                    <option value="Emergency">Emergency</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="ScheduledStartTime" class="form-label">Scheduled Start Time <span class="text-danger">*</span></label>
+                <input asp-for="ScheduledStartTime" type="time" class="form-control" required />
+                <span asp-validation-for="ScheduledStartTime" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="ScheduledEndTime" class="form-label">Scheduled End Time <span class="text-danger">*</span></label>
+                <input asp-for="ScheduledEndTime" type="time" class="form-control" required />
+                <span asp-validation-for="ScheduledEndTime" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="CheckInTime" class="form-label">Check In Time</label>
+                <input asp-for="CheckInTime" type="time" class="form-control" />
+                <span asp-validation-for="CheckInTime" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="CheckOutTime" class="form-label">Check Out Time</label>
+                <input asp-for="CheckOutTime" type="time" class="form-control" />
+                <span asp-validation-for="CheckOutTime" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="MinutesLate" class="form-label">Minutes Late</label>
+                <input asp-for="MinutesLate" type="number" min="0" class="form-control" />
+                <span asp-validation-for="MinutesLate" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="ParticipationScore" class="form-label">Participation Score</label>
+                <select asp-for="ParticipationScore" class="form-select">
+                    <option value="1">1 - Poor</option>
+                    <option value="2">2 - Below Average</option>
+                    <option value="3">3 - Average</option>
+                    <option value="4">4 - Good</option>
+                    <option value="5">5 - Excellent</option>
+                </select>
+                <span asp-validation-for="ParticipationScore" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="form-check">
+                    <input asp-for="MakeupRequired" class="form-check-input" type="checkbox" />
+                    <label asp-for="MakeupRequired" class="form-check-label">
+                        Makeup Required
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="form-check">
+                    <input asp-for="HomeworkSubmitted" class="form-check-input" type="checkbox" />
+                    <label asp-for="HomeworkSubmitted" class="form-check-label">
+                        Homework Submitted
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="MakeupScheduledDate" class="form-label">Makeup Scheduled Date</label>
+                <input asp-for="MakeupScheduledDate" type="date" class="form-control" />
+                <span asp-validation-for="MakeupScheduledDate" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Notes" class="form-label">Notes</label>
+            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Additional notes..."></textarea>
+            <span asp-validation-for="Notes" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Update Attendance</button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+        // Auto-calculate minutes late when check-in time changes
+        function calculateMinutesLate() {
+            var scheduledStartTime = $('#ScheduledStartTime').val();
+            var checkInTime = $('#CheckInTime').val();
+            
+            if (scheduledStartTime && checkInTime) {
+                // Convert time strings to minutes for calculation
+                var scheduledMinutes = timeToMinutes(scheduledStartTime);
+                var checkInMinutes = timeToMinutes(checkInTime);
+                
+                // Calculate difference
+                var minutesLate = checkInMinutes - scheduledMinutes;
+                
+                // Only set if student is actually late (positive value)
+                if (minutesLate > 0) {
+                    $('#MinutesLate').val(minutesLate);
+                    // Auto-set status to Late if not already set
+                    if ($('#Status').val() === '') {
+                        $('#Status').val('Late');
+                    }
+                } else {
+                    $('#MinutesLate').val(0);
+                }
+            }
+        }
+        
+        // Helper function to convert time string to minutes
+        function timeToMinutes(timeString) {
+            var parts = timeString.split(':');
+            return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+        }
+        
+        // Attach event listeners for auto-calculation
+        $('#CheckInTime, #ScheduledStartTime').on('change', calculateMinutesLate);
+        
+        // Handle form submission
+        $('#editAttendanceForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.flag) {
+                        $('#modal-container').modal('hide');
+                        showNotification('success', response.message);
+                        loadAttendanceList();
+                    } else {
+                        showNotification('error', response.message);
+                    }
+                },
+                error: function() {
+                    showNotification('error', 'An error occurred while updating attendance.');
+                }
+            });
+        });
+    });
+</script>

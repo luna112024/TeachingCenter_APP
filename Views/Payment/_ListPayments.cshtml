@@ -1,0 +1,109 @@
+@using hongWenAPP.Models.PaymentModel.DTOs
+@model PageList<GetPaymentDTO>
+
+@{
+    GetPaymentDTO p = null;
+}
+<style>
+    .bg-label-success {
+        background-color: #e8fadf !important;
+        color: #71dd37 !important;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-secondary {
+        background-color: #e4e6e8 !important;
+        color: #8592a3;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-warning {
+        background-color: #fff3cd !important;
+        color: #856404;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-primary {
+        background-color: #e7f3ff !important;
+        color: #696cff;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .bg-label-danger {
+        background-color: #f8d7da !important;
+        color: #721c24;
+        font-size: 11px;
+        font-weight: 600;
+    }
+</style>
+<table class="table">
+    <thead>
+        <tr>
+            <th class="mcol-50">N<sup>o</sup></th>
+            <th>Payment Reference</th>
+            <th>Student</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Payment Date</th>
+            <th>Status</th>
+            <th class="text-end mcol-200">Actions</th>
+        </tr>
+    </thead>
+    <tbody class="table-border-bottom-0">
+        @{
+            var i = Model.Paging.StartRowNo;
+        }
+        @foreach (var m in Model)
+        {
+        <tr>
+            <td>@i</td>
+            <td>@m.PaymentReference</td>
+            <td>@($"{m.StudentName} ({m.StudentCode})")</td>
+            <td>$@m.Amount.ToString("F2") @m.Currency</td>
+            <td>@m.PaymentMethodName</td>
+            <td>@m.PaymentDate.ToString("yyyy-MM-dd")</td>
+            <td>
+                @switch (m.Status?.ToLower())
+                {
+                    case "completed":
+                        <span class="badge bg-label-success text-capitalized">Completed</span>
+                        break;
+                    case "pending":
+                        <span class="badge bg-label-warning text-capitalized">Pending</span>
+                        break;
+                    case "failed":
+                        <span class="badge bg-label-danger text-capitalized">Failed</span>
+                        break;
+                    case "cancelled":
+                        <span class="badge bg-label-secondary text-capitalized">Cancelled</span>
+                        break;
+                    default:
+                        <span class="badge bg-label-secondary text-capitalized">@m.Status</span>
+                        break;
+                }
+            </td>
+            <td class="text-end">
+                <div class="dropdown">
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                        <i class="bx bx-dots-vertical-rounded"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" modal-popup="" modal-size="xl" asp-action="GetPayment" asp-controller="Payment" asp-route-paymentId="@m.PaymentId"><i class="bx bx-show me-1"></i> Details</a>
+                        <a class="dropdown-item" modal-popup="" modal-size="xl" asp-action="EditPayment" asp-controller="Payment" asp-route-paymentId="@m.PaymentId"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                        <a class="dropdown-item" href="/Payment/PrintInvoice?paymentId=@m.PaymentId" target="_blank"><i class="bx bx-receipt me-1"></i> Invoice</a>
+                        <a class="dropdown-item text-danger" modal-popup="" asp-action="DeletePayment" asp-controller="Payment" asp-route-paymentId="@m.PaymentId"><i class="bx bx-trash me-1"></i> Delete</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        i++;
+        }
+
+    </tbody>
+</table>
+
+@await Html.PartialAsync("_pageList", Model.Paging)

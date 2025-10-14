@@ -1,0 +1,484 @@
+@model hongWenAPP.Models.PaymentModel.DTOs.GetPaymentDTO
+@{
+    ViewData["Title"] = "Invoice";
+    Layout = null; // No layout for printing
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invoice - HongWen</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: white;
+        }
+
+        /* Header */
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .company-info {
+            flex: 1;
+        }
+
+        .company-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo-circle {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .company-name {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .company-details {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .invoice-details {
+            text-align: right;
+        }
+
+        .invoice-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .invoice-meta {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Student and Invoice Details */
+        .details-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .details-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        .details-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: #6c757d;
+            min-width: 100px;
+        }
+
+        .detail-value {
+            color: #2c3e50;
+        }
+
+        /* Items Table */
+        .items-section {
+            margin-bottom: 2rem;
+        }
+
+        .items-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .items-table th {
+            background: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .items-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .items-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .items-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* Summary */
+        .summary-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 2rem;
+        }
+
+        .summary-table {
+            width: 300px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+            border-top: 2px solid #2c3e50;
+        }
+
+        .summary-label {
+            color: #6c757d;
+        }
+
+        .summary-value {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .total-row .summary-value {
+            background: #2c3e50;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+
+        /* Footer */
+        .invoice-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .signature-section {
+            text-align: center;
+        }
+
+        .signature-line {
+            width: 200px;
+            height: 2px;
+            background: #2c3e50;
+            margin: 1rem 0 0.5rem;
+        }
+
+        .signature-label {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .thank-you {
+            color: #6c757d;
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-refund {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Print Styles */
+        @@media print {
+            body {
+                font-size: 12pt;
+            }
+            
+            .invoice-container {
+                padding: 0;
+                max-width: none;
+            }
+            
+            .items-table,
+            .summary-table {
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+            
+            .summary-value {
+                background: transparent !important;
+                color: #2c3e50 !important;
+                padding: 0 !important;
+            }
+            
+            .total-row .summary-value {
+                background: #f0f0f0 !important;
+                color: #2c3e50 !important;
+                padding: 0.25rem 0.5rem !important;
+            }
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .invoice-container {
+                padding: 1rem;
+            }
+            
+            .invoice-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .invoice-details {
+                text-align: left;
+            }
+            
+            .details-section {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .invoice-footer {
+                flex-direction: column;
+                gap: 2rem;
+            }
+            
+            .items-table {
+                font-size: 0.9rem;
+            }
+            
+            .items-table th,
+            .items-table td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <!-- Header -->
+        <div class="invoice-header">
+            <div class="company-info">
+                <div class="company-logo">
+                    <div class="logo-circle">HW</div>
+                    <div class="company-name">HongWen</div>
+                </div>
+                <div class="company-details">
+                    <div><strong>Address:</strong> St.Keo Chenda, Chroy Chongvar, Phnom Penh, Cambodia</div>
+                    <div><strong>Contact:</strong> +(855) 96 618 2291</div>
+                    <div><strong>Email:</strong> hongwen.yuwen@mail.com</div>
+                </div>
+            </div>
+            <div class="invoice-details">
+                <div class="invoice-title">Invoice</div>
+                <div class="invoice-meta">
+                    <div><strong>Invoice Date:</strong> @DateTime.Now.ToString("MMM dd, yyyy")</div>
+                    <div><strong>Invoice No.:</strong> @Model.PaymentReference</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student and Invoice Details -->
+        <div class="details-section">
+            <div class="details-card">
+                <div class="details-title">Student Details</div>
+                <div class="detail-row">
+                    <span class="detail-label">Student ID:</span>
+                    <span class="detail-value">@Model.StudentCode</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Student Name:</span>
+                    <span class="detail-value">@Model.StudentName</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Gender:</span>
+                    <span class="detail-value">@(Model.StudentName?.Contains("Doung") == true ? "Female" : "Male")</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Class:</span>
+                    <span class="detail-value">Class A</span>
+                </div>
+            </div>
+            <div class="details-card">
+                <div class="details-title">Invoice Details</div>
+                <div class="detail-row">
+                    <span class="detail-label">Receptionist:</span>
+                    <span class="detail-value">Hong Chea</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">School day:</span>
+                    <span class="detail-value">@DateTime.Now.AddDays(-3).ToString("dd.MM.yyyy") - @DateTime.Now.AddDays(3).ToString("dd.MM.yyyy")</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Pay Methods:</span>
+                    <span class="detail-value">@Model.PaymentMethodName</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Items Table -->
+        <div class="items-section">
+            <div class="items-title">Payment Items</div>
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th class="text-center">N°</th>
+                        <th>Items</th>
+                        <th class="text-center">QTY</th>
+                        <th class="text-right">Unit Price</th>
+                        <th class="text-right">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-center">1</td>
+                        <td>Course Fee</td>
+                        <td class="text-center">1</td>
+                        <td class="text-right">60</td>
+                        <td class="text-right">60</td>
+                    </tr>
+                    <!-- Payment Details -->
+                    <tr>
+                        <td class="text-center">2</td>
+                        <td>@Model.PaymentFor @(!string.IsNullOrEmpty(Model.Term) ? $"({Model.Term})" : "")</td>
+                        <td class="text-center">1</td>
+                        <td class="text-right">@Model.Amount.ToString("F2")</td>
+                        <td class="text-right">@Model.Amount.ToString("F2")</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary-section">
+            <table class="summary-table">
+                <tr>
+                    <td class="summary-row">
+                        <span class="summary-label">SubTotal:</span>
+                        <span class="summary-value">@Model.Amount.ToString("F0")</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="summary-row">
+                        <span class="summary-label">Discount:</span>
+                        <span class="summary-value">10</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="summary-row">
+                        <span class="summary-label">Tax:</span>
+                        <span class="summary-value">0</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="summary-row">
+                        <span class="summary-label">Riel:</span>
+                        <span class="summary-value" style="background: #f0f0f0; padding: 0.25rem 0.5rem; border-radius: 4px;">@((245 * 4100).ToString("#,##0"))#</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="summary-row total-row">
+                        <span class="summary-label">Total($):</span>
+                        <span class="summary-value">@Model.Amount.ToString("F1")$</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="invoice-footer">
+            <div>
+                <div class="thank-you">Thank you for trusting in HongWen</div>
+                <div class="no-refund">No Refunded</div>
+            </div>
+            <div class="signature-section">
+                <div class="signature-line"></div>
+                <div class="signature-label">Customer Signature</div>
+            </div>
+            <div class="signature-section">
+                <div class="signature-line"></div>
+                <div class="signature-label">Cashier Signature</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto print when page loads
+        window.onload = function() {
+            window.print();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+@model GetGradeDTO
+
+<div class="modal-header">
+    <h5 class="modal-title text-danger" id="staticBackdropLabel">Delete Grade</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <div class="alert alert-warning" role="alert">
+        <i class="bx bx-error-circle me-2"></i>
+        <strong>Warning!</strong> This action cannot be undone. Are you sure you want to delete this grade?
+    </div>
+
+    <div class="row g-3">
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Student</label>
+            <div class="form-control-plaintext">
+                <div class="d-flex flex-column">
+                    <span class="fw-semibold">@Model.StudentName</span>
+                    <small class="text-muted">@Model.StudentCode</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Assessment</label>
+            <div class="form-control-plaintext">
+                <div class="d-flex flex-column">
+                    <span class="fw-semibold">@Model.AssessmentName</span>
+                    <small class="text-muted">@Model.AssessmentType</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-4 mb-3">
+            <label class="form-label fw-semibold">Earned Score</label>
+            <div class="form-control-plaintext">
+                <span class="fw-semibold">@Model.EarnedScore</span>
+                <small class="text-muted">/ @Model.MaxScore</small>
+            </div>
+        </div>
+        <div class="col-4 mb-3">
+            <label class="form-label fw-semibold">Percentage</label>
+            <div class="form-control-plaintext">@Model.Percentage.ToString("F1")%</div>
+        </div>
+        <div class="col-4 mb-3">
+            <label class="form-label fw-semibold">Letter Grade</label>
+            <div class="form-control-plaintext">
+                @if (!string.IsNullOrEmpty(Model.LetterGrade))
+                {
+                    var gradeClass = Model.LetterGrade.StartsWith("A") ? "grade-a" : 
+                                   Model.LetterGrade.StartsWith("B") ? "grade-b" : 
+                                   Model.LetterGrade.StartsWith("C") ? "grade-c" : 
+                                   Model.LetterGrade.StartsWith("D") ? "grade-d" : "grade-f";
+                    <span class="grade-badge @gradeClass">@Model.LetterGrade</span>
+                }
+                else
+                {
+                    <span class="text-muted">-</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Graded Date</label>
+            <div class="form-control-plaintext">@Model.GradedDate.ToString("MMM dd, yyyy HH:mm")</div>
+        </div>
+        <div class="col-6 mb-3">
+            <label class="form-label fw-semibold">Graded By</label>
+            <div class="form-control-plaintext">@(Model.GradedByUsername ?? "Unknown")</div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+    <form asp-action="DeleteGradeConfirmed" asp-controller="Grade" method="post" style="display: inline;">
+        <input type="hidden" asp-for="GradeId" />
+        <button type="submit" class="btn btn-danger">Delete Grade</button>
+    </form>
+</div>
+
+<style>
+    .grade-badge {
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+
+    .grade-a { background-color: #d4edda; color: #155724; }
+    .grade-b { background-color: #cce5ff; color: #004085; }
+    .grade-c { background-color: #fff3cd; color: #856404; }
+    .grade-d { background-color: #f8d7da; color: #721c24; }
+    .grade-f { background-color: #f5c6cb; color: #721c24; }
+</style>

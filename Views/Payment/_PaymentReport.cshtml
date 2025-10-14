@@ -1,0 +1,163 @@
+@model DailyPaymentReportDTO
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">📊 Daily Payment Report - @Model.ReportDate.ToString("yyyy-MM-dd")</h5>
+    </div>
+    <div class="card-body">
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-center bg-light">
+                    <div class="card-body">
+                        <h6>Total Transactions</h6>
+                        <h3 class="text-primary">@Model.TotalTransactions</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center bg-success text-white">
+                    <div class="card-body">
+                        <h6>Completed</h6>
+                        <h3>@Model.CompletedTransactions</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center bg-warning text-white">
+                    <div class="card-body">
+                        <h6>Voided</h6>
+                        <h3>@Model.VoidedTransactions</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center bg-info text-white">
+                    <div class="card-body">
+                        <h6>Total USD</h6>
+                        <h3>$@Model.TotalAmountUSD.ToString("N2")</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Details -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <strong>💰 Revenue Summary</strong>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <td><strong>Total (USD):</strong></td>
+                        <td class="text-end"><h5 class="text-success mb-0">$@Model.TotalAmountUSD.ToString("N2")</h5></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total (KHR):</strong></td>
+                        <td class="text-end"><h5 class="text-success mb-0">@Model.TotalAmountKHR.ToString("N0") ៛</h5></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- By Payment Method -->
+        @if (Model.ByPaymentMethod != null && Model.ByPaymentMethod.Any())
+        {
+            <div class="card mb-4">
+                <div class="card-header">
+                    <strong>💳 By Payment Method</strong>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Payment Method</th>
+                                <th class="text-center">Count</th>
+                                <th class="text-end">Total USD</th>
+                                <th class="text-end">Total KHR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var method in Model.ByPaymentMethod)
+                            {
+                                <tr>
+                                    <td>@method.PaymentMethodName</td>
+                                    <td class="text-center">@method.Count</td>
+                                    <td class="text-end">$@method.TotalUSD.ToString("N2")</td>
+                                    <td class="text-end">@method.TotalKHR.ToString("N0") ៛</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <td><strong>Total</strong></td>
+                                <td class="text-center"><strong>@Model.ByPaymentMethod.Sum(m => m.Count)</strong></td>
+                                <td class="text-end"><strong>$@Model.ByPaymentMethod.Sum(m => m.TotalUSD).ToString("N2")</strong></td>
+                                <td class="text-end"><strong>@Model.ByPaymentMethod.Sum(m => m.TotalKHR).ToString("N0") ៛</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        }
+
+        <!-- By Payment Type -->
+        @if (Model.ByPaymentType != null && Model.ByPaymentType.Any())
+        {
+            <div class="card">
+                <div class="card-header">
+                    <strong>📝 By Payment Type</strong>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Payment For</th>
+                                <th class="text-center">Count</th>
+                                <th class="text-end">Total USD</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var type in Model.ByPaymentType)
+                            {
+                                <tr>
+                                    <td>@type.PaymentFor</td>
+                                    <td class="text-center">@type.Count</td>
+                                    <td class="text-end">$@type.TotalUSD.ToString("N2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <td><strong>Total</strong></td>
+                                <td class="text-center"><strong>@Model.ByPaymentType.Sum(t => t.Count)</strong></td>
+                                <td class="text-end"><strong>$@Model.ByPaymentType.Sum(t => t.TotalUSD).ToString("N2")</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="card-footer">
+        <button type="button" class="btn btn-primary" onclick="exportToPDF()">
+            <i class="bx bx-download"></i> Export PDF
+        </button>
+        <button type="button" class="btn btn-success" onclick="exportToExcel()">
+            <i class="bx bx-file"></i> Export Excel
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="window.print()">
+            <i class="bx bx-printer"></i> Print
+        </button>
+    </div>
+</div>
+
+<script>
+    function exportToPDF() {
+        alert('PDF export coming soon!');
+    }
+
+    function exportToExcel() {
+        alert('Excel export coming soon!');
+    }
+</script>
