@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-ban"></i> Access Denied
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h5 class="alert-heading">Access to this resource is restricted</h5>
+                        @if (!string.IsNullOrEmpty(ViewData["ErrorMessage"] as string))
+                        {
+                            <p class="mb-0">@ViewData["ErrorMessage"]</p>
+                        }
+                        else
+                        {
+                            <p class="mb-0">You don't have permission to access this resource.</p>
+                        }
+                    </div>
+                    
+                    <div class="mt-4">
+                        <p>Possible reasons for this error:</p>
+                        <ul>
+                            <li>Your session may have expired</li>
+                            <li>You don't have the required permissions</li>
+                            <li>The resource may have been moved or deleted</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-primary">
+                            <i class="fas fa-home"></i> Return to Home
+                        </a>
+                        <a href="@Url.Action("Login", "Account")" class="btn btn-secondary">
+                            <i class="fas fa-sign-in-alt"></i> Login Again
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

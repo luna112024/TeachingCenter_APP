@@ -1,0 +1,106 @@
+@{
+    ViewData["Title"] = "Supply Catalog";
+}
+
+@section TopBar {
+    <!-- Search -->
+    <div class="navbar-nav align-items-center">
+        <div class="nav-item d-flex align-items-center justify-content-center">
+            <form id="formSearch" class="d-flex w-100">
+                <button type="button" id="searchButton" style="background:none; border:none">
+                    <i class="bx bx-search fs-4 lh-0"></i>
+                </button>
+                <input type="text" id="searchText" class="form-control border-0 shadow-none" placeholder="Search supplies..." aria-label="Search..." />
+            </form>
+        </div>
+    </div>
+    <!-- /Search -->
+}
+
+<div class="fluid-container flex-grow-1">
+    <nav class="pt-sm-3 pb-1" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index" asp-controller="home">Dashboard</a></li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    <div class="card">
+        <div class="card-header p-3">
+            <div class="row">
+                <div class="col-sm-5 col-12">
+                    <div class="card-title">@ViewData["Title"]</div>
+                </div>
+                <div class="col-sm-7 col-12">
+                    <div class="d-flex h-100 justify-content-end align-items-center">
+                        <div class="me-2">
+                            <select id="categoryFilter" class="form-select">
+                                <option value="">All Categories</option>
+                                <option value="Textbook">Textbook</option>
+                                <option value="Workbook">Workbook</option>
+                                <option value="Materials">Materials</option>
+                                <option value="Equipment">Equipment</option>
+                                <option value="Stationery">Stationery</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="me-2">
+                            <select id="statusFilter" class="form-select">
+                                <option value="">All Status</option>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <a type="button" class="btn btn-primary btn-icon-only" asp-action="AddSupply" asp-controller="Supply" modal-popup="" modal-size="lg">
+                            <i class="bx bx-plus"></i><span class="ms-1 d-none d-md-block">Add Supply</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive text-nowrap p-3 pt-2">
+            <partial name="_loading" />
+            <div id="listData">
+                <!-- Supplies list will load here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            loadSupplies();
+
+            // Filter change events
+            $('#categoryFilter, #statusFilter').on('change', function () {
+                loadSupplies();
+            });
+
+            // Search
+            $('#searchButton').on('click', function (e) {
+                e.preventDefault();
+                loadSupplies();
+            });
+        });
+
+        function loadSupplies() {
+            const category = $('#categoryFilter').val();
+            const status = $('#statusFilter').val();
+            const search = $('#searchText').val();
+
+            $.ajax({
+                url: '@Url.Action("ListSupplies", "Supply")',
+                type: 'GET',
+                data: { category: category, status: status, search: search },
+                success: function (result) {
+                    $('#listData').html(result);
+                },
+                error: function () {
+                    toastr.error('Failed to load supplies');
+                }
+            });
+        }
+    </script>
+}
+

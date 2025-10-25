@@ -1,0 +1,183 @@
+@{
+    ViewData["Title"] = "Invoice Management";
+}
+
+@section TopBar {
+    <!-- Search -->
+    <div class="navbar-nav align-items-center">
+        <div class="nav-item d-flex align-items-center justify-content-center">
+            <form id="formSearch" class="d-flex w-100">
+                <button type="button" id="searchButton" style="background:none; border:none">
+                    <i class="bx bx-search fs-4 lh-0"></i>
+                </button>
+                <input type="text" id="searchText" class="form-control border-0 shadow-none" placeholder="Search invoices..." aria-label="Search..." />
+            </form>
+        </div>
+    </div>
+    <!-- /Search -->
+}
+
+<div class="fluid-container flex-grow-1">
+    <nav class="pt-sm-3 pb-1" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index" asp-controller="home">Dashboard</a></li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    <!-- Summary Cards -->
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">All Invoices</span>
+                            <h3 class="card-title mb-0" id="totalInvoices">-</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-primary rounded">
+                                <i class="bx bx-receipt bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">Outstanding</span>
+                            <h3 class="card-title text-warning mb-0" id="totalOutstanding">-</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-warning rounded">
+                                <i class="bx bx-time bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">Overdue</span>
+                            <h3 class="card-title text-danger mb-0" id="totalOverdue">-</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-danger rounded">
+                                <i class="bx bx-error bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">Paid</span>
+                            <h3 class="card-title text-success mb-0" id="totalPaid">-</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-success rounded">
+                                <i class="bx bx-check-circle bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header p-3">
+            <div class="row">
+                <div class="col-sm-5 col-12">
+                    <div class="card-title">@ViewData["Title"]</div>
+                </div>
+                <div class="col-sm-7 col-12">
+                    <div class="d-flex h-100 justify-content-end align-items-center">
+                        <div class="me-2">
+                            <select id="statusFilter" class="form-select">
+                                <option value="">All Status</option>
+                                <option value="Draft">Draft</option>
+                                <option value="Issued">Issued</option>
+                                <option value="PartiallyPaid">Partially Paid</option>
+                                <option value="Paid">Paid</option>
+                                <option value="Overdue">Overdue</option>
+                                <option value="Voided">Voided</option>
+                            </select>
+                        </div>
+                        <div class="me-2">
+                            <select id="typeFilter" class="form-select">
+                                <option value="">All Types</option>
+                                <option value="NewStudent">New Student</option>
+                                <option value="Promoted">Promoted</option>
+                                <option value="Regular">Regular</option>
+                                <option value="Adjustment">Adjustment</option>
+                            </select>
+                        </div>
+                        <a href="@Url.Action("Outstanding", "Invoice")" class="btn btn-warning me-2">
+                            <i class="bx bx-time"></i> Outstanding
+                        </a>
+                        <a href="@Url.Action("Overdue", "Invoice")" class="btn btn-danger">
+                            <i class="bx bx-error"></i> Overdue
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive text-nowrap p-3 pt-2">
+            <partial name="_loading" />
+            <div id="listData">
+                <!-- Invoices list will load here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            loadInvoices();
+
+            // Filter change events
+            $('#statusFilter, #typeFilter').on('change', function () {
+                loadInvoices();
+            });
+
+            // Search
+            $('#searchButton').on('click', function (e) {
+                e.preventDefault();
+                loadInvoices();
+            });
+        });
+
+        function loadInvoices() {
+            const status = $('#statusFilter').val();
+            const type = $('#typeFilter').val();
+            const search = $('#searchText').val();
+
+            $.ajax({
+                url: '@Url.Action("ListInvoices", "Invoice")',
+                type: 'GET',
+                data: { status: status, invoiceType: type, search: search },
+                success: function (result) {
+                    $('#listData').html(result);
+                },
+                error: function () {
+                    toastr.error('Failed to load invoices');
+                }
+            });
+        }
+    </script>
+}
+

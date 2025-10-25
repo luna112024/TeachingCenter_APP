@@ -78,7 +78,7 @@ namespace hongWenAPP.Services
             var data = new { name, phone, relationship };
             return await SendRequestAsync<Response>(
                 $"{_baseUrl}/Student/{studentId}/emergency-contact",
-                HttpMethod.Put,
+                HttpMethod.Post,
                 data);
         }
     }

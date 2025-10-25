@@ -20,7 +20,8 @@ namespace hongWenAPP.Models.PaymentModel.DTOs
         public string Currency { get; set; } = "USD"; // USD, KHR
 
         [Required]
-        public Guid PaymentMethodId { get; set; } // Cash, Bank, ABA, Wing, TrueMoney
+        [StringLength(50)]
+        public string PaymentMethod { get; set; } = string.Empty; // Cash, Bank Transfer, ABA Pay, Wing, TrueMoney
 
         [Required]
         public DateTime PaymentDate { get; set; }
@@ -56,8 +57,7 @@ namespace hongWenAPP.Models.PaymentModel.DTOs
         public string Currency { get; set; }
         public decimal? AmountInKHR { get; set; } // If USD, show KHR equivalent
 
-        public Guid PaymentMethodId { get; set; }
-        public string? PaymentMethodName { get; set; }
+        public string PaymentMethod { get; set; } = string.Empty;
 
         public DateTime PaymentDate { get; set; }
         public string PaymentFor { get; set; }
@@ -131,7 +131,7 @@ namespace hongWenAPP.Models.PaymentModel.DTOs
 
     public record class PaymentMethodSummaryDTO
     {
-        public string PaymentMethodName { get; set; }
+        public string PaymentMethod { get; set; } = string.Empty;
         public int Count { get; set; }
         public decimal TotalUSD { get; set; }
         public decimal TotalKHR { get; set; }

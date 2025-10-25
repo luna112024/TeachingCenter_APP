@@ -5,26 +5,12 @@ using Serilog;
 using SharedHongWenApp.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
-// Configure Serilog early to capture startup logs
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration)
-    .Enrich.FromLogContext()
-    .CreateBootstrapLogger();
 
-
+// Configure Serilog (SharedServices handles the full configuration)
 builder.Services.AddSharedServices(builder.Configuration, "hongWenAPP");
 
-// Use Serilog as the logging provider
-builder.Host.UseSerilog((context, services, configuration) => configuration
-    .ReadFrom.Configuration(context.Configuration)
-    .ReadFrom.Services(services)
-    .Enrich.FromLogContext()
-    .Enrich.WithMachineName()
-    .Enrich.WithThreadId()
-    .Enrich.WithEnvironmentUserName()
-    .Enrich.WithProperty("Application", "hongWenAPP")
-    .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
-);
+// Use Serilog as the logging provider (Log.Logger already configured by SharedServices)
+builder.Host.UseSerilog();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -70,6 +56,13 @@ builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<IGradeService, GradeService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 
+// Register NEW Invoice-Based Payment System Services
+builder.Services.AddScoped<IStudentCourseService, StudentCourseService>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+builder.Services.AddScoped<IPaymentNewService, PaymentNewService>();
+builder.Services.AddScoped<IPromotionService, PromotionService>();
+builder.Services.AddScoped<ISupplyService, SupplyService>();
+
 // Register Report Export Service
 builder.Services.AddScoped<ReportExportService>();
 
@@ -101,6 +94,9 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+// Add Serilog request logging
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

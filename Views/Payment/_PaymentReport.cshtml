@@ -81,7 +81,7 @@
                             @foreach (var method in Model.ByPaymentMethod)
                             {
                                 <tr>
-                                    <td>@method.PaymentMethodName</td>
+                                    <td>@method.PaymentMethod</td>
                                     <td class="text-center">@method.Count</td>
                                     <td class="text-end">$@method.TotalUSD.ToString("N2")</td>
                                     <td class="text-end">@method.TotalKHR.ToString("N0") ៛</td>

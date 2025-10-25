@@ -1,0 +1,120 @@
+@{
+    ViewData["Title"] = "Student Course Assignment";
+}
+
+@section TopBar {
+    <!-- Search -->
+    <div class="navbar-nav align-items-center">
+        <div class="nav-item d-flex align-items-center justify-content-center">
+            <form id="formSearch" class="d-flex w-100">
+                <button type="button" id="searchButton" style="background:none; border:none">
+                    <i class="bx bx-search fs-4 lh-0"></i>
+                </button>
+                <input type="text" id="searchText" class="form-control border-0 shadow-none" placeholder="Search students..." aria-label="Search..." />
+            </form>
+        </div>
+    </div>
+    <!-- /Search -->
+}
+
+<div class="fluid-container flex-grow-1">
+    <nav class="pt-sm-3 pb-1" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index" asp-controller="home">Dashboard</a></li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    <div class="alert alert-info">
+        <h5 class="alert-heading">
+            <i class="bx bx-info-circle"></i> Student Course Assignment
+        </h5>
+        <p class="mb-0">
+            Assign students to course packages. When you assign a student to a course, an invoice will be automatically generated with the course package fee.
+        </p>
+    </div>
+
+    <div class="card">
+        <div class="card-header p-3">
+            <div class="row">
+                <div class="col-sm-5 col-12">
+                    <div class="card-title">@ViewData["Title"]</div>
+                </div>
+                <div class="col-sm-7 col-12">
+                    <div class="d-flex h-100 justify-content-end align-items-center">
+                        <div class="me-2">
+                            <select id="termFilter" class="form-select">
+                                <option value="">All Terms</option>
+                                @if (ViewBag.ActiveTerms != null)
+                                {
+                                    @foreach (var term in ViewBag.ActiveTerms)
+                                    {
+                                        <option value="@term.TermId">@term.TermName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="me-2">
+                            <select id="courseFilter" class="form-select">
+                                <option value="">All Courses</option>
+                                @if (ViewBag.ActiveCourses != null)
+                                {
+                                    @foreach (var course in ViewBag.ActiveCourses)
+                                    {
+                                        <option value="@course.CourseId">@course.CourseName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <a href="@Url.Action("AssignStudent", "StudentCourse")" class="btn btn-primary" modal-popup="" modal-size="xl">
+                            <i class="bx bx-plus"></i> Assign Student to Course
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <h6 class="text-white">Quick Links</h6>
+                            <div class="d-grid gap-2">
+                                <a href="@Url.Action("Index", "Student")" class="btn btn-light btn-sm">
+                                    <i class="bx bx-user"></i> View All Students
+                                </a>
+                                <a href="@Url.Action("Index", "Course")" class="btn btn-light btn-sm">
+                                    <i class="bx bx-book"></i> View All Courses
+                                </a>
+                                <a href="@Url.Action("Index", "Invoice")" class="btn btn-light btn-sm">
+                                    <i class="bx bx-receipt"></i> View All Invoices
+                                </a>
+                                <a href="@Url.Action("Index", "Promotion")" class="btn btn-light btn-sm">
+                                    <i class="bx bx-trending-up"></i> Student Promotions
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <h6>How It Works:</h6>
+                    <ol>
+                        <li>Click "Assign Student to Course"</li>
+                        <li>Select student, course package, and term</li>
+                        <li>System automatically:
+                            <ul>
+                                <li>Creates course assignment record</li>
+                                <li>Generates invoice with course package fee</li>
+                                <li>Sets invoice due date (+7 days)</li>
+                                <li>Updates student's current course</li>
+                            </ul>
+                        </li>
+                        <li>View the generated invoice in Invoice Management</li>
+                        <li>Record payment when student pays</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

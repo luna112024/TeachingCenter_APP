@@ -1,5 +1,3 @@
-@model CreatePaymentDTO
-
 <form asp-action="AddPayment" asp-controller="Payment" method="post" autocomplete="off" id="addPaymentForm">
     <div class="modal-header">
         <h5 class="modal-title">💰 Record Payment</h5>
@@ -14,23 +12,23 @@
         <!-- Student Selection -->
         <div class="mb-3">
             <label class="form-label">Student<span class="text-danger">*</span></label>
-            <select asp-for="StudentId" class="form-select" id="studentSelect" required>
+            <select name="StudentId" class="form-select" id="studentSelect" required>
                 <option value="">Select Student</option>
             </select>
-            <span asp-validation-for="StudentId" class="text-danger"></span>
+            <span class="text-danger" id="studentError"></span>
         </div>
 
         <!-- Amount & Currency -->
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label" asp-for="Amount">Amount<span class="text-danger">*</span></label>
-                <input asp-for="Amount" type="number" class="form-control" step="0.01" min="0.01" required placeholder="0.00"/>
-                <span asp-validation-for="Amount" class="text-danger"></span>
+                <label class="form-label">Amount<span class="text-danger">*</span></label>
+                <input name="Amount" type="number" class="form-control" step="0.01" min="0.01" required placeholder="0.00"/>
+                <span class="text-danger" id="amountError"></span>
             </div>
             <div class="col-md-6 mb-3">
-                <label class="form-label" asp-for="Currency">Currency<span class="text-danger">*</span></label>
-                <select asp-for="Currency" class="form-select" required>
-                    <option value="USD">USD 💵</option>
+                <label class="form-label">Currency<span class="text-danger">*</span></label>
+                <select name="Currency" class="form-select" required>
+                    <option value="USD" selected>USD 💵</option>
                     <option value="KHR">KHR ៛</option>
                 </select>
             </div>
@@ -38,59 +36,64 @@
 
         <!-- Payment Method -->
         <div class="mb-3">
-            <label class="form-label" asp-for="PaymentMethodId">Payment Method<span class="text-danger">*</span></label>
-            <select asp-for="PaymentMethodId" class="form-select" id="paymentMethodSelect" required>
+            <label class="form-label">Payment Method<span class="text-danger">*</span></label>
+            <select name="PaymentMethod" class="form-select" required>
                 <option value="">Select Payment Method</option>
+                <option value="Cash">Cash</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="ABA Pay">ABA Pay</option>
+                <option value="Wing">Wing</option>
+                <option value="TrueMoney">TrueMoney</option>
             </select>
-            <span asp-validation-for="PaymentMethodId" class="text-danger"></span>
+            <span class="text-danger" id="paymentMethodError"></span>
         </div>
 
         <!-- Payment Date -->
         <div class="mb-3">
-            <label class="form-label" asp-for="PaymentDate">Payment Date<span class="text-danger">*</span></label>
-            <input asp-for="PaymentDate" type="date" class="form-control" required />
-            <span asp-validation-for="PaymentDate" class="text-danger"></span>
+            <label class="form-label">Payment Date<span class="text-danger">*</span></label>
+            <input name="PaymentDate" type="date" class="form-control" id="paymentDate" required />
+            <span class="text-danger" id="paymentDateError"></span>
         </div>
 
         <!-- Payment For -->
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label" asp-for="PaymentFor">Payment For<span class="text-danger">*</span></label>
-                <select asp-for="PaymentFor" class="form-select" required>
+                <label class="form-label">Payment For<span class="text-danger">*</span></label>
+                <select name="PaymentFor" class="form-select" required>
                     <option value="">Select Type</option>
                     <option value="Registration">Registration Fee</option>
-                    <option value="Tuition">Tuition Fee</option>
+                    <option value="Tuition" selected>Tuition Fee</option>
                     <option value="Course Fee">Course Fee</option>
                     <option value="Support Fee">Support Fee</option>
                     <option value="Supply Fee">Supply Fee</option>
                     <option value="Enrollment Fee">Enrollment Fee</option>
                 </select>
-                <span asp-validation-for="PaymentFor" class="text-danger"></span>
+                <span class="text-danger" id="paymentForError"></span>
             </div>
             <div class="col-md-6 mb-3">
-                <label class="form-label" asp-for="Term">Term (Optional)</label>
-                <input asp-for="Term" type="text" class="form-control" placeholder="e.g., 2025-Term1"/>
+                <label class="form-label">Term (Optional)</label>
+                <input name="Term" type="text" class="form-control" placeholder="e.g., 2025-Term1"/>
                 <small class="text-muted">Leave empty if not applicable</small>
             </div>
         </div>
 
         <!-- Payer Information -->
         <div class="mb-3">
-            <label class="form-label" asp-for="PayerName">Payer Name (Optional)</label>
-            <input asp-for="PayerName" type="text" class="form-control" placeholder="Enter payer name if different from student"/>
+            <label class="form-label">Payer Name (Optional)</label>
+            <input name="PayerName" type="text" class="form-control" placeholder="Enter payer name if different from student"/>
         </div>
 
         <!-- Transaction Reference -->
         <div class="mb-3">
-            <label class="form-label" asp-for="TransactionReference">Transaction Reference (Optional)</label>
-            <input asp-for="TransactionReference" type="text" class="form-control" placeholder="Bank ref, ABA transaction ID, etc"/>
+            <label class="form-label">Transaction Reference (Optional)</label>
+            <input name="TransactionReference" type="text" class="form-control" placeholder="Bank ref, ABA transaction ID, etc"/>
             <small class="text-muted">Required for Bank Transfer, ABA, Wing, TrueMoney</small>
         </div>
 
         <!-- Notes -->
         <div class="mb-3">
-            <label class="form-label" asp-for="Notes">Notes (Optional)</label>
-            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Any additional notes"></textarea>
+            <label class="form-label">Notes (Optional)</label>
+            <textarea name="Notes" class="form-control" rows="3" placeholder="Any additional notes"></textarea>
         </div>
     </div>
     <div class="modal-footer">
@@ -105,38 +108,26 @@
     $(document).ready(function() {
         // Set today's date as default
         const today = new Date().toISOString().split('T')[0];
-        $('#PaymentDate').val(today);
+        $('#paymentDate').val(today);
 
-        // Load students
+        // Load students dynamically
         $.get('@Url.Action("GetStudents", "Payment")', function(students) {
+            $('#studentSelect').empty().append('<option value="">Select Student</option>');
             students.forEach(function(student) {
                 $('#studentSelect').append(
                     `<option value="${student.studentId}">${student.studentName} (${student.studentCode})</option>`
                 );
             });
-        });
-
-        // Load payment methods from database (pre-configured)
-        $.get('/api/payment/methods', function(methods) {
-            methods.forEach(function(method) {
-                $('#paymentMethodSelect').append(
-                    `<option value="${method.methodId}">${method.methodName}</option>`
-                );
-            });
         }).fail(function() {
-            // Fallback: Static payment methods
-            $('#paymentMethodSelect').append(`
-                <option value="cash">Cash 💵</option>
-                <option value="bank">Bank Transfer 🏦</option>
-                <option value="aba">ABA Pay 📱</option>
-                <option value="wing">Wing 📱</option>
-                <option value="truemoney">TrueMoney 📱</option>
-            `);
+            toastr.error('Failed to load students');
         });
 
         // Form submission
         $('#addPaymentForm').on('submit', function(e) {
             e.preventDefault();
+            
+            // Clear previous errors
+            $('.text-danger').text('');
             
             const formData = $(this).serialize();
             
@@ -144,9 +135,20 @@
                 if (response.flag) {
                     toastr.success(response.message);
                     $('.modal').modal('hide');
-                    location.reload();
+                    $('#listContainer').load('@Url.Action("ListPayment", "Payment")');
                 } else {
                     toastr.error(response.message);
+                }
+            }).fail(function(xhr) {
+                if (xhr.responseJSON && xhr.responseJSON.validationErrors) {
+                    // Display validation errors
+                    const errors = xhr.responseJSON.validationErrors;
+                    for (const [key, messages] of Object.entries(errors)) {
+                        const errorElementId = key.charAt(0).toLowerCase() + key.slice(1) + 'Error';
+                        $(`#${errorElementId}`).text(messages.join(', '));
+                    }
+                } else {
+                    toastr.error('Failed to record payment');
                 }
             });
         });

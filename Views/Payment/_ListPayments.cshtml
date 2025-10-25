@@ -64,7 +64,7 @@
             <td>@m.PaymentReference</td>
             <td>@($"{m.StudentName} ({m.StudentCode})")</td>
             <td>$@m.Amount.ToString("F2") @m.Currency</td>
-            <td>@m.PaymentMethodName</td>
+            <td>@m.PaymentMethod</td>
             <td>@m.PaymentDate.ToString("yyyy-MM-dd")</td>
             <td>
                 @switch (m.Status?.ToLower())

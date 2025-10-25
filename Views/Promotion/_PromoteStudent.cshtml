@@ -1,0 +1,173 @@
+@model hongWenAPP.Models.StudentCourseModel.DTOs.PromoteStudentDTO
+
+<form asp-action="PromoteStudent" asp-controller="Promotion" method="post" id="promoteForm">
+    <div class="modal-header">
+        <h5 class="modal-title">Promote Student</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class="alert alert-warning">
+            <i class="bx bx-info-circle"></i>
+            <strong>Important:</strong> Promotion will:
+            <ul class="mb-0 mt-2">
+                <li>Mark current course as "Completed"</li>
+                <li>Check for outstanding balances</li>
+                <li>Apply 5% late fee if overdue</li>
+                <li>Generate new invoice with carryover + new course fee</li>
+            </ul>
+        </div>
+
+        <input type="hidden" asp-for="StudentId" />
+
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <label class="form-label">New Course <span class="text-danger">*</span></label>
+                <select asp-for="NewCourseId" class="form-select" id="newCourseSelect" required>
+                    <option value="">Select Next Level Course</option>
+                    @if (ViewBag.ActiveCourses != null)
+                    {
+                        @foreach (var course in ViewBag.ActiveCourses)
+                        {
+                            <option value="@course.CourseId" data-fee="@course.BaseFee">
+                                @course.CourseName ($@course.BaseFee)
+                            </option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="NewCourseId" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-12 mb-3">
+                <label class="form-label">New Term <span class="text-danger">*</span></label>
+                <select asp-for="NewTermId" class="form-select" id="newTermSelect" required>
+                    <option value="">Select Term</option>
+                    @if (ViewBag.ActiveTerms != null)
+                    {
+                        @foreach (var term in ViewBag.ActiveTerms)
+                        {
+                            <option value="@term.TermId">@term.TermName</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="NewTermId" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-12 mb-3">
+                <label class="form-label">Promotion Status</label>
+                <select asp-for="PromotionStatus" class="form-select">
+                    <option value="Promoted">Promoted</option>
+                    <option value="Repeated">Repeated (Same Level)</option>
+                    <option value="Conditional">Conditional Promotion</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 mb-3">
+                <label class="form-label">Performance Notes</label>
+                <textarea asp-for="PerformanceNotes" class="form-control" rows="3" placeholder="Notes about student performance..."></textarea>
+            </div>
+
+            <!-- Preview Button -->
+            <div class="col-md-12 mb-3">
+                <button type="button" class="btn btn-info w-100" id="previewBtn">
+                    <i class="bx bx-show"></i> Preview Promotion Impact
+                </button>
+            </div>
+
+            <!-- Preview Results -->
+            <div class="col-md-12" id="previewResults" style="display:none;">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">Promotion Preview</h6>
+                        <div id="previewContent">
+                            <!-- Preview will load here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="confirmPromoteBtn">
+            <i class="bx bx-check"></i> Confirm Promotion
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        $('#previewBtn').on('click', function () {
+            const studentId = $('input[name="StudentId"]').val();
+            const newCourseId = $('#newCourseSelect').val();
+            const newTermId = $('#newTermSelect').val();
+
+            if (!newCourseId || !newTermId) {
+                toastr.warning('Please select course and term first');
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("PreviewPromotion", "Promotion")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    studentId: studentId,
+                    newCourseId: newCourseId,
+                    newTermId: newTermId
+                }),
+                success: function (result) {
+                    if (result.success) {
+                        const preview = result.data;
+                        let html = `
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td>Current Course:</td>
+                                        <td><strong>${preview.currentCourse}</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Target Course:</td>
+                                        <td><strong>${preview.targetCourse}</strong></td>
+                                    </tr>
+                                    <tr class="table-light">
+                                        <td>Outstanding Balance:</td>
+                                        <td><strong class="text-danger">$${preview.outstandingBalance.toFixed(2)}</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Late Fee (5%):</td>
+                                        <td><strong class="text-danger">$${preview.lateFeeAmount.toFixed(2)}</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>New Course Fee:</td>
+                                        <td><strong>$${preview.newCourseFee.toFixed(2)}</strong></td>
+                                    </tr>
+                                    <tr class="table-success">
+                                        <td><strong>Estimated Invoice Total:</strong></td>
+                                        <td><h5 class="mb-0">$${preview.estimatedInvoiceTotal.toFixed(2)}</h5></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        `;
+
+                        if (preview.warnings && preview.warnings.length > 0) {
+                            html += '<div class="alert alert-warning mt-2 mb-0"><ul class="mb-0">';
+                            preview.warnings.forEach(warning => {
+                                html += `<li>${warning}</li>`;
+                            });
+                            html += '</ul></div>';
+                        }
+
+                        $('#previewContent').html(html);
+                        $('#previewResults').slideDown();
+                    } else {
+                        toastr.error(result.message || 'Failed to preview promotion');
+                    }
+                },
+                error: function () {
+                    toastr.error('Failed to load preview');
+                }
+            });
+        });
+    </script>
+}
+

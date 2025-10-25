@@ -7,65 +7,44 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace hongWenAPP.Controllers
 {
-    /// <summary>
-    /// Simple Payment Controller - Cambodia Standard Practice
-    /// - Immutable payments (NO editing after creation)
-    /// - Void only for mistakes (original stays in system)
-    /// - Support: Cash, Bank Transfer, ABA, Wing, TrueMoney
-    /// </summary>
     public class PaymentController : Controller
     {
         private readonly IPaymentService _paymentService;
         private readonly IStudentService _studentService;
         private readonly ReturnHelper _returnHelper;
         private readonly AuthenticationService _authService;
-        private readonly ILogger<PaymentController> _logger;
 
-        public PaymentController(
-            IPaymentService paymentService, 
-            IStudentService studentService, 
-            ReturnHelper returnHelper, 
-            AuthenticationService authService,
-            ILogger<PaymentController> logger)
+        public PaymentController(IPaymentService paymentService, IStudentService studentService, ReturnHelper returnHelper, AuthenticationService authService)
         {
             _paymentService = paymentService;
             _studentService = studentService;
             _returnHelper = returnHelper;
             _authService = authService;
-            _logger = logger;
         }
 
-        // ========================================
-        // MAIN PAGE & LISTING
-        // ========================================
-        
         [HttpGet]
-        public async Task<IActionResult> Index(ListPaymentDTOs model)
+        public IActionResult Index(ListPaymentDTOs model)
+        {
+            // Redirect to NEW payment system
+            TempData["InfoMessage"] = "Redirected to NEW Payment System. The old payment system is deprecated.";
+            return RedirectToAction("Index", "PaymentNew");
+        }
+
+        public async Task<IActionResult> IndexOld(ListPaymentDTOs model)
         {
             if (!_authService.HasPermission("ViewPayment"))
             {
                 return PartialView("_AccessDenied");
             }
-
-            try
+            var payments = await _paymentService.GetPaymentsByDateRange(
+                DateTime.Today.AddDays(-30), 
+                DateTime.Today.AddDays(1));
+            var list = new ListPaymentDTOs
             {
-                _logger.LogInformation("Loading payments index page");
-                var payments = await _paymentService.GetPaymentsByDateRange(
-                    DateTime.Today.AddDays(-30), 
-                    DateTime.Today.AddDays(1));
+                Payments = PageList<GetPaymentDTO>.Create(payments, model.Page, model.PageSize, "ListPayment")
+            };
 
-                var list = new ListPaymentDTOs
-                {
-                    Payments = PageList<GetPaymentDTO>.Create(payments, model.Page, model.PageSize, "ListPayment")
-                };
-
-                return View(list);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to load payments index page");
-                return View("Error");
-            }
+            return View(list);
         }
 
         [HttpGet]
@@ -75,53 +54,195 @@ namespace hongWenAPP.Controllers
             {
                 return PartialView("_AccessDenied");
             }
-
-            try
-            {
-                _logger.LogInformation("Listing payments");
-                var payments = await _paymentService.GetPaymentsByDateRange(
-                    model.StartDate ?? DateTime.Today.AddDays(-30), 
-                    model.EndDate ?? DateTime.Today.AddDays(1));
-
-                var list = PageList<GetPaymentDTO>.Create(payments, model.Page, model.PageSize, "ListPayment");
-                return PartialView("_ListPayments", list);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to list payments");
-                return PartialView("_Error");
-            }
+            var payments = await _paymentService.GetPaymentsByDateRange(
+                model.StartDate ?? DateTime.Today.AddDays(-30), 
+                model.EndDate ?? DateTime.Today.AddDays(1));
+            var list = PageList<GetPaymentDTO>.Create(payments, model.Page, model.PageSize, "ListPayment");
+            return PartialView("_ListPayments", list);
         }
 
-        // ========================================
-        // VIEW PAYMENT DETAILS
-        // ========================================
-        
         [HttpGet]
-        public async Task<IActionResult> GetPayment(Guid paymentId)
+        public async Task<IActionResult> FetchPayment(string i)
         {
             if (!_authService.HasPermission("ViewPayment"))
             {
                 return PartialView("_AccessDenied");
             }
+            var payments = await _paymentService.GetPaymentsByDateRange(
+                DateTime.Today.AddDays(-30), 
+                DateTime.Today.AddDays(1));
+            var result = payments.Select(p => new
+            {
+                p.PaymentId,
+                p.PaymentReference,
+                p.StudentName,
+                p.Amount,
+                p.Currency,
+                p.PaymentMethod,
+                p.PaymentDate,
+                p.Status
+            }).ToList();
+            return Json(result);
+        }
 
+        [HttpGet]
+        public async Task<IActionResult> AddPayment()
+        {
+            if (!_authService.HasPermission("ManagePayment"))
+            {
+                return PartialView("_AccessDenied");
+            }
+
+            return PartialView("_addPayment");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddPayment(CreatePaymentDTO createPaymentDTO)
+        {
             try
             {
-                _logger.LogInformation("Retrieving payment {PaymentId}", paymentId);
-                var payment = await _paymentService.GetPayment(paymentId);
+                if (!_authService.HasPermission("ManagePayment"))
+                {
+                    return PartialView("_AccessDenied");
+                }
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.ToDictionary(kvp => kvp.Key, kvp => kvp.Value?.Errors.Select(e => e.ErrorMessage).ToArray());
+                    return Json(new { validationErrors = errors });
+                }
+                          
+                var result = await _paymentService.CreatePayment(createPaymentDTO);
+                return _returnHelper.ReturnNewResult(result.Flag, result.Message);
+            }
+            catch (Exception ex)
+            {
+                return _returnHelper.ReturnNewResult(false, $"Error: {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPayment(Guid id)
+        {
+            try
+            {
+                if (!_authService.HasPermission("ViewPayment"))
+                {
+                    return PartialView("_AccessDenied");
+                }
+                var payment = await _paymentService.GetPayment(id);
+                if (payment == null)
+                {
+                    return _returnHelper.ReturnNewResult(false, "Payment not found.");
+                }
+
                 return PartialView("_PaymentDetails", payment);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to retrieve payment {PaymentId}", paymentId);
-                return PartialView("_Error");
+                return _returnHelper.ReturnNewResult(false, $"Error loading payment details: {ex.Message}");
             }
         }
 
-        // ========================================
-        // STUDENT PAYMENT HISTORY
-        // ========================================
-        
+        [HttpGet]
+        public async Task<IActionResult> VoidPayment(Guid id)
+        {
+            try
+            {
+                if (!_authService.HasPermission("ManagePayment"))
+                {
+                    return PartialView("_AccessDenied");
+                }
+                var payment = await _paymentService.GetPayment(id);
+                if (payment == null)
+                {
+                    return _returnHelper.ReturnNewResult(false, "Payment not found.");
+                }
+
+                return PartialView("_voidPayment", payment);
+            }
+            catch (Exception ex)
+            {
+                return _returnHelper.ReturnNewResult(false, $"Error loading void form: {ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VoidPaymentConfirmed(VoidPaymentDTO model)
+        {
+            try
+            {
+                if (!_authService.HasPermission("ManagePayment"))
+                {
+                    return PartialView("_AccessDenied");
+                }
+                var result = await _paymentService.VoidPayment(model);
+                return _returnHelper.ReturnNewResult(result.Flag, result.Message ?? "Payment voided successfully");
+            }
+            catch (Exception ex)
+            {
+                return _returnHelper.ReturnNewResult(false, $"Error voiding payment: {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DetailsPayment(Guid id)
+        {
+            try
+            {
+                if (!_authService.HasPermission("ViewPayment"))
+                {
+                    return PartialView("_AccessDenied");
+                }
+                var payment = await _paymentService.GetPayment(id);
+                if (payment == null)
+                {
+                    return _returnHelper.ReturnNewResult(false, "Payment not found.");
+                }
+
+                return PartialView("_detailsPayment", payment);
+            }
+            catch (Exception ex)
+            {
+                return _returnHelper.ReturnNewResult(false, $"Error loading payment details: {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetStudents(string q = "")
+        {
+            if (!_authService.HasPermission("ViewStudent"))
+            {
+                return Json(new List<object>());
+            }
+            try
+            {
+                var students = await _studentService.GetAllStudents();
+                var result = students.Select(s => new
+                {
+                    studentId = s.StudentId,
+                    studentName = $"{s.FirstName} {s.LastName}" ?? "Unknown",
+                    studentCode = s.StudentCode
+                }).ToList();
+
+                // Filter by search query if provided
+                if (!string.IsNullOrEmpty(q))
+                {
+                    result = result.Where(s => 
+                        s.studentName.ToLower().Contains(q.ToLower()) || 
+                        s.studentCode.ToLower().Contains(q.ToLower())
+                    ).ToList();
+                }
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new List<object>());
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetPaymentsByStudent(Guid studentId)
         {
@@ -129,260 +250,34 @@ namespace hongWenAPP.Controllers
             {
                 return PartialView("_AccessDenied");
             }
-
             try
             {
-                _logger.LogInformation("Retrieving payment history for student {StudentId}", studentId);
                 var history = await _paymentService.GetStudentPaymentHistory(studentId);
                 return PartialView("_StudentPaymentHistory", history);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to retrieve payment history for student {StudentId}", studentId);
-                return PartialView("_Error");
+                return _returnHelper.ReturnNewResult(false, $"Error loading payment history: {ex.Message}");
             }
         }
 
-        // ========================================
-        // RECORD NEW PAYMENT (IMMUTABLE)
-        // ========================================
-        
         [HttpGet]
-        public async Task<IActionResult> AddPayment(Guid? studentId = null)
-        {
-            if (!_authService.HasPermission("ManagePayment"))
-            {
-                return PartialView("_AccessDenied");
-            }
-
-            try
-            {
-                _logger.LogInformation("Loading add payment form for student {StudentId}", studentId);
-                ViewBag.StudentId = studentId;
-                return PartialView("_addPayment");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to load add payment form");
-                return PartialView("_Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddPayment(CreatePaymentDTO paymentDto)
-        {
-            if (!_authService.HasPermission("ManagePayment"))
-            {
-                return Json(new Response { Flag = false, Message = "Access denied" });
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return Json(new Response { Flag = false, Message = "Invalid payment data" });
-            }
-
-            try
-            {
-
-                _logger.LogInformation("Recording payment for student {StudentId}, Amount: {Amount} {Currency} by {Username}", 
-                    paymentDto.StudentId, paymentDto.Amount, paymentDto.Currency, paymentDto.CreatedBy);
-
-                var response = await _paymentService.CreatePayment(paymentDto);
-                
-                if (response.Flag)
-                {
-                    _logger.LogInformation("Payment recorded successfully: {Message}", response.Message);
-                }
-                else
-                {
-                    _logger.LogWarning("Payment recording failed: {Message}", response.Message);
-                }
-
-                return Json(response);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to record payment for student {StudentId}", paymentDto.StudentId);
-                return Json(new Response { Flag = false, Message = "Failed to record payment" });
-            }
-        }
-
-        // ========================================
-        // VOID PAYMENT (For Mistakes Only)
-        // ========================================
-        
-        [HttpGet]
-        public async Task<IActionResult> VoidPayment(Guid paymentId)
-        {
-            if (!_authService.HasPermission("ManagePayment"))
-            {
-                return PartialView("_AccessDenied");
-            }
-
-            try
-            {
-                _logger.LogInformation("Loading void payment form for payment {PaymentId}", paymentId);
-                var payment = await _paymentService.GetPayment(paymentId);
-                
-                if (payment.Status == "Voided")
-                {
-                    return PartialView("_Error", "This payment is already voided");
-                }
-
-                return PartialView("_voidPayment", payment);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to load void payment form for payment {PaymentId}", paymentId);
-                return PartialView("_Error");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> VoidPayment(VoidPaymentDTO voidDto)
-        {
-            if (!_authService.HasPermission("ManagePayment"))
-            {
-                return Json(new Response { Flag = false, Message = "Access denied" });
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return Json(new Response { Flag = false, Message = "Invalid void data" });
-            }
-
-            try
-            {
-
-                _logger.LogWarning("Voiding payment {PaymentId} by {Username}. Reason: {Reason}", 
-                    voidDto.PaymentId, voidDto.VoidedBy, voidDto.VoidReason);
-
-                var response = await _paymentService.VoidPayment(voidDto);
-                
-                if (response.Flag)
-                {
-                    _logger.LogWarning("Payment {PaymentId} voided successfully by {Username}", 
-                        voidDto.PaymentId, voidDto.VoidedBy);
-                }
-                else
-                {
-                    _logger.LogWarning("Void payment failed: {Message}", response.Message);
-                }
-
-                return Json(response);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to void payment {PaymentId}", voidDto.PaymentId);
-                return Json(new Response { Flag = false, Message = "Failed to void payment" });
-            }
-        }
-
-        // ========================================
-        // PAYMENT REPORTS
-        // ========================================
-        
-        [HttpGet]
-        public async Task<IActionResult> DailyReport(DateTime? reportDate = null)
+        public async Task<IActionResult> GetPaymentHistoryData(Guid id)
         {
             if (!_authService.HasPermission("ViewPayment"))
             {
-                return PartialView("_AccessDenied");
+                return Json(new { error = "Access denied" });
             }
-
             try
             {
-                var date = reportDate ?? DateTime.Today;
-                _logger.LogInformation("Generating daily payment report for {ReportDate}", date);
-                
-                var report = await _paymentService.GetDailyReport(date);
-                return PartialView("_DailyPaymentReport", report);
+                var history = await _paymentService.GetStudentPaymentHistory(id);
+                return Json(history);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to generate daily payment report");
-                return PartialView("_Error");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> DateRangeReport(DateTime? startDate = null, DateTime? endDate = null)
-        {
-            if (!_authService.HasPermission("ViewPayment"))
-            {
-                return PartialView("_AccessDenied");
-            }
-
-            try
-            {
-                var start = startDate ?? DateTime.Today.AddDays(-30);
-                var end = endDate ?? DateTime.Today;
-
-                _logger.LogInformation("Generating payment report from {StartDate} to {EndDate}", start, end);
-                var payments = await _paymentService.GetPaymentsByDateRange(start, end);
-                
-                return PartialView("_PaymentReport", payments);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to generate payment report");
-                return PartialView("_Error");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> RevenueReport(DateTime? startDate = null, DateTime? endDate = null)
-        {
-            if (!_authService.HasPermission("ViewPayment"))
-            {
-                return Json(new { TotalRevenue = 0, Error = "Access denied" });
-            }
-
-            try
-            {
-                _logger.LogInformation("Retrieving revenue report from {StartDate} to {EndDate}", startDate, endDate);
-                var revenue = await _paymentService.GetTotalRevenue(startDate, endDate);
-                return Json(new { TotalRevenue = revenue });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to retrieve revenue report");
-                return Json(new { TotalRevenue = 0, Error = "Failed to retrieve revenue" });
-            }
-        }
-
-        // ========================================
-        // JSON HELPERS FOR DROPDOWNS
-        // ========================================
-        
-        [HttpGet]
-        public async Task<IActionResult> GetStudents(string q = "")
-        {
-            try
-            {
-                _logger.LogInformation("Retrieving students for dropdown with query: {Query}", q);
-                var students = await _studentService.GetAllStudents();
-                
-                if (!string.IsNullOrEmpty(q))
-                {
-                    students = students.Where(s => 
-                        s.FirstName.Contains(q, StringComparison.OrdinalIgnoreCase) ||
-                        s.LastName.Contains(q, StringComparison.OrdinalIgnoreCase) ||
-                        s.StudentCode.Contains(q, StringComparison.OrdinalIgnoreCase))
-                        .ToList();
-                }
-
-                return Json(students.Select(s => new { 
-                    StudentId = s.StudentId, 
-                    StudentName = $"{s.FirstName} {s.LastName}",
-                    StudentCode = s.StudentCode
-                }));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to retrieve students for dropdown");
-                return Json(new List<object>());
+                return Json(new { error = ex.Message });
             }
         }
     }
 }
+

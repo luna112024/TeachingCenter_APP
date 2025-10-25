@@ -1,0 +1,166 @@
+@{
+    ViewData["Title"] = "Student Promotion";
+}
+
+@section TopBar {
+    <!-- Search -->
+    <div class="navbar-nav align-items-center">
+        <div class="nav-item d-flex align-items-center justify-content-center">
+            <form id="formSearch" class="d-flex w-100">
+                <button type="button" id="searchButton" style="background:none; border:none">
+                    <i class="bx bx-search fs-4 lh-0"></i>
+                </button>
+                <input type="text" id="searchText" class="form-control border-0 shadow-none" placeholder="Search students..." aria-label="Search..." />
+            </form>
+        </div>
+    </div>
+    <!-- /Search -->
+}
+
+<div class="fluid-container flex-grow-1">
+    <nav class="pt-sm-3 pb-1" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index" asp-controller="home">Dashboard</a></li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    <div class="alert alert-warning">
+        <h5 class="alert-heading">
+            <i class="bx bx-trending-up"></i> Student Promotion System
+        </h5>
+        <p class="mb-2">
+            <strong>Important:</strong> When promoting students, the system will:
+        </p>
+        <ul class="mb-0">
+            <li>Mark current course as "Completed"</li>
+            <li>Check for outstanding balances from previous term</li>
+            <li>Calculate late fees (5%) if overdue beyond 7-day grace period</li>
+            <li>Generate new invoice with: <strong>Previous Balance + Late Fees + New Course Fee</strong></li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bx bx-user"></i> Single Promotion
+                    </h5>
+                    <p class="text-muted">Promote one student at a time with preview</p>
+                    <div class="d-grid">
+                        <a href="@Url.Action("PromoteStudent", "Promotion")" class="btn btn-primary" modal-popup="" modal-size="xl">
+                            <i class="bx bx-trending-up"></i> Promote Student
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bx bx-group"></i> Bulk Promotion
+                    </h5>
+                    <p class="text-muted">Promote multiple students to next level</p>
+                    <div class="d-grid">
+                        <a href="@Url.Action("BulkPromote", "Promotion")" class="btn btn-success">
+                            <i class="bx bx-group"></i> Bulk Promote
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bx bx-receipt"></i> Check Invoices
+                    </h5>
+                    <p class="text-muted">View invoices generated from promotions</p>
+                    <div class="d-grid">
+                        <a href="@Url.Action("Index", "Invoice", new { invoiceType = "Promoted" })" class="btn btn-info">
+                            <i class="bx bx-receipt"></i> Promotion Invoices
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header p-3">
+            <h5 class="card-title mb-0">Promotion Workflow</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <h6>Step-by-Step Process:</h6>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <span class="timeline-point timeline-point-primary">
+                                <i class="bx bx-show"></i>
+                            </span>
+                            <div class="timeline-event">
+                                <div class="timeline-header mb-1">
+                                    <h6 class="mb-0">Preview Promotion</h6>
+                                </div>
+                                <p class="mb-0 text-muted">
+                                    Click "Preview Promotion Impact" to see:
+                                    <br/>• Outstanding balance from previous term
+                                    <br/>• Late fees (if applicable)
+                                    <br/>• New course fee
+                                    <br/>• Total estimated invoice amount
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <span class="timeline-point timeline-point-success">
+                                <i class="bx bx-check"></i>
+                            </span>
+                            <div class="timeline-event">
+                                <div class="timeline-header mb-1">
+                                    <h6 class="mb-0">Confirm Promotion</h6>
+                                </div>
+                                <p class="mb-0 text-muted">
+                                    System executes stored procedure:
+                                    <br/>• sp_PromoteStudentAndGenerateInvoice
+                                    <br/>• Previous course marked "Completed"
+                                    <br/>• New course assignment created
+                                    <br/>• Invoice generated with all charges
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <span class="timeline-point timeline-point-info">
+                                <i class="bx bx-dollar"></i>
+                            </span>
+                            <div class="timeline-event">
+                                <div class="timeline-header mb-1">
+                                    <h6 class="mb-0">Payment</h6>
+                                </div>
+                                <p class="mb-0 text-muted">
+                                    Go to Invoice Management to:
+                                    <br/>• View the generated invoice
+                                    <br/>• Record payment
+                                    <br/>• Confirm payment (locks it)
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Filter handling can be added here
+    </script>
+}
+

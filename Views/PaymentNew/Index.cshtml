@@ -1,0 +1,198 @@
+@{
+    ViewData["Title"] = "Payment Management (NEW System)";
+}
+
+@section TopBar {
+    <!-- Search -->
+    <div class="navbar-nav align-items-center">
+        <div class="nav-item d-flex align-items-center justify-content-center">
+            <form id="formSearch" class="d-flex w-100">
+                <button type="button" id="searchButton" style="background:none; border:none">
+                    <i class="bx bx-search fs-4 lh-0"></i>
+                </button>
+                <input type="text" id="searchReference" class="form-control border-0 shadow-none" placeholder="Search by payment reference..." aria-label="Search..." />
+            </form>
+        </div>
+    </div>
+    <!-- /Search -->
+}
+
+<div class="fluid-container flex-grow-1">
+    <nav class="pt-sm-3 pb-1" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index" asp-controller="home">Dashboard</a></li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    <div class="alert alert-info">
+        <h5 class="alert-heading">
+            <i class="bx bx-info-circle"></i> NEW Immutable Payment System
+        </h5>
+        <p class="mb-0">
+            This is the NEW invoice-based payment system with:
+        </p>
+        <ul class="mb-0 mt-2">
+            <li><strong>Immutable Payments:</strong> Payments lock after confirmation (cannot be edited)</li>
+            <li><strong>Auto-Invoice Integration:</strong> Payments linked to invoices</li>
+            <li><strong>Complete Audit Trail:</strong> All changes tracked</li>
+            <li><strong>Admin Adjustments:</strong> Corrections via adjustment records (not edits)</li>
+        </ul>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Quick Actions</h5>
+                    <div class="btn-group" role="group">
+                        <a href="@Url.Action("Outstanding", "Invoice")" class="btn btn-warning">
+                            <i class="bx bx-receipt"></i> Outstanding Invoices
+                        </a>
+                        <a href="@Url.Action("Overdue", "Invoice")" class="btn btn-danger">
+                            <i class="bx bx-error"></i> Overdue Invoices
+                        </a>
+                        <a href="@Url.Action("Index", "Invoice")" class="btn btn-primary">
+                            <i class="bx bx-file"></i> All Invoices
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search by Reference -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header p-3">
+                    <h5 class="card-title mb-0">Search Payment by Reference</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <input type="text" id="paymentReferenceInput" class="form-control" placeholder="e.g., PAY-20250116-00001" />
+                                <button type="button" id="searchBtn" class="btn btn-primary">
+                                    <i class="bx bx-search"></i> Search
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="searchResult" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily/Range Reports -->
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header p-3">
+                    <h5 class="card-title mb-0">Payment Reports</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" id="startDate" class="form-control" value="@DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd")" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">End Date</label>
+                            <input type="date" id="endDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">&nbsp;</label>
+                            <button type="button" id="generateReportBtn" class="btn btn-primary w-100">
+                                <i class="bx bx-bar-chart"></i> Generate Report
+                            </button>
+                        </div>
+                    </div>
+                    <div id="reportResult" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Search by reference
+            $('#searchBtn, #searchButton').on('click', function (e) {
+                e.preventDefault();
+                const reference = $('#paymentReferenceInput').val() || $('#searchReference').val();
+                
+                if (!reference) {
+                    toastr.warning('Please enter a payment reference');
+                    return;
+                }
+
+                $.ajax({
+                    url: '@Url.Action("SearchByReference", "PaymentNew")',
+                    type: 'GET',
+                    data: { reference: reference },
+                    success: function (result) {
+                        if (result.success && result.data) {
+                            const payment = result.data;
+                            let html = `
+                                <div class="alert alert-success">
+                                    <h6>Payment Found: ${payment.paymentReference}</h6>
+                                    <table class="table table-sm table-borderless">
+                                        <tr>
+                                            <td>Student:</td>
+                                            <td><strong>${payment.studentName} (${payment.studentCode})</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Amount:</td>
+                                            <td><strong>$${payment.amount.toFixed(2)}</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Date:</td>
+                                            <td>${new Date(payment.paymentDate).toLocaleDateString()}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Status:</td>
+                                            <td><span class="badge bg-${payment.status === 'Confirmed' ? 'success' : 'warning'}">${payment.status}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Locked:</td>
+                                            <td>${payment.isLocked ? '🔒 <strong class="text-danger">LOCKED</strong>' : '🔓 <span class="text-success">Unlocked</span>'}</td>
+                                        </tr>
+                                    </table>
+                                    <a href="/PaymentNew/Details/${payment.paymentId}" class="btn btn-sm btn-primary">View Full Details</a>
+                                </div>
+                            `;
+                            $('#searchResult').html(html);
+                        } else {
+                            $('#searchResult').html(`
+                                <div class="alert alert-warning">
+                                    <i class="bx bx-error"></i> Payment not found with reference: ${reference}
+                                </div>
+                            `);
+                        }
+                    },
+                    error: function () {
+                        toastr.error('Failed to search payment');
+                    }
+                });
+            });
+
+            // Generate report button click
+            $('#generateReportBtn').on('click', function () {
+                const startDate = $('#startDate').val();
+                const endDate = $('#endDate').val();
+
+                if (!startDate || !endDate) {
+                    toastr.warning('Please select both start and end dates');
+                    return;
+                }
+
+                window.location.href = `/PaymentNew/Reports/DateRange?startDate=${startDate}&endDate=${endDate}`;
+            });
+        });
+    </script>
+}
+

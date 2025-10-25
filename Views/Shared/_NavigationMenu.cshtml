@@ -146,10 +146,52 @@
             ​​Grades
         </a>
     </li>
+
+    <!-- NEW Invoice-Based Payment System -->
+    <li class="menu-header small text-uppercase" asp-permissions="ViewInvoice,ViewPayment,ViewStudentCourse,ViewPromotion,ViewSupply">
+        <span class="menu-header-text small">FINANCIAL MANAGEMENT</span>
+    </li>
+    
+    <li class="menu-item @Html.IsSelected(action: "index", controller: "StudentCourse")" asp-permissions="ViewStudentCourse,ManageStudentCourse">
+        <a href="@Url.Action("Index", "StudentCourse")" class="menu-link">
+            <i class="menu-icon icon-base ri ri-book-mark-line"></i>
+            ​​Student Courses
+        </a>
+    </li>
+    
+    <li class="menu-item @Html.IsSelected(action: "index", controller: "Invoice")" asp-permissions="ViewInvoice,ManageInvoice,DeleteInvoice">
+        <a href="@Url.Action("Index", "Invoice")" class="menu-link">
+            <i class="menu-icon icon-base ri ri-file-list-3-line"></i>
+            ​​Invoices
+        </a>
+    </li>
+    
+    <li class="menu-item @Html.IsSelected(action: "index", controller: "PaymentNew")" asp-permissions="ViewPayment,ManagePayment">
+        <a href="@Url.Action("Index", "PaymentNew")" class="menu-link">
+            <i class="menu-icon icon-base ri ri-bank-card-line"></i>
+            ​​Payments (NEW)
+        </a>
+    </li>
+    
+    <li class="menu-item @Html.IsSelected(action: "index", controller: "Promotion")" asp-permissions="ViewPromotion,ManagePromotion">
+        <a href="@Url.Action("Index", "Promotion")" class="menu-link">
+            <i class="menu-icon icon-base ri ri-arrow-up-circle-line"></i>
+            ​​Promotions
+        </a>
+    </li>
+    
+    <li class="menu-item @Html.IsSelected(action: "index", controller: "Supply")" asp-permissions="ViewSupply,ManageSupply,DeleteSupply">
+        <a href="@Url.Action("Index", "Supply")" class="menu-link">
+            <i class="menu-icon icon-base ri ri-inbox-line"></i>
+            ​​Supply Catalog
+        </a>
+    </li>
+    
+    <!-- OLD Payment System (Legacy - Keep for reference) -->
     <li class="menu-item @Html.IsSelected(action: "index", controller: "Payment")" asp-permissions="ViewPayment,ManagePayment,DeletePayment">
         <a href="@Url.Action("Index", "Payment")" class="menu-link">
             <i class="menu-icon icon-base ri ri-bank-card-line"></i>
-            ​​Payments
+            ​​Payments (OLD)
         </a>
     </li>
 

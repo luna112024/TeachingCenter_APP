@@ -1,0 +1,120 @@
+@model hongWenAPP.Models.StudentCourseModel.DTOs.AssignStudentToCourseDTO
+
+<form asp-action="AssignStudent" asp-controller="StudentCourse" method="post">
+    <div class="modal-header">
+        <h5 class="modal-title">Assign Student to Course</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class="alert alert-info">
+            <i class="bx bx-info-circle"></i>
+            <strong>Note:</strong> Assigning a student to a course will automatically generate an invoice with the course fee.
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <label class="form-label">Student <span class="text-danger">*</span></label>
+                <select asp-for="StudentId" class="form-select" required>
+                    <option value="">Select Student</option>
+                    @* Students will be loaded via AJAX or passed from ViewBag *@
+                </select>
+                <span asp-validation-for="StudentId" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-12 mb-3">
+                <label class="form-label">Course Package <span class="text-danger">*</span></label>
+                <select asp-for="CourseId" class="form-select" id="courseSelect" required>
+                    <option value="">Select Course</option>
+                    @if (ViewBag.ActiveCourses != null)
+                    {
+                        @foreach (var course in ViewBag.ActiveCourses)
+                        {
+                            <option value="@course.CourseId" data-fee="@course.BaseFee">
+                                @course.CourseName ($@course.BaseFee)
+                            </option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="CourseId" class="text-danger"></span>
+                <small class="text-muted">Package price includes all subjects for this level</small>
+            </div>
+
+            <div class="col-md-12 mb-3">
+                <label class="form-label">Term <span class="text-danger">*</span></label>
+                <select asp-for="TermId" class="form-select" required>
+                    <option value="">Select Term</option>
+                    @if (ViewBag.ActiveTerms != null)
+                    {
+                        @foreach (var term in ViewBag.ActiveTerms)
+                        {
+                            <option value="@term.TermId">@term.TermName (@term.StartDate.ToString("MMM dd") - @term.EndDate.ToString("MMM dd, yyyy"))</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="TermId" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Start Date</label>
+                <input asp-for="StartDate" type="date" class="form-control" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Assignment Type</label>
+                <select asp-for="AssignmentType" class="form-select">
+                    <option value="NewStudent">New Student</option>
+                    <option value="Transferred">Transferred</option>
+                    <option value="Repeated">Repeated</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 mb-3">
+                <label class="form-label">Notes</label>
+                <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+            </div>
+
+            <!-- Fee Preview -->
+            <div class="col-md-12">
+                <div class="alert alert-success" id="feePreview" style="display:none;">
+                    <h6 class="mb-2">Invoice Preview</h6>
+                    <div class="d-flex justify-content-between">
+                        <span>Course Fee:</span>
+                        <strong id="courseFeeAmount">$0.00</strong>
+                    </div>
+                    <hr class="my-2">
+                    <div class="d-flex justify-content-between">
+                        <span>Total Invoice Amount:</span>
+                        <strong id="totalAmount" class="fs-5">$0.00</strong>
+                    </div>
+                    <small class="text-muted d-block mt-2">
+                        <i class="bx bx-info-circle"></i> Invoice will be generated automatically after assignment
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary">
+            <i class="bx bx-check"></i> Assign & Generate Invoice
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        $('#courseSelect').on('change', function () {
+            var selectedOption = $(this).find('option:selected');
+            var fee = parseFloat(selectedOption.data('fee')) || 0;
+
+            if (fee > 0) {
+                $('#courseFeeAmount').text('$' + fee.toFixed(2));
+                $('#totalAmount').text('$' + fee.toFixed(2));
+                $('#feePreview').slideDown();
+            } else {
+                $('#feePreview').slideUp();
+            }
+        });
+    </script>
+}
+
