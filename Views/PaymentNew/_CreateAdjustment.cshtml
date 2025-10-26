@@ -1,0 +1,283 @@
+@model hongWenAPP.Models.PaymentNewModel.DTOs.CreatePaymentAdjustmentDTO
+
+@{
+    var originalPayment = ViewBag.OriginalPayment as hongWenAPP.Models.PaymentNewModel.DTOs.GetPaymentNewDTO;
+}
+
+<div class="modal-header bg-warning">
+    <h5 class="modal-title">
+        <i class="bx bx-edit me-2"></i>Create Payment Adjustment (Admin Only)
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<form id="adjustmentForm" asp-action="CreateAdjustment" asp-controller="PaymentNew" method="post">
+    <div class="modal-body">
+        <!-- Warning Alert -->
+        <div class="alert alert-danger">
+            <h6 class="alert-heading">
+                <i class="bx bx-error-circle me-2"></i>Critical Admin Action
+            </h6>
+            <p class="mb-0">
+                This creates a <strong>new adjustment payment</strong>. The original payment remains <strong>UNCHANGED</strong> for audit trail. 
+                Use this only for corrections after supervisor approval.
+            </p>
+        </div>
+
+        @if (originalPayment != null)
+        {
+            <!-- Original Payment Info -->
+            <div class="card bg-light mb-3">
+                <div class="card-body">
+                    <h6 class="card-title mb-3">Original Payment Details</h6>
+                    <div class="row">
+                        <div class="col-6 mb-2">
+                            <small class="text-muted d-block">Reference</small>
+                            <strong>@originalPayment.PaymentReference</strong>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <small class="text-muted d-block">Original Amount</small>
+                            <strong class="text-success">$@originalPayment.Amount.ToString("N2")</strong>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <small class="text-muted d-block">Student</small>
+                            <strong>@originalPayment.StudentName</strong>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <small class="text-muted d-block">Payment Date</small>
+                            <strong>@originalPayment.PaymentDate.ToString("MMM dd, yyyy")</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Hidden Fields -->
+        <input asp-for="OriginalPaymentId" type="hidden" />
+        <input asp-for="AdjustedBy" type="hidden" />
+
+        <!-- Adjustment Amount -->
+        <div class="mb-3">
+            <label asp-for="AdjustmentAmount" class="form-label">
+                Adjustment Amount <span class="text-danger">*</span>
+            </label>
+            <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input asp-for="AdjustmentAmount" type="number" id="adjustmentAmount" class="form-control" 
+                       step="0.01" placeholder="0.00" required />
+            </div>
+            <span asp-validation-for="AdjustmentAmount" class="text-danger"></span>
+            <div class="form-text">
+                <strong>Positive value:</strong> Additional payment | 
+                <strong>Negative value:</strong> Refund/Reduction
+            </div>
+        </div>
+
+        <!-- Adjustment Type Selection -->
+        <div class="mb-3">
+            <label class="form-label">Adjustment Type</label>
+            <div class="btn-group w-100" role="group">
+                <input type="radio" class="btn-check" name="adjustmentType" id="typeAddition" value="addition" checked>
+                <label class="btn btn-outline-success" for="typeAddition">
+                    <i class="bx bx-plus-circle me-1"></i>Additional Payment
+                </label>
+
+                <input type="radio" class="btn-check" name="adjustmentType" id="typeReduction" value="reduction">
+                <label class="btn btn-outline-danger" for="typeReduction">
+                    <i class="bx bx-minus-circle me-1"></i>Refund/Reduction
+                </label>
+            </div>
+        </div>
+
+        <!-- Quick Amount Buttons -->
+        <div class="mb-3">
+            <label class="form-label">Quick Amounts</label>
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setAmount(10)">$10</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setAmount(20)">$20</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setAmount(50)">$50</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setAmount(100)">$100</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setAmount(200)">$200</button>
+            </div>
+        </div>
+
+        <!-- Adjustment Reason -->
+        <div class="mb-3">
+            <label asp-for="AdjustmentReason" class="form-label">
+                Reason for Adjustment <span class="text-danger">*</span>
+            </label>
+            <textarea asp-for="AdjustmentReason" class="form-control" rows="4" 
+                      placeholder="Provide detailed explanation for this adjustment (required for audit)" 
+                      required></textarea>
+            <span asp-validation-for="AdjustmentReason" class="text-danger"></span>
+        </div>
+
+        <!-- Quick Reason Templates -->
+        <div class="mb-3">
+            <label class="form-label">Reason Templates (Optional)</label>
+            <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertReason('Calculation error correction - ')">
+                    Calculation Error
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertReason('Discount applied retroactively - ')">
+                    Retroactive Discount
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertReason('Overpayment refund - ')">
+                    Refund
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertReason('Fee adjustment per management approval - ')">
+                    Management Approval
+                </button>
+            </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="card bg-label-info" id="adjustmentPreview" style="display:none;">
+            <div class="card-body">
+                <h6 class="card-title mb-3">Adjustment Preview</h6>
+                <div class="row">
+                    <div class="col-6">
+                        <small class="text-muted d-block">Original Payment</small>
+                        <h5 class="mb-0" id="previewOriginal">$0.00</h5>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted d-block">Adjustment Amount</small>
+                        <h5 class="mb-0" id="previewAdjustment">$0.00</h5>
+                    </div>
+                    <div class="col-12 mt-3 pt-3 border-top">
+                        <small class="text-muted d-block">Net Effect</small>
+                        <h4 class="mb-0 fw-bold" id="previewNet">$0.00</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Approval Confirmation -->
+        <div class="form-check mt-3">
+            <input class="form-check-input" type="checkbox" id="confirmAdjustment" required>
+            <label class="form-check-label" for="confirmAdjustment">
+                <strong>I confirm this adjustment has been approved by management and is necessary for accounting accuracy.</strong>
+            </label>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bx bx-x me-1"></i>Cancel
+        </button>
+        <button type="submit" class="btn btn-warning">
+            <i class="bx bx-check me-1"></i>Create Adjustment
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        var originalAmount = @(originalPayment?.Amount ?? 0);
+
+        $(document).ready(function () {
+            // Update preview on amount change
+            $('#adjustmentAmount').on('input', updatePreview);
+            $('input[name="adjustmentType"]').on('change', updatePreview);
+
+            // Form submission
+            $('#adjustmentForm').on('submit', function (e) {
+                e.preventDefault();
+
+                var adjustmentAmount = parseFloat($('#adjustmentAmount').val()) || 0;
+                var reason = $('#AdjustmentReason').val().trim();
+                var confirmed = $('#confirmAdjustment').is(':checked');
+                
+                if (adjustmentAmount === 0) {
+                    toastr.error('Adjustment amount must be greater than 0');
+                    return;
+                }
+
+                if (!reason) {
+                    toastr.error('Please provide a reason for this adjustment');
+                    return;
+                }
+
+                if (!confirmed) {
+                    toastr.error('Please confirm that this adjustment has been approved');
+                    return;
+                }
+
+                // Adjust sign based on type
+                var type = $('input[name="adjustmentType"]:checked').val();
+                if (type === 'reduction') {
+                    adjustmentAmount = -Math.abs(adjustmentAmount);
+                } else {
+                    adjustmentAmount = Math.abs(adjustmentAmount);
+                }
+
+                $('#AdjustmentAmount').val(adjustmentAmount);
+
+                var formData = $(this).serialize();
+                var actionUrl = $(this).attr('action');
+
+                $.ajax({
+                    url: actionUrl,
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        if (response.flag) {
+                            toastr.success(response.message || 'Payment adjustment created successfully');
+                            $('.modal').modal('hide');
+                            location.reload();
+                        } else {
+                            toastr.error(response.message || 'Failed to create adjustment');
+                        }
+                    },
+                    error: function () {
+                        toastr.error('An error occurred while creating the adjustment');
+                    }
+                });
+            });
+
+            updatePreview();
+        });
+
+        function updatePreview() {
+            var adjustmentAmount = parseFloat($('#adjustmentAmount').val()) || 0;
+            var type = $('input[name="adjustmentType"]:checked').val();
+            
+            if (type === 'reduction') {
+                adjustmentAmount = -Math.abs(adjustmentAmount);
+            } else {
+                adjustmentAmount = Math.abs(adjustmentAmount);
+            }
+
+            var netAmount = originalAmount + adjustmentAmount;
+
+            $('#previewOriginal').text('$' + originalAmount.toFixed(2));
+            $('#previewAdjustment').text('$' + adjustmentAmount.toFixed(2));
+            $('#previewNet').text('$' + netAmount.toFixed(2));
+
+            if (adjustmentAmount !== 0) {
+                $('#adjustmentPreview').slideDown();
+            } else {
+                $('#adjustmentPreview').slideUp();
+            }
+        }
+
+        function setAmount(amount) {
+            $('#adjustmentAmount').val(amount.toFixed(2));
+            updatePreview();
+        }
+
+        function insertReason(text) {
+            var $textarea = $('#AdjustmentReason');
+            var currentText = $textarea.val();
+            
+            if (currentText) {
+                $textarea.val(currentText + '\n' + text);
+            } else {
+                $textarea.val(text);
+            }
+            
+            $textarea.focus();
+        }
+    </script>
+}
+

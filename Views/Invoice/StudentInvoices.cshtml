@@ -1,0 +1,383 @@
+@model List<hongWenAPP.Models.InvoiceModel.DTOs.GetInvoiceDTO>
+
+@{
+    ViewData["Title"] = "Student Invoices";
+    var student = ViewBag.Student as hongWenAPP.Models.StudentModel.DTOs.GetStudentDTO;
+    var studentId = ViewBag.StudentId as Guid?;
+}
+
+@section TopBar {
+    <!-- Search -->
+    <div class="navbar-nav align-items-center">
+        <div class="nav-item d-flex align-items-center justify-content-center">
+            <form id="formSearch" class="d-flex w-100">
+                <button type="button" id="searchButton" style="background:none; border:none">
+                    <i class="bx bx-search fs-4 lh-0"></i>
+                </button>
+                <input type="text" id="searchText" class="form-control border-0 shadow-none" placeholder="Search invoices..." aria-label="Search..." />
+            </form>
+        </div>
+    </div>
+    <!-- /Search -->
+}
+
+<div class="fluid-container flex-grow-1">
+    <nav class="pt-sm-3 pb-1" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index" asp-controller="home">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Student">Students</a></li>
+            @if (student != null)
+            {
+                <li class="breadcrumb-item"><a asp-action="Details" asp-controller="Student" asp-route-id="@studentId">@student.FirstName @student.LastName</a></li>
+            }
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    <!-- Student Info Card -->
+    @if (student != null)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-2 text-center">
+                        <div class="avatar avatar-xl">
+                            <div class="avatar-initial bg-label-primary rounded-circle">
+                                <i class="bx bx-user" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="mb-2">@student.FirstName @student.LastName</h4>
+                        <div class="row">
+                            <div class="col-6">
+                                <p class="mb-1"><strong>Student Code:</strong> @student.StudentCode</p>
+                                <p class="mb-1"><strong>Current Level:</strong> @student.CurrentLevel</p>
+                            </div>
+                            <div class="col-6">
+                                <p class="mb-1"><strong>Status:</strong> 
+                                    <span class="badge bg-@(student.StudentStatus == "Active" ? "success" : student.StudentStatus == "Graduated" ? "info" : student.StudentStatus == "Suspended" ? "danger" : "secondary")">
+                                        @student.StudentStatus
+                                    </span>
+                                </p>
+                                <p class="mb-1"><strong>Email:</strong> @(student.Email ?? "N/A")</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-label-info mb-0">
+                            <div class="card-body">
+                                <h6 class="mb-2">Financial Summary</h6>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Total Invoiced:</span>
+                                    <strong>$@Model.Sum(i => i.TotalAmount).ToString("N2")</strong>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Total Paid:</span>
+                                    <strong class="text-success">$@Model.Sum(i => i.AmountPaid).ToString("N2")</strong>
+                                </div>
+                                <hr class="my-2" />
+                                <div class="d-flex justify-content-between">
+                                    <span class="fw-bold">Outstanding:</span>
+                                    <strong class="text-danger">$@Model.Sum(i => i.AmountOutstanding).ToString("N2")</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Summary Cards -->
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">Total Invoices</span>
+                            <h3 class="card-title mb-0">@Model.Count</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-primary rounded">
+                                <i class="bx bx-receipt bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">Paid Invoices</span>
+                            <h3 class="card-title text-success mb-0">@Model.Count(i => i.Status == "Paid")</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-success rounded">
+                                <i class="bx bx-check-circle bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">Outstanding</span>
+                            <h3 class="card-title text-warning mb-0">@Model.Count(i => i.AmountOutstanding > 0 && i.Status != "Overdue")</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-warning rounded">
+                                <i class="bx bx-time bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">Overdue</span>
+                            <h3 class="card-title text-danger mb-0">@Model.Count(i => i.Status == "Overdue")</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-danger rounded">
+                                <i class="bx bx-error bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Buttons -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="btn-group w-100" role="group" aria-label="Invoice filter">
+                <button type="button" class="btn btn-outline-primary active" data-filter="all">
+                    All Invoices (@Model.Count)
+                </button>
+                <button type="button" class="btn btn-outline-success" data-filter="Paid">
+                    Paid (@Model.Count(i => i.Status == "Paid"))
+                </button>
+                <button type="button" class="btn btn-outline-warning" data-filter="outstanding">
+                    Outstanding (@Model.Count(i => i.AmountOutstanding > 0 && i.Status != "Overdue"))
+                </button>
+                <button type="button" class="btn btn-outline-danger" data-filter="Overdue">
+                    Overdue (@Model.Count(i => i.Status == "Overdue"))
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoices Table -->
+    <div class="card">
+        <div class="card-header p-3">
+            <div class="row align-items-center">
+                <div class="col-sm-6 col-12">
+                    <div class="card-title mb-0">Invoice History</div>
+                </div>
+                <div class="col-sm-6 col-12">
+                    <div class="d-flex h-100 justify-content-end align-items-center">
+                        @if (studentId.HasValue)
+                        {
+                            <a href="@Url.Action("Details", "Student", new { id = studentId })" class="btn btn-secondary">
+                                <i class="bx bx-arrow-back"></i> Back to Student
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive text-nowrap p-3 pt-2">
+            <table class="table table-hover" id="invoicesTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>Invoice #</th>
+                        <th>Course</th>
+                        <th>Invoice Date</th>
+                        <th>Due Date</th>
+                        <th>Total Amount</th>
+                        <th>Amount Paid</th>
+                        <th>Outstanding</th>
+                        <th>Status</th>
+                        <th>Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model == null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="10" class="text-center py-4">
+                                <i class="bx bx-receipt text-muted" style="font-size: 3rem;"></i>
+                                <p class="mt-2 mb-0 text-muted">No invoices found for this student</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var invoice in Model.OrderByDescending(i => i.InvoiceDate))
+                        {
+                            var statusClass = invoice.Status switch
+                            {
+                                "Paid" => "success",
+                                "Overdue" => "danger",
+                                "PartiallyPaid" => "warning",
+                                "Issued" => "info",
+                                "Draft" => "secondary",
+                                "Voided" => "dark",
+                                _ => "secondary"
+                            };
+
+                            var typeClass = invoice.InvoiceType switch
+                            {
+                                "NewStudent" => "primary",
+                                "Promoted" => "info",
+                                "Adjustment" => "warning",
+                                _ => "secondary"
+                            };
+
+                            var isOverdue = invoice.Status == "Overdue";
+                            var hasOutstanding = invoice.AmountOutstanding > 0;
+                            var daysOverdue = isOverdue ? (DateTime.Now - invoice.DueDate).Days : 0;
+
+                            <tr data-status="@invoice.Status" data-outstanding="@hasOutstanding">
+                                <td>
+                                    <strong>@invoice.InvoiceNumber</strong>
+                                    @if (invoice.IsAutogenerated)
+                                    {
+                                        <i class="bx bx-bot text-primary ms-1" title="Auto-generated"></i>
+                                    }
+                                </td>
+                                <td>@invoice.CourseName</td>
+                                <td>@invoice.InvoiceDate.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    @invoice.DueDate.ToString("MMM dd, yyyy")
+                                    @if (isOverdue)
+                                    {
+                                        <br /><small class="badge bg-danger">@daysOverdue days overdue</small>
+                                    }
+                                </td>
+                                <td class="text-end">$@invoice.TotalAmount.ToString("N2")</td>
+                                <td class="text-end text-success">$@invoice.AmountPaid.ToString("N2")</td>
+                                <td class="text-end">
+                                    <strong class="@(hasOutstanding ? "text-danger" : "text-success")">
+                                        $@invoice.AmountOutstanding.ToString("N2")
+                                    </strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-@statusClass">@invoice.Status</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-@typeClass">@invoice.InvoiceType</span>
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="@Url.Action("Details", "Invoice", new { id = invoice.InvoiceId })">
+                                                <i class="bx bx-show me-1"></i> View Details
+                                            </a>
+                                            @if (hasOutstanding && invoice.Status != "Voided")
+                                            {
+                                                <a class="dropdown-item" href="@Url.Action("RecordPayment", "PaymentNew", new { invoiceId = invoice.InvoiceId })" modal-popup="" modal-size="lg">
+                                                    <i class="bx bx-dollar me-1"></i> Record Payment
+                                                </a>
+                                            }
+                                            @if (invoice.Status == "Draft")
+                                            {
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item" href="@Url.Action("AddLineItem", "Invoice", new { invoiceId = invoice.InvoiceId })" modal-popup="">
+                                                    <i class="bx bx-list-plus me-1"></i> Add Line Item
+                                                </a>
+                                                <a class="dropdown-item" href="@Url.Action("ApplyDiscount", "Invoice", new { invoiceId = invoice.InvoiceId })" modal-popup="">
+                                                    <i class="bx bx-purchase-tag me-1"></i> Apply Discount
+                                                </a>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+                @if (Model != null && Model.Any())
+                {
+                    <tfoot class="table-light">
+                        <tr>
+                            <th colspan="4" class="text-end">Totals:</th>
+                            <th class="text-end">$@Model.Sum(i => i.TotalAmount).ToString("N2")</th>
+                            <th class="text-end text-success">$@Model.Sum(i => i.AmountPaid).ToString("N2")</th>
+                            <th class="text-end text-danger">$@Model.Sum(i => i.AmountOutstanding).ToString("N2")</th>
+                            <th colspan="3"></th>
+                        </tr>
+                    </tfoot>
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Search functionality
+            $('#searchText').on('keyup', function () {
+                var value = $(this).val().toLowerCase();
+                $('#invoicesTable tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+            $('#searchButton').on('click', function (e) {
+                e.preventDefault();
+                $('#searchText').trigger('keyup');
+            });
+
+            // Filter functionality
+            $('.btn-group button[data-filter]').on('click', function () {
+                var filter = $(this).data('filter');
+                
+                // Update active button
+                $('.btn-group button').removeClass('active');
+                $(this).addClass('active');
+                
+                // Filter table rows
+                $('#invoicesTable tbody tr').each(function () {
+                    var $row = $(this);
+                    var status = $row.data('status');
+                    var hasOutstanding = $row.data('outstanding');
+                    
+                    if (filter === 'all') {
+                        $row.show();
+                    } else if (filter === 'outstanding') {
+                        if (hasOutstanding && status !== 'Overdue') {
+                            $row.show();
+                        } else {
+                            $row.hide();
+                        }
+                    } else if (filter === status) {
+                        $row.show();
+                    } else {
+                        $row.hide();
+                    }
+                });
+            });
+        });
+    </script>
+}
+

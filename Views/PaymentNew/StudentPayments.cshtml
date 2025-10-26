@@ -1,0 +1,383 @@
+@model List<hongWenAPP.Models.PaymentNewModel.DTOs.GetPaymentNewDTO>
+
+@{
+    ViewData["Title"] = "Payment History";
+    var student = ViewBag.Student as hongWenAPP.Models.StudentModel.DTOs.GetStudentDTO;
+}
+
+@section TopBar {
+    <div class="navbar-nav align-items-center">
+        <div class="nav-item d-flex align-items-center justify-content-center">
+            <form id="formSearch" class="d-flex w-100">
+                <button type="button" id="searchButton" style="background:none; border:none">
+                    <i class="bx bx-search fs-4 lh-0"></i>
+                </button>
+                <input type="text" id="searchText" class="form-control border-0 shadow-none" placeholder="Search payments..." aria-label="Search..." />
+            </form>
+        </div>
+    </div>
+}
+
+<div class="fluid-container flex-grow-1">
+    <nav class="pt-sm-3 pb-1" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index" asp-controller="home">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Student">Students</a></li>
+            @if (student != null)
+            {
+                <li class="breadcrumb-item"><a asp-action="Details" asp-controller="Student" asp-route-id="@student.StudentId">@student.FirstName @student.LastName</a></li>
+            }
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    <!-- Student Info Card -->
+    @if (student != null)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-2 text-center">
+                        <div class="avatar avatar-xl">
+                            <div class="avatar-initial bg-label-primary rounded-circle">
+                                <i class="bx bx-user" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="mb-2">@student.FirstName @student.LastName</h4>
+                        <div class="row">
+                            <div class="col-6">
+                                <p class="mb-1"><strong>Student Code:</strong> @student.StudentCode</p>
+                                <p class="mb-0"><strong>Status:</strong> 
+                                    <span class="badge bg-@(student.StudentStatus == "Active" ? "success" : "secondary")">
+                                        @student.StudentStatus
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="col-6">
+                                <p class="mb-1"><strong>Current Level:</strong> @student.CurrentLevel</p>
+                                <p class="mb-0"><strong>Email:</strong> @(student.Email ?? "N/A")</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-label-success mb-0">
+                            <div class="card-body">
+                                <h6 class="mb-2">Payment Summary</h6>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Total Payments:</span>
+                                    <strong>@Model.Count</strong>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Total Paid:</span>
+                                    <strong class="text-success">$@Model.Sum(p => p.Amount).ToString("N2")</strong>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Confirmed:</span>
+                                    <strong>@Model.Count(p => p.IsLocked)</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Summary Cards -->
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">Total Payments</span>
+                            <h3 class="card-title mb-0">@Model.Count</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-primary rounded">
+                                <i class="bx bx-dollar bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">Total Amount</span>
+                            <h3 class="card-title text-success mb-0">$@Model.Sum(p => p.Amount).ToString("N2")</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-success rounded">
+                                <i class="bx bx-dollar-circle bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">Confirmed</span>
+                            <h3 class="card-title text-info mb-0">@Model.Count(p => p.IsLocked)</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-info rounded">
+                                <i class="bx bx-lock-alt bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">Pending</span>
+                            <h3 class="card-title text-warning mb-0">@Model.Count(p => !p.IsLocked)</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-warning rounded">
+                                <i class="bx bx-time bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Buttons -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="btn-group w-100" role="group" aria-label="Payment filter">
+                <button type="button" class="btn btn-outline-primary active" data-filter="all">
+                    All Payments (@Model.Count)
+                </button>
+                <button type="button" class="btn btn-outline-success" data-filter="confirmed">
+                    Confirmed (@Model.Count(p => p.Status == "Confirmed"))
+                </button>
+                <button type="button" class="btn btn-outline-warning" data-filter="pending">
+                    Pending (@Model.Count(p => p.Status == "Pending"))
+                </button>
+                <button type="button" class="btn btn-outline-info" data-filter="adjustment">
+                    Adjustments (@Model.Count(p => p.PaymentType == "Adjustment"))
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payments Table -->
+    <div class="card">
+        <div class="card-header p-3">
+            <div class="row align-items-center">
+                <div class="col-sm-6 col-12">
+                    <div class="card-title mb-0">Payment History</div>
+                </div>
+                <div class="col-sm-6 col-12">
+                    <div class="d-flex h-100 justify-content-end align-items-center">
+                        @if (student != null)
+                        {
+                            <a href="@Url.Action("StudentInvoices", "Invoice", new { studentId = student.StudentId })" 
+                               class="btn btn-outline-primary me-2">
+                                <i class="bx bx-receipt"></i> View Invoices
+                            </a>
+                            <a href="@Url.Action("Details", "Student", new { id = student.StudentId })" class="btn btn-secondary">
+                                <i class="bx bx-arrow-back"></i> Back to Student
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive text-nowrap p-3 pt-2">
+            <table class="table table-hover" id="paymentsTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>Reference</th>
+                        <th>Invoice</th>
+                        <th>Payment Date</th>
+                        <th>Method</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Type</th>
+                        <th>Locked</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model == null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center py-4">
+                                <i class="bx bx-dollar-circle text-muted" style="font-size: 3rem;"></i>
+                                <p class="mt-2 mb-0 text-muted">No payment records found</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var payment in Model.OrderByDescending(p => p.PaymentDate))
+                        {
+                            var statusColor = payment.Status switch
+                            {
+                                "Confirmed" => "success",
+                                "Pending" => "warning",
+                                _ => "secondary"
+                            };
+
+                            var typeColor = payment.PaymentType switch
+                            {
+                                "Regular" => "primary",
+                                "Adjustment" => "warning",
+                                _ => "secondary"
+                            };
+
+                            <tr data-status="@payment.Status" data-type="@payment.PaymentType">
+                                <td>
+                                    <strong>@payment.PaymentReference</strong>
+                                    @if (payment.PaymentType == "Adjustment")
+                                    {
+                                        <br /><small class="text-warning"><i class="bx bx-info-circle"></i> Adjustment</small>
+                                    }
+                                </td>
+                                <td>
+                                    @if (payment.InvoiceId.HasValue)
+                                    {
+                                        <a href="@Url.Action("Details", "Invoice", new { id = payment.InvoiceId })">
+                                            @payment.InvoiceNumber
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @payment.PaymentDate.ToString("MMM dd, yyyy")
+                                    @if (payment.PaymentTime.HasValue)
+                                    {
+                                        <br /><small class="text-muted">@payment.PaymentTime.Value.ToString(@"hh\:mm")</small>
+                                    }
+                                </td>
+                                <td><span class="badge bg-primary">@payment.PaymentMethod</span></td>
+                                <td class="text-end"><strong class="text-success">$@payment.Amount.ToString("N2")</strong></td>
+                                <td><span class="badge bg-@statusColor">@payment.Status</span></td>
+                                <td><span class="badge bg-@typeColor">@payment.PaymentType</span></td>
+                                <td class="text-center">
+                                    @if (payment.IsLocked)
+                                    {
+                                        <i class="bx bx-lock-alt text-success" style="font-size: 1.2rem;" title="Locked on @payment.LockDate?.ToString("MMM dd, yyyy")"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bx bx-lock-open-alt text-warning" style="font-size: 1.2rem;" title="Not locked"></i>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="@Url.Action("Details", "PaymentNew", new { paymentId = payment.PaymentId })">
+                                                <i class="bx bx-show me-1"></i> View Details
+                                            </a>
+                                            @if (!payment.IsLocked && payment.Status == "Pending")
+                                            {
+                                                <form asp-action="ConfirmPayment" asp-controller="PaymentNew" method="post" style="display:inline;">
+                                                    <input type="hidden" name="paymentId" value="@payment.PaymentId" />
+                                                    <button type="submit" class="dropdown-item text-success">
+                                                        <i class="bx bx-check-circle me-1"></i> Confirm & Lock
+                                                    </button>
+                                                </form>
+                                            }
+                                            @if (payment.IsLocked)
+                                            {
+                                                <a class="dropdown-item" href="@Url.Action("AddNote", "PaymentNew", new { paymentId = payment.PaymentId })" modal-popup="">
+                                                    <i class="bx bx-note me-1"></i> Add Note
+                                                </a>
+                                            }
+                                            @if (payment.InvoiceId.HasValue)
+                                            {
+                                                <a class="dropdown-item" href="@Url.Action("Details", "Invoice", new { id = payment.InvoiceId })">
+                                                    <i class="bx bx-receipt me-1"></i> View Invoice
+                                                </a>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+                @if (Model != null && Model.Any())
+                {
+                    <tfoot class="table-light">
+                        <tr>
+                            <th colspan="4" class="text-end">Total Payments:</th>
+                            <th class="text-end text-success">$@Model.Sum(p => p.Amount).ToString("N2")</th>
+                            <th colspan="4"></th>
+                        </tr>
+                    </tfoot>
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Search functionality
+            $('#searchText').on('keyup', function () {
+                var value = $(this).val().toLowerCase();
+                $('#paymentsTable tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+            $('#searchButton').on('click', function (e) {
+                e.preventDefault();
+                $('#searchText').trigger('keyup');
+            });
+
+            // Filter functionality
+            $('.btn-group button[data-filter]').on('click', function () {
+                var filter = $(this).data('filter');
+                
+                // Update active button
+                $('.btn-group button').removeClass('active');
+                $(this).addClass('active');
+                
+                // Filter table rows
+                $('#paymentsTable tbody tr').each(function () {
+                    var $row = $(this);
+                    var status = $row.data('status');
+                    var type = $row.data('type');
+                    
+                    if (filter === 'all') {
+                        $row.show();
+                    } else if (filter === 'confirmed') {
+                        $row.toggle(status === 'Confirmed');
+                    } else if (filter === 'pending') {
+                        $row.toggle(status === 'Pending');
+                    } else if (filter === 'adjustment') {
+                        $row.toggle(type === 'Adjustment');
+                    }
+                });
+            });
+        });
+    </script>
+}
+

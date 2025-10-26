@@ -1,0 +1,377 @@
+@model hongWenAPP.Models.PaymentNewModel.DTOs.GetPaymentNewDTO
+
+@{
+    ViewData["Title"] = "Payment Details";
+    var auditTrail = ViewBag.AuditTrail as List<hongWenAPP.Models.PaymentNewModel.DTOs.PaymentAuditDTO>;
+}
+
+@section TopBar {
+    <div class="navbar-nav align-items-center">
+        <div class="nav-item d-flex align-items-center justify-content-center">
+            <h5 class="mb-0">Payment: @Model.PaymentReference</h5>
+        </div>
+    </div>
+}
+
+<div class="fluid-container flex-grow-1">
+    <nav class="pt-sm-3 pb-1" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index" asp-controller="home">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" asp-controller="PaymentNew">Payments</a></li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    <!-- Payment Status Alert -->
+    @if (Model.IsLocked)
+    {
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <h5 class="alert-heading d-flex align-items-center mb-2">
+                <i class="bx bx-lock-alt me-2" style="font-size: 1.5rem;"></i>
+                Payment Confirmed & Locked
+            </h5>
+            <p class="mb-1">This payment has been confirmed and is now <strong>LOCKED</strong>. It cannot be edited or deleted.</p>
+            <small class="text-muted">
+                Locked on: @Model.LockDate?.ToString("MMM dd, yyyy hh:mm tt") | 
+                Confirmed by: @Model.ConfirmedBy
+            </small>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    else if (Model.Status == "Pending")
+    {
+        <div class="alert alert-warning alert-dismissible" role="alert">
+            <h5 class="alert-heading d-flex align-items-center mb-2">
+                <i class="bx bx-time me-2" style="font-size: 1.5rem;"></i>
+                Payment Pending Confirmation
+            </h5>
+            <p class="mb-0">This payment is awaiting supervisor confirmation.</p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Main Payment Details -->
+        <div class="col-md-8">
+            <div class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Payment Information</h5>
+                    <span class="badge bg-@(Model.Status == "Confirmed" ? "success" : Model.Status == "Pending" ? "warning" : "secondary") fs-6">
+                        @Model.Status
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-2">Payment Reference</h6>
+                            <h4 class="mb-0">@Model.PaymentReference</h4>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <h6 class="text-muted mb-2">Payment Amount</h6>
+                            <h2 class="text-success mb-0">$@Model.Amount.ToString("N2")</h2>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Student</label>
+                            <p class="mb-0">
+                                <a href="@Url.Action("Details", "Student", new { id = Model.StudentId })" class="text-decoration-none">
+                                    <strong>@Model.StudentName</strong>
+                                </a>
+                                <br />
+                                <small class="text-muted">@Model.StudentCode</small>
+                            </p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Invoice</label>
+                            <p class="mb-0">
+                                @if (Model.InvoiceId.HasValue)
+                                {
+                                    <a href="@Url.Action("Details", "Invoice", new { id = Model.InvoiceId })" class="text-decoration-none">
+                                        <strong>@Model.InvoiceNumber</strong>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No invoice linked</span>
+                                }
+                            </p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Payment Date & Time</label>
+                            <p class="mb-0">
+                                <i class="bx bx-calendar me-1"></i>@Model.PaymentDate.ToString("MMM dd, yyyy")
+                                @if (Model.PaymentTime.HasValue)
+                                {
+                                    <br /><i class="bx bx-time me-1"></i>@Model.PaymentTime.Value.ToString(@"hh\:mm")
+                                }
+                            </p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Payment Method</label>
+                            <p class="mb-0">
+                                <span class="badge bg-primary">@Model.PaymentMethod</span>
+                            </p>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model.TransactionReference))
+                        {
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted small">Transaction Reference</label>
+                                <p class="mb-0"><strong>@Model.TransactionReference</strong></p>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.PayerName))
+                        {
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted small">Payer Information</label>
+                                <p class="mb-0">
+                                    <strong>@Model.PayerName</strong>
+                                    @if (!string.IsNullOrEmpty(Model.PayerRelationship))
+                                    {
+                                        <br /><small class="text-muted">(@Model.PayerRelationship)</small>
+                                    }
+                                </p>
+                            </div>
+                        }
+
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Received By</label>
+                            <p class="mb-0">@Model.ReceivedBy</p>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model.ConfirmedBy))
+                        {
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted small">Confirmed By</label>
+                                <p class="mb-0">
+                                    @Model.ConfirmedBy
+                                    @if (Model.ConfirmedDate.HasValue)
+                                    {
+                                        <br /><small class="text-muted">@Model.ConfirmedDate.Value.ToString("MMM dd, yyyy hh:mm tt")</small>
+                                    }
+                                </p>
+                            </div>
+                        }
+                    </div>
+
+                    @if (Model.PaymentType == "Adjustment" && Model.OriginalAmount.HasValue)
+                    {
+                        <div class="alert alert-info mt-3">
+                            <h6 class="alert-heading">Payment Adjustment</h6>
+                            <p class="mb-1"><strong>Original Amount:</strong> $@Model.OriginalAmount.Value.ToString("N2")</p>
+                            <p class="mb-1"><strong>Adjustment Amount:</strong> $@Model.Amount.ToString("N2")</p>
+                            @if (!string.IsNullOrEmpty(Model.AdjustmentReason))
+                            {
+                                <p class="mb-0"><strong>Reason:</strong> @Model.AdjustmentReason</p>
+                            }
+                            @if (Model.RelatedPaymentId.HasValue)
+                            {
+                                <p class="mb-0">
+                                    <strong>Related Payment:</strong> 
+                                    <a href="@Url.Action("Details", "PaymentNew", new { paymentId = Model.RelatedPaymentId })">
+                                        @Model.RelatedPaymentReference
+                                    </a>
+                                </p>
+                            }
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Notes))
+                    {
+                        <div class="mt-3 pt-3 border-top">
+                            <label class="text-muted small">Notes</label>
+                            <p class="mb-0">@Model.Notes</p>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.InternalComments))
+                    {
+                        <div class="mt-3 pt-3 border-top">
+                            <label class="text-muted small">Internal Comments (Staff Only)</label>
+                            <p class="mb-0 text-danger">@Model.InternalComments</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Payment Allocations -->
+            @if (Model.Allocations != null && Model.Allocations.Any())
+            {
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Payment Allocations</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Allocation Date</th>
+                                        <th class="text-end">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var allocation in Model.Allocations)
+                                    {
+                                        <tr>
+                                            <td>@allocation.ItemName</td>
+                                            <td>@allocation.AllocationDate.ToString("MMM dd, yyyy")</td>
+                                            <td class="text-end">$@allocation.AllocatedAmount.ToString("N2")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr class="fw-bold">
+                                        <td colspan="2" class="text-end">Total Allocated:</td>
+                                        <td class="text-end">$@Model.Allocations.Sum(a => a.AllocatedAmount).ToString("N2")</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Audit Trail -->
+            @if (auditTrail != null && auditTrail.Any())
+            {
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bx bx-history me-2"></i>Audit Trail
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="timeline">
+                            @foreach (var audit in auditTrail.OrderByDescending(a => a.PerformedDate))
+                            {
+                                <div class="timeline-item mb-3">
+                                    <div class="d-flex">
+                                        <div class="flex-shrink-0">
+                                            <i class="bx bx-check-circle text-success" style="font-size: 1.5rem;"></i>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <h6 class="mb-1">@audit.Action</h6>
+                                            <p class="text-muted mb-1">
+                                                By: <strong>@audit.PerformedBy</strong> | 
+                                                @audit.PerformedDate.ToString("MMM dd, yyyy hh:mm tt")
+                                            </p>
+                                            @if (!string.IsNullOrEmpty(audit.OldStatus) || !string.IsNullOrEmpty(audit.NewStatus))
+                                            {
+                                                <p class="mb-1">
+                                                    Status: <span class="badge bg-secondary">@audit.OldStatus</span> 
+                                                    <i class="bx bx-right-arrow-alt"></i> 
+                                                    <span class="badge bg-success">@audit.NewStatus</span>
+                                                </p>
+                                            }
+                                            @if (audit.OldAmount.HasValue || audit.NewAmount.HasValue)
+                                            {
+                                                <p class="mb-1">
+                                                    Amount: $@audit.OldAmount?.ToString("N2") → $@audit.NewAmount?.ToString("N2")
+                                                </p>
+                                            }
+                                            @if (!string.IsNullOrEmpty(audit.Reason))
+                                            {
+                                                <p class="mb-0"><em>Reason: @audit.Reason</em></p>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Actions Sidebar -->
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">Actions</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Status == "Pending" && !Model.IsLocked)
+                    {
+                        <form asp-action="ConfirmPayment" asp-controller="PaymentNew" method="post">
+                            <input type="hidden" name="paymentId" value="@Model.PaymentId" />
+                            <button type="submit" class="btn btn-success w-100 mb-2">
+                                <i class="bx bx-check-circle"></i> Confirm & Lock Payment
+                            </button>
+                        </form>
+                    }
+
+                    @if (Model.IsLocked)
+                    {
+                        <a href="@Url.Action("AddNote", "PaymentNew", new { paymentId = Model.PaymentId })" 
+                           class="btn btn-primary w-100 mb-2" modal-popup="">
+                            <i class="bx bx-note"></i> Add Note
+                        </a>
+
+                        <a href="@Url.Action("CreateAdjustment", "PaymentNew", new { originalPaymentId = Model.PaymentId })" 
+                           class="btn btn-warning w-100 mb-2" modal-popup="" modal-size="lg">
+                            <i class="bx bx-edit"></i> Create Adjustment (Admin)
+                        </a>
+                    }
+
+                    <a href="@Url.Action("StudentPayments", "PaymentNew", new { studentId = Model.StudentId })" 
+                       class="btn btn-outline-primary w-100 mb-2">
+                        <i class="bx bx-history"></i> Student Payment History
+                    </a>
+
+                    @if (Model.InvoiceId.HasValue)
+                    {
+                        <a href="@Url.Action("Details", "Invoice", new { id = Model.InvoiceId })" 
+                           class="btn btn-outline-secondary w-100 mb-2">
+                            <i class="bx bx-receipt"></i> View Invoice
+                        </a>
+                    }
+
+                    <button type="button" class="btn btn-outline-secondary w-100" onclick="window.print()">
+                        <i class="bx bx-printer"></i> Print Receipt
+                    </button>
+                </div>
+            </div>
+
+            <!-- Payment Summary -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Created:</span>
+                        <span>@Model.CreateDate.ToString("MMM dd, yyyy")</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Type:</span>
+                        <span class="badge bg-info">@Model.PaymentType</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Status:</span>
+                        <span class="badge bg-@(Model.IsLocked ? "success" : "warning")">
+                            @(Model.IsLocked ? "Locked" : "Unlocked")
+                        </span>
+                    </div>
+                    @if (Model.IsLocked && Model.LockDate.HasValue)
+                    {
+                        <div class="d-flex justify-content-between">
+                            <span>Locked:</span>
+                            <span>@Model.LockDate.Value.ToString("MMM dd, yyyy")</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

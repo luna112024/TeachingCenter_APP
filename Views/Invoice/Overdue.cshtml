@@ -1,0 +1,329 @@
+@model List<hongWenAPP.Models.InvoiceModel.DTOs.GetInvoiceDTO>
+
+@{
+    ViewData["Title"] = "Overdue Invoices";
+}
+
+@section TopBar {
+    <!-- Search -->
+    <div class="navbar-nav align-items-center">
+        <div class="nav-item d-flex align-items-center justify-content-center">
+            <form id="formSearch" class="d-flex w-100">
+                <button type="button" id="searchButton" style="background:none; border:none">
+                    <i class="bx bx-search fs-4 lh-0"></i>
+                </button>
+                <input type="text" id="searchText" class="form-control border-0 shadow-none" placeholder="Search invoices..." aria-label="Search..." />
+            </form>
+        </div>
+    </div>
+    <!-- /Search -->
+}
+
+<div class="fluid-container flex-grow-1">
+    <nav class="pt-sm-3 pb-1" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index" asp-controller="home">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Invoice">Invoices</a></li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    <!-- Alert Banner -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <h5 class="alert-heading d-flex align-items-center mb-2">
+                <i class="bx bx-error-circle me-2" style="font-size: 1.5rem;"></i>
+                Attention Required!
+            </h5>
+            <p class="mb-0">
+                You have <strong>@Model.Count</strong> overdue invoice(s) with a total outstanding amount of 
+                <strong>$@Model.Sum(i => i.AmountOutstanding).ToString("N2")</strong>. 
+                Please take immediate action to collect these payments.
+            </p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Summary Card -->
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <div class="card border-danger">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">Overdue Invoices</span>
+                            <h3 class="card-title text-danger mb-0">@Model.Count</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-danger rounded">
+                                <i class="bx bx-error bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">Total Amount</span>
+                            <h3 class="card-title mb-0">$@Model.Sum(i => i.TotalAmount).ToString("N2")</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-info rounded">
+                                <i class="bx bx-dollar-circle bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">Amount Paid</span>
+                            <h3 class="card-title text-success mb-0">$@Model.Sum(i => i.AmountPaid).ToString("N2")</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-success rounded">
+                                <i class="bx bx-check-circle bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-danger">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">Outstanding</span>
+                            <h3 class="card-title text-danger mb-0">$@Model.Sum(i => i.AmountOutstanding).ToString("N2")</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-danger rounded">
+                                <i class="bx bx-time bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoices Table -->
+    <div class="card border-danger">
+        <div class="card-header p-3 bg-label-danger">
+            <div class="row align-items-center">
+                <div class="col-sm-6 col-12">
+                    <div class="card-title mb-0 text-danger">
+                        <i class="bx bx-error-circle me-2"></i>@ViewData["Title"]
+                    </div>
+                </div>
+                <div class="col-sm-6 col-12">
+                    <div class="d-flex h-100 justify-content-end align-items-center">
+                        <a href="@Url.Action("Outstanding", "Invoice")" class="btn btn-warning me-2">
+                            <i class="bx bx-time"></i> All Outstanding
+                        </a>
+                        <a href="@Url.Action("Index", "Invoice")" class="btn btn-secondary">
+                            <i class="bx bx-arrow-back"></i> Back to All Invoices
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive text-nowrap p-3 pt-2">
+            <table class="table table-hover" id="overdueTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>Invoice #</th>
+                        <th>Student</th>
+                        <th>Course</th>
+                        <th>Invoice Date</th>
+                        <th>Due Date</th>
+                        <th>Days Overdue</th>
+                        <th>Total Amount</th>
+                        <th>Amount Paid</th>
+                        <th>Outstanding</th>
+                        <th>Status</th>
+                        <th>Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model == null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="12" class="text-center py-4">
+                                <i class="bx bx-check-circle text-success" style="font-size: 3rem;"></i>
+                                <p class="mt-2 mb-0 text-success">No overdue invoices! All payments are up to date.</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var invoice in Model.OrderBy(i => i.DueDate))
+                        {
+                            var statusClass = invoice.Status switch
+                            {
+                                "Paid" => "success",
+                                "Overdue" => "danger",
+                                "PartiallyPaid" => "warning",
+                                "Issued" => "info",
+                                "Draft" => "secondary",
+                                "Voided" => "dark",
+                                _ => "secondary"
+                            };
+
+                            var typeClass = invoice.InvoiceType switch
+                            {
+                                "NewStudent" => "primary",
+                                "Promoted" => "info",
+                                "Adjustment" => "warning",
+                                _ => "secondary"
+                            };
+
+                            var daysOverdue = (DateTime.Now - invoice.DueDate).Days;
+                            var severityClass = daysOverdue switch
+                            {
+                                > 60 => "table-danger",
+                                > 30 => "table-warning",
+                                _ => ""
+                            };
+
+                            <tr class="@severityClass">
+                                <td>
+                                    <strong>@invoice.InvoiceNumber</strong>
+                                    @if (invoice.IsAutogenerated)
+                                    {
+                                        <i class="bx bx-bot text-primary ms-1" title="Auto-generated"></i>
+                                    }
+                                </td>
+                                <td>
+                                    <div>@invoice.StudentName</div>
+                                    <small class="text-muted">@invoice.StudentCode</small>
+                                </td>
+                                <td>@invoice.CourseName</td>
+                                <td>@invoice.InvoiceDate.ToString("MMM dd, yyyy")</td>
+                                <td>@invoice.DueDate.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <span class="badge @(daysOverdue > 60 ? "bg-danger" : daysOverdue > 30 ? "bg-warning" : "bg-secondary")">
+                                        @daysOverdue days
+                                    </span>
+                                </td>
+                                <td class="text-end">$@invoice.TotalAmount.ToString("N2")</td>
+                                <td class="text-end text-success">$@invoice.AmountPaid.ToString("N2")</td>
+                                <td class="text-end">
+                                    <strong class="text-danger">
+                                        $@invoice.AmountOutstanding.ToString("N2")
+                                    </strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-@statusClass">@invoice.Status</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-@typeClass">@invoice.InvoiceType</span>
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="@Url.Action("Details", "Invoice", new { id = invoice.InvoiceId })">
+                                                <i class="bx bx-show me-1"></i> View Details
+                                            </a>
+                                            <a class="dropdown-item text-primary" href="@Url.Action("RecordPayment", "PaymentNew", new { invoiceId = invoice.InvoiceId })" modal-popup="" modal-size="lg">
+                                                <i class="bx bx-dollar me-1"></i> Record Payment
+                                            </a>
+                                            @if (invoice.Status == "Draft")
+                                            {
+                                                <a class="dropdown-item" href="@Url.Action("AddLineItem", "Invoice", new { invoiceId = invoice.InvoiceId })" modal-popup="">
+                                                    <i class="bx bx-list-plus me-1"></i> Add Line Item
+                                                </a>
+                                                <a class="dropdown-item" href="@Url.Action("ApplyDiscount", "Invoice", new { invoiceId = invoice.InvoiceId })" modal-popup="">
+                                                    <i class="bx bx-purchase-tag me-1"></i> Apply Discount
+                                                </a>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+                @if (Model != null && Model.Any())
+                {
+                    <tfoot class="table-light">
+                        <tr>
+                            <th colspan="6" class="text-end">Totals:</th>
+                            <th class="text-end">$@Model.Sum(i => i.TotalAmount).ToString("N2")</th>
+                            <th class="text-end text-success">$@Model.Sum(i => i.AmountPaid).ToString("N2")</th>
+                            <th class="text-end text-danger">$@Model.Sum(i => i.AmountOutstanding).ToString("N2")</th>
+                            <th colspan="3"></th>
+                        </tr>
+                    </tfoot>
+                }
+            </table>
+        </div>
+    </div>
+
+    <!-- Legend -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6 class="card-title mb-2">Severity Legend</h6>
+                <div class="d-flex flex-wrap gap-3">
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-secondary me-2">0-30 days</span>
+                        <span class="text-muted">Recently overdue</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-warning me-2">31-60 days</span>
+                        <span class="text-muted">Moderate priority</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-danger me-2">60+ days</span>
+                        <span class="text-muted">High priority</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Search functionality
+            $('#searchText').on('keyup', function () {
+                var value = $(this).val().toLowerCase();
+                $('#overdueTable tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+            $('#searchButton').on('click', function (e) {
+                e.preventDefault();
+                $('#searchText').trigger('keyup');
+            });
+
+            // Add warning icon to severely overdue invoices
+            $('tr.table-danger').each(function () {
+                $(this).find('td:first').prepend('<i class="bx bx-error-circle text-danger me-1" title="Critical: 60+ days overdue"></i>');
+            });
+
+            $('tr.table-warning').each(function () {
+                $(this).find('td:first').prepend('<i class="bx bx-error text-warning me-1" title="Warning: 31-60 days overdue"></i>');
+            });
+        });
+    </script>
+}
+

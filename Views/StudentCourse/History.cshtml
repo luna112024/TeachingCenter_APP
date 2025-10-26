@@ -1,0 +1,280 @@
+@model List<hongWenAPP.Models.StudentCourseModel.DTOs.GetStudentCourseDTO>
+
+@{
+    ViewData["Title"] = "Course Assignment History";
+    var student = ViewBag.Student as hongWenAPP.Models.StudentModel.DTOs.GetStudentDTO;
+}
+
+@section TopBar {
+    <div class="navbar-nav align-items-center">
+        <div class="nav-item d-flex align-items-center justify-content-center">
+            <h5 class="mb-0">@ViewData["Title"]</h5>
+        </div>
+    </div>
+}
+
+<div class="fluid-container flex-grow-1">
+    <nav class="pt-sm-3 pb-1" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index" asp-controller="home">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Student">Students</a></li>
+            @if (student != null)
+            {
+                <li class="breadcrumb-item"><a asp-action="Details" asp-controller="Student" asp-route-id="@student.StudentId">@student.FirstName @student.LastName</a></li>
+            }
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    <!-- Student Info Card -->
+    @if (student != null)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-2 text-center">
+                        <div class="avatar avatar-xl">
+                            <div class="avatar-initial bg-label-primary rounded-circle">
+                                <i class="bx bx-user" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="mb-2">@student.FirstName @student.LastName</h4>
+                        <div class="row">
+                            <div class="col-6">
+                                <p class="mb-1"><strong>Student Code:</strong> @student.StudentCode</p>
+                                <p class="mb-1"><strong>Current Level:</strong> @student.CurrentLevel</p>
+                            </div>
+                            <div class="col-6">
+                                <p class="mb-1"><strong>Status:</strong> 
+                                    <span class="badge bg-@(student.StudentStatus == "Active" ? "success" : "secondary")">
+                                        @student.StudentStatus
+                                    </span>
+                                </p>
+                                <p class="mb-1"><strong>Enrollment Date:</strong> @student.EnrollmentDate.ToString("MMM dd, yyyy")</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-label-info mb-0">
+                            <div class="card-body">
+                                <h6 class="mb-2">Course Summary</h6>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Total Courses:</span>
+                                    <strong>@Model.Count</strong>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Active Courses:</span>
+                                    <strong class="text-success">@Model.Count(c => c.IsActive)</strong>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Completed:</span>
+                                    <strong class="text-info">@Model.Count(c => c.Status == "Completed")</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Course History Timeline -->
+    <div class="card">
+        <div class="card-header p-3">
+            <div class="row align-items-center">
+                <div class="col-sm-6 col-12">
+                    <div class="card-title mb-0">
+                        <i class="bx bx-history me-2"></i>Course Assignment History
+                    </div>
+                </div>
+                <div class="col-sm-6 col-12">
+                    <div class="d-flex h-100 justify-content-end align-items-center">
+                        @if (student != null)
+                        {
+                            <a href="@Url.Action("AssignStudent", "StudentCourse", new { studentId = student.StudentId })" 
+                               class="btn btn-primary me-2" modal-popup="" modal-size="lg">
+                                <i class="bx bx-plus"></i> Assign to Course
+                            </a>
+                            <a href="@Url.Action("Details", "Student", new { id = student.StudentId })" class="btn btn-secondary">
+                                <i class="bx bx-arrow-back"></i> Back to Student
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            @if (Model == null || !Model.Any())
+            {
+                <div class="text-center py-5">
+                    <i class="bx bx-book-open text-muted" style="font-size: 4rem;"></i>
+                    <p class="mt-3 text-muted">No course assignments found for this student</p>
+                    @if (student != null)
+                    {
+                        <a href="@Url.Action("AssignStudent", "StudentCourse", new { studentId = student.StudentId })" 
+                           class="btn btn-primary mt-2" modal-popup="" modal-size="lg">
+                            <i class="bx bx-plus"></i> Assign First Course
+                        </a>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="timeline">
+                    @foreach (var course in Model.OrderByDescending(c => c.AssignmentDate))
+                    {
+                        var statusColor = course.Status switch
+                        {
+                            "Active" => "success",
+                            "Completed" => "info",
+                            "Dropped" => "danger",
+                            "Transferred" => "warning",
+                            _ => "secondary"
+                        };
+
+                        var assignmentTypeColor = course.AssignmentType switch
+                        {
+                            "NewStudent" => "primary",
+                            "Promoted" => "success",
+                            "Transferred" => "warning",
+                            "Repeated" => "secondary",
+                            _ => "secondary"
+                        };
+
+                        <div class="timeline-item mb-4">
+                            <div class="timeline-point timeline-point-@statusColor"></div>
+                            <div class="timeline-event card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h5 class="mb-1">@course.CourseName</h5>
+                                            <p class="text-muted mb-2">
+                                                <i class="bx bx-calendar me-1"></i>
+                                                @course.StartDate.ToString("MMM dd, yyyy") 
+                                                @if (course.EndDate.HasValue)
+                                                {
+                                                    <span> - @course.EndDate.Value.ToString("MMM dd, yyyy")</span>
+                                                }
+                                            </p>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge bg-@statusColor mb-1">@course.Status</span>
+                                            <br />
+                                            <span class="badge bg-@assignmentTypeColor">@course.AssignmentType</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-3">
+                                        <div class="col-md-4">
+                                            <small class="text-muted">Course Code</small>
+                                            <p class="mb-0 fw-semibold">@course.CourseCode</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <small class="text-muted">Term</small>
+                                            <p class="mb-0 fw-semibold">@course.TermName</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <small class="text-muted">Course Fee</small>
+                                            <p class="mb-0 fw-semibold text-success">$@course.CourseFee.ToString("N2")</p>
+                                        </div>
+                                    </div>
+
+                                    @if (course.PreviousCourseName != null)
+                                    {
+                                        <div class="alert alert-info mt-3 mb-0">
+                                            <i class="bx bx-info-circle me-1"></i>
+                                            <strong>Promoted from:</strong> @course.PreviousCourseName
+                                            @if (!string.IsNullOrEmpty(course.PromotionStatus))
+                                            {
+                                                <span class="badge bg-info ms-2">@course.PromotionStatus</span>
+                                            }
+                                        </div>
+                                    }
+
+                                    @if (course.InvoiceId.HasValue)
+                                    {
+                                        <div class="mt-3 pt-3 border-top">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-8">
+                                                    <p class="mb-1">
+                                                        <i class="bx bx-receipt me-1"></i>
+                                                        <strong>Invoice:</strong> @course.InvoiceNumber
+                                                        <span class="badge bg-@(course.InvoiceStatus == "Paid" ? "success" : course.InvoiceStatus == "Overdue" ? "danger" : "warning") ms-2">
+                                                            @course.InvoiceStatus
+                                                        </span>
+                                                    </p>
+                                                    <small class="text-muted">Total: $@course.InvoiceTotal?.ToString("N2")</small>
+                                                </div>
+                                                <div class="col-md-4 text-end">
+                                                    <a href="@Url.Action("Details", "Invoice", new { id = course.InvoiceId })" 
+                                                       class="btn btn-sm btn-outline-primary">
+                                                        <i class="bx bx-show"></i> View Invoice
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    @if (!string.IsNullOrEmpty(course.Notes))
+                                    {
+                                        <div class="mt-3">
+                                            <small class="text-muted">Notes:</small>
+                                            <p class="mb-0">@course.Notes</p>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e0e0e0;
+        }
+        
+        .timeline-item {
+            position: relative;
+        }
+        
+        .timeline-point {
+            position: absolute;
+            left: -24px;
+            top: 10px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 3px solid white;
+            z-index: 1;
+        }
+        
+        .timeline-point-success { background-color: #28a745; }
+        .timeline-point-info { background-color: #17a2b8; }
+        .timeline-point-danger { background-color: #dc3545; }
+        .timeline-point-warning { background-color: #ffc107; }
+        .timeline-point-secondary { background-color: #6c757d; }
+        
+        .timeline-event {
+            margin-left: 10px;
+        }
+    </style>
+}
+

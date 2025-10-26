@@ -1,0 +1,302 @@
+@model List<hongWenAPP.Models.StudentCourseModel.DTOs.GetStudentCourseDTO>
+
+@{
+    ViewData["Title"] = "Students in Course";
+    var course = ViewBag.Course as hongWenAPP.Models.CourseModel.DTOs.GetCourseDTO;
+    var term = ViewBag.Term as hongWenAPP.Models.TermModel.DTOs.GetTermDTO;
+}
+
+@section TopBar {
+    <div class="navbar-nav align-items-center">
+        <div class="nav-item d-flex align-items-center justify-content-center">
+            <form id="formSearch" class="d-flex w-100">
+                <button type="button" id="searchButton" style="background:none; border:none">
+                    <i class="bx bx-search fs-4 lh-0"></i>
+                </button>
+                <input type="text" id="searchText" class="form-control border-0 shadow-none" placeholder="Search students..." aria-label="Search..." />
+            </form>
+        </div>
+    </div>
+}
+
+<div class="fluid-container flex-grow-1">
+    <nav class="pt-sm-3 pb-1" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index" asp-controller="home">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" asp-controller="StudentCourse">Student Courses</a></li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </nav>
+
+    <!-- Course Info Card -->
+    @if (course != null && term != null)
+    {
+        <div class="card mb-3 border-primary">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-2 text-center">
+                        <div class="avatar avatar-xl">
+                            <div class="avatar-initial bg-primary rounded-circle">
+                                <i class="bx bx-book-open" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <h4 class="mb-2">@course.CourseName</h4>
+                        <div class="row">
+                            <div class="col-6">
+                                <p class="mb-1"><strong>Course Code:</strong> @course.CourseCode</p>
+                                <p class="mb-1"><strong>Level:</strong> @course.LevelName</p>
+                                <p class="mb-0"><strong>Course Fee:</strong> <span class="text-success">$@course.BaseFee.ToString("N2")</span></p>
+                            </div>
+                            <div class="col-6">
+                                <p class="mb-1"><strong>Term:</strong> @term.TermName</p>
+                                <p class="mb-1"><strong>Period:</strong> @term.StartDate.ToString("MMM dd") - @term.EndDate.ToString("MMM dd, yyyy")</p>
+                                <p class="mb-0">
+                                    <strong>Status:</strong> 
+                                    <span class="badge bg-@(term.Status == "Active" ? "success" : "secondary")">@term.Status</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-label-primary mb-0">
+                            <div class="card-body text-center">
+                                <h2 class="mb-1">@Model.Count</h2>
+                                <p class="mb-0">Total Students</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Summary Cards -->
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">Active</span>
+                            <h3 class="card-title text-success mb-0">@Model.Count(s => s.IsActive)</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-success rounded">
+                                <i class="bx bx-user-check bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">Completed</span>
+                            <h3 class="card-title text-info mb-0">@Model.Count(s => s.Status == "Completed")</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-info rounded">
+                                <i class="bx bx-badge-check bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">New Students</span>
+                            <h3 class="card-title text-primary mb-0">@Model.Count(s => s.AssignmentType == "NewStudent")</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-primary rounded">
+                                <i class="bx bx-user-plus bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="d-block mb-1">Promoted</span>
+                            <h3 class="card-title text-warning mb-0">@Model.Count(s => s.AssignmentType == "Promoted")</h3>
+                        </div>
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-warning rounded">
+                                <i class="bx bx-trending-up bx-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Students Table -->
+    <div class="card">
+        <div class="card-header p-3">
+            <div class="row align-items-center">
+                <div class="col-sm-6 col-12">
+                    <div class="card-title mb-0">Course Roster</div>
+                </div>
+                <div class="col-sm-6 col-12">
+                    <div class="d-flex h-100 justify-content-end align-items-center">
+                        <button type="button" class="btn btn-success me-2" onclick="exportToExcel()">
+                            <i class="bx bx-download"></i> Export to Excel
+                        </button>
+                        <a href="@Url.Action("Index", "StudentCourse")" class="btn btn-secondary">
+                            <i class="bx bx-arrow-back"></i> Back
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive text-nowrap p-3 pt-2">
+            <table class="table table-hover" id="studentsTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Student Code</th>
+                        <th>Student Name</th>
+                        <th>Assignment Date</th>
+                        <th>Start Date</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Invoice</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model == null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center py-4">
+                                <i class="bx bx-user-x text-muted" style="font-size: 3rem;"></i>
+                                <p class="mt-2 mb-0 text-muted">No students assigned to this course yet</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        var index = 1;
+                        foreach (var student in Model.OrderBy(s => s.StudentName))
+                        {
+                            var statusColor = student.Status switch
+                            {
+                                "Active" => "success",
+                                "Completed" => "info",
+                                "Dropped" => "danger",
+                                "Transferred" => "warning",
+                                _ => "secondary"
+                            };
+
+                            var typeColor = student.AssignmentType switch
+                            {
+                                "NewStudent" => "primary",
+                                "Promoted" => "success",
+                                "Transferred" => "warning",
+                                "Repeated" => "secondary",
+                                _ => "secondary"
+                            };
+
+                            <tr>
+                                <td>@index</td>
+                                <td><strong>@student.StudentCode</strong></td>
+                                <td>
+                                    <a href="@Url.Action("Details", "Student", new { id = student.StudentId })" class="text-decoration-none">
+                                        @student.StudentName
+                                    </a>
+                                </td>
+                                <td>@student.AssignmentDate.ToString("MMM dd, yyyy")</td>
+                                <td>@student.StartDate.ToString("MMM dd, yyyy")</td>
+                                <td><span class="badge bg-@typeColor">@student.AssignmentType</span></td>
+                                <td><span class="badge bg-@statusColor">@student.Status</span></td>
+                                <td>
+                                    @if (student.InvoiceId.HasValue)
+                                    {
+                                        <a href="@Url.Action("Details", "Invoice", new { id = student.InvoiceId })" 
+                                           class="badge bg-@(student.InvoiceStatus == "Paid" ? "success" : student.InvoiceStatus == "Overdue" ? "danger" : "warning")">
+                                            @student.InvoiceNumber
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="@Url.Action("Details", "Student", new { id = student.StudentId })">
+                                                <i class="bx bx-user me-1"></i> View Student Profile
+                                            </a>
+                                            <a class="dropdown-item" href="@Url.Action("History", "StudentCourse", new { studentId = student.StudentId })">
+                                                <i class="bx bx-history me-1"></i> Course History
+                                            </a>
+                                            @if (student.InvoiceId.HasValue)
+                                            {
+                                                <a class="dropdown-item" href="@Url.Action("Details", "Invoice", new { id = student.InvoiceId })">
+                                                    <i class="bx bx-receipt me-1"></i> View Invoice
+                                                </a>
+                                            }
+                                            <a class="dropdown-item" href="@Url.Action("StudentPayments", "PaymentNew", new { studentId = student.StudentId })">
+                                                <i class="bx bx-dollar me-1"></i> Payment History
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            index++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Search functionality
+            $('#searchText').on('keyup', function () {
+                var value = $(this).val().toLowerCase();
+                $('#studentsTable tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+            $('#searchButton').on('click', function (e) {
+                e.preventDefault();
+                $('#searchText').trigger('keyup');
+            });
+        });
+
+        function exportToExcel() {
+            // Simple export to Excel functionality
+            var table = document.getElementById('studentsTable');
+            var html = table.outerHTML;
+            var url = 'data:application/vnd.ms-excel,' + escape(html);
+            var link = document.createElement('a');
+            link.href = url;
+            link.download = 'course_roster_' + new Date().toISOString().slice(0,10) + '.xls';
+            link.click();
+        }
+    </script>
+}
+

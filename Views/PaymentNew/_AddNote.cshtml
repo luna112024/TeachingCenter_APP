@@ -1,0 +1,133 @@
+@model hongWenAPP.Models.PaymentNewModel.DTOs.AddPaymentNoteDTO
+
+@{
+    var paymentId = ViewBag.PaymentId as Guid?;
+}
+
+<div class="modal-header">
+    <h5 class="modal-title">
+        <i class="bx bx-note me-2"></i>Add Note to Payment
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<form id="addNoteForm" asp-action="AddNote" asp-controller="PaymentNew" asp-route-paymentId="@paymentId" method="post">
+    <div class="modal-body">
+        <div class="alert alert-info">
+            <i class="bx bx-info-circle me-2"></i>
+            <strong>Note:</strong> This payment is locked and confirmed. Only notes can be added. The payment amount and other details cannot be changed.
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Note" class="form-label">
+                Note <span class="text-danger">*</span>
+            </label>
+            <textarea asp-for="Note" class="form-control" rows="5" 
+                      placeholder="Add additional information, clarifications, or updates about this payment..." 
+                      required></textarea>
+            <span asp-validation-for="Note" class="text-danger"></span>
+            <div class="form-text">
+                <i class="bx bx-lock-alt text-success me-1"></i>
+                This note will be added to the payment record for audit purposes. It will not modify the payment amount or status.
+            </div>
+        </div>
+
+        <!-- Quick Templates -->
+        <div class="mb-3">
+            <label class="form-label">Quick Templates (Optional)</label>
+            <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertTemplate('Payment verified and confirmed by supervisor')">
+                    Verified
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertTemplate('Customer confirmed receipt')">
+                    Receipt Confirmed
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertTemplate('Bank transaction verified')">
+                    Bank Verified
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertTemplate('Late payment note: ')">
+                    Late Payment
+                </button>
+            </div>
+        </div>
+
+        <!-- Character Counter -->
+        <div class="text-end">
+            <small class="text-muted">
+                <span id="charCount">0</span> characters
+            </small>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bx bx-x me-1"></i>Cancel
+        </button>
+        <button type="submit" class="btn btn-primary">
+            <i class="bx bx-check me-1"></i>Add Note
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Character counter
+            $('#Note').on('input', function () {
+                var charCount = $(this).val().length;
+                $('#charCount').text(charCount);
+            });
+
+            // Form submission
+            $('#addNoteForm').on('submit', function (e) {
+                e.preventDefault();
+
+                var note = $('#Note').val().trim();
+                
+                if (!note) {
+                    toastr.error('Please enter a note');
+                    return;
+                }
+
+                var formData = $(this).serialize();
+                var actionUrl = $(this).attr('action');
+
+                $.ajax({
+                    url: actionUrl,
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        if (response.flag) {
+                            toastr.success(response.message || 'Note added successfully');
+                            $('.modal').modal('hide');
+                            location.reload(); // Refresh to show updated payment
+                        } else {
+                            toastr.error(response.message || 'Failed to add note');
+                        }
+                    },
+                    error: function () {
+                        toastr.error('An error occurred while adding the note');
+                    }
+                });
+            });
+        });
+
+        function insertTemplate(text) {
+            var $textarea = $('#Note');
+            var currentText = $textarea.val();
+            
+            if (currentText) {
+                $textarea.val(currentText + '\n' + text);
+            } else {
+                $textarea.val(text);
+            }
+            
+            // Update character count
+            $('#charCount').text($textarea.val().length);
+            
+            // Focus on textarea
+            $textarea.focus();
+        }
+    </script>
+}
+
